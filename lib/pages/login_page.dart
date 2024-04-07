@@ -1,78 +1,128 @@
-
 import 'package:flutter/material.dart';
-import 'package:leare_fa/components/my_button.dart';
-import 'package:leare_fa/components/my_textfield.dart';
+import 'package:leare_fa/widgets/widgets.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   // text editing controllers
   final usernameController = TextEditingController();
+
   final passwordController = TextEditingController();
 
   // sign user in method
-  void signUserIn() {
-
-  }
+  void signUserIn() {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 47, 72, 88),
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: Colors.black,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Stack(
+            alignment: Alignment.center,
             children: [
-              const SizedBox(height: 25),
-
-              // logo
               const Image(
-                image: AssetImage('assets/leare.png'),
-                width: 150,
-                ),
-
-              const SizedBox(height: 50),
-
-              const Text(
-                'Inicia sesión para descubrir más',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
+                image: AssetImage('assets/background.png'),
+                width: double.infinity,
+                height: 270,
               ),
-
-              const SizedBox(height: 25),
-
-              // username textfield
-              MyTextField(
-                controller: usernameController,
-                hintText: 'Username',
-                obscureText: false,
-                size: 20,
+              // Dark low opacity layer
+              Container(
+                height: 270,
+                color: Colors.black.withOpacity(0.2),
               ),
-
-              const SizedBox(height: 10),
-
-              // password textfield
-              MyTextField(
-                controller: passwordController,
-                hintText: 'Contraseña',
-                obscureText: true,
-                size: 20,
-              ),
-        
-
-              const SizedBox(height: 20),
-
-              MyButton(
-                onTap: () => Navigator.pushNamed(context, '/home'),
-                text: 'Iniciar Sesión',
-                size: 25,
+              Positioned(
+                top: 30.0,
+                left: 10.0,
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back_ios_new,
+                        color: Colors.white)),
               ),
             ],
           ),
-        ),
+          Expanded(
+            child: Container(
+              transform: Matrix4.translationValues(0.0, -30.0, 0.0),
+              height: 100,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 40.0,
+                  left: 25.0,
+                  right: 25.0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hola, bienvenido de nuevo!',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Te hemos extrañado mucho!',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const LoginForm(),
+                    const SizedBox(height: 20),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Divider(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          thickness: 1,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Aún no tienes cuenta?",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/register');
+                              },
+                              child: Text(
+                                'Regístrate',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

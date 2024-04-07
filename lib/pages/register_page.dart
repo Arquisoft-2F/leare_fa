@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:leare_fa/components/my_button.dart';
-import 'package:leare_fa/components/my_textfield.dart';
+import 'package:leare_fa/widgets/my_button.dart';
+import 'package:leare_fa/widgets/my_textfield.dart';
 import 'package:country_picker/country_picker.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -162,6 +162,7 @@ class RegisterPageState extends State<RegisterPage> {
                     GestureDetector(
                       onTap: () {
                         // Navigate to login page
+                        Navigator.pushNamed(context, '/login');
                       },
                       child: const Text(
                         'Inicia sesión',

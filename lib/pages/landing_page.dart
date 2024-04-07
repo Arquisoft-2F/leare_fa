@@ -30,6 +30,13 @@ class LandingPageState extends State<LandingPage> {
 }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -81,11 +88,12 @@ class LandingPageState extends State<LandingPage> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
                 },
-                child: const Text('Iniciar Sesión', style: TextStyle(color: Color.fromARGB(255, 0, 145, 255)),),
+                child: Text('Iniciar Sesión', style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),),
               ),
               const SizedBox(height: 20),
               Row(
@@ -96,7 +104,7 @@ class LandingPageState extends State<LandingPage> {
                     onPressed: () {
                       Navigator.pushNamed(context, '/register');
                     },
-                    child: const Text('Regístrate', style: TextStyle(color: Color.fromARGB(255, 0, 145, 255)),
+                    child: Text('Regístrate', style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                   ),
               )],
               ),
