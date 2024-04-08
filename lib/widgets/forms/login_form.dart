@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -15,6 +16,17 @@ class _LoginFormState extends State<LoginForm> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool _obscurePassword = true;
+  final String loginMutation = """
+mutation login {
+  login(
+    email:"jsarmiento@gmail.com",
+    password:"User@123"
+    )
+    {
+    token
+  }
+}
+""";
 
   @override
   Widget build(BuildContext context) {
@@ -90,21 +102,32 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              
-            ),
-            child: const Text('Iniciar Sesión'),
-          ),
+          Mutation(
+  options: MutationOptions(document: gql(loginMutation)),
+  builder: (
+    RunMutation runMutation,
+    QueryResult<Object?>? result, // Make sure QueryResult is nullable
+  ) {
+    return ElevatedButton(
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Processing Data')),
+          );
+        }
+        result = runMutation({}).eagerResult;
+        print(result?.hasException);
+        print(result?.data);
+      },
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 50),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+      ),
+      child: const Text('Iniciar Sesión'),
+    );
+  }
+)
+
         ],
       )
     );

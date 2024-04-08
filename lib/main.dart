@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'pages/pages.dart';
 
 void main() {
@@ -11,7 +11,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final HttpLink httpLink = HttpLink('http://35.215.20.21:5555/graphql');
+    final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
+      GraphQLClient(
+        cache: GraphQLCache(),
+        link: httpLink,
+      ),
+    );
+
+    return GraphQLProvider(
+      client: client,
+      child: MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -25,6 +35,9 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const LoggedInPage(),
       },
-    );
+    ));
   }
+
+
 }
+
