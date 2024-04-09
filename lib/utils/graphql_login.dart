@@ -8,38 +8,40 @@ class GraphQLLogin {
 
   Future<LoginModel> login(
       {required String email, required String password}) async {
-    String x = r"""
-            mutation {
-              login(
-                email:"jsarmiento@gmail.com",
-                password:"User@123"
-                )
-                {
-                token
-              }
-            }
-            """;
+    String x = r'''mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token,
+      flag,
+      message
+    }
+  }
+''';
     try {
       QueryResult result = await client.mutate(
         MutationOptions(
           fetchPolicy: FetchPolicy.noCache,
           document: gql(x),
+          variables: {
+            'email': email,
+            'password': password,
+          },
         ),
       );
-      print("HOLA2");
+
       if (result.hasException) {
         throw Exception(result.exception);
       }
-      print("HOLA1");
       if (result == null ||
           result.data == null ||
           result.data?['login'] == null) {
         throw Exception("Not login");
       }
-      print("HOLA");
       LoginModel res = LoginModel.fromMap(map: result.data?['login']);
+
       print(res.token);
+      print(res.message);
       print(res.flag);
+
       return res;
     } catch (error) {
       throw Exception(error);

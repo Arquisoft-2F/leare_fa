@@ -17,10 +17,8 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  GraphQLLogin _graphQLLogin = GraphQLLogin();
+  final GraphQLLogin _graphQLLogin = GraphQLLogin();
   bool _obscurePassword = true;
-
-  void _login() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +99,28 @@ class _LoginFormState extends State<LoginForm> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                print('YA');
-                LoginModel X =
-                    await _graphQLLogin.login(email: "aaa", password: "bbb");
-                print(X.token);
-                print(X.flag);
+
+                if(usernameController.text.isEmpty || passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Por favor, complete todos los campos'),
+                    ),
+                  );
+                }
+
+                else{
+                LoginModel loginRequest = await _graphQLLogin.login(email: usernameController.text, password: passwordController.text);
+                
+                if (loginRequest == "true") {
+                    Navigator.pushNamed(context, '/home');
+                 } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Usuario o contraseña incorrectos'),
+                      ),
+                    );
+                  }
+              }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
