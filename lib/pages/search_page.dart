@@ -50,6 +50,7 @@ class _SearchPageState extends State<SearchPage> {
                     hintText: 'Buscar',
                     side: const MaterialStatePropertyAll(BorderSide.none),
                     onTap: () => controller.openView(),
+                    onChanged: (_) => controller.openView(),
                     leading: const Icon(Icons.search),
                   );
                 },
