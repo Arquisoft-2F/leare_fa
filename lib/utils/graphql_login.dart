@@ -1,6 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/graphql_config.dart';
-import 'package:leare_fa/models/login_model.dart';
+import 'package:leare_fa/models/models.dart';
 
 class GraphQLLogin {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();

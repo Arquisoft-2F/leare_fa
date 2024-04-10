@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/models/login_model.dart';
 import 'package:leare_fa/utils/graphql_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -111,29 +107,27 @@ class _LoginFormState extends State<LoginForm> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-
-                if(usernameController.text.isEmpty || passwordController.text.isEmpty) {
+                if (usernameController.text.isEmpty ||
+                    passwordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Por favor, complete todos los campos'),
                     ),
                   );
-                }
-
-                else{
-                LoginModel loginRequest = await _graphQLLogin.login(email: usernameController.text, password: passwordController.text);
-                
-                if (loginRequest.flag == "true") {
-                    prefs.setString('token', loginRequest.token as String);
+                } else {
+                  LoginModel loginRequest = await _graphQLLogin.login(
+                      email: usernameController.text,
+                      password: passwordController.text);
+                  if (loginRequest.flag == "true") {
                     Navigator.pushNamed(context, '/home');
-                 } else {
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Usuario o contraseña incorrectos'),
                       ),
                     );
                   }
-              }
+                }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
