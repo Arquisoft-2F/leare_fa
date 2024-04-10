@@ -146,35 +146,6 @@ class RegisterPageState extends State<RegisterPage> {
                   onTap: registerUser,
                   size: 10,
                 ),
-
-                const SizedBox(height: 20),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Ya tiene una cuenta? ',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigate to login page
-                        Navigator.pushNamed(context, '/login');
-                      },
-                      child: const Text(
-                        'Inicia sesión',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 16,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/pages/chat_page.dart';
+import 'package:leare_fa/pages/user_page.dart';
 import 'pages/pages.dart';
 
 void main() {
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
             '/search': (context) => const SearchPage(),
             '/chat': (context) => const ChatPage(),
             '/chats': (context) => const ChatsPage(),
+            '/profile': (context) => const UserProfilePage(),
           },
         ));
   }

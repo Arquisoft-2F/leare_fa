@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leare_fa/models/login_model.dart';
+import 'package:leare_fa/pages/user_page.dart';
 import 'package:leare_fa/utils/graphql_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -119,6 +120,7 @@ class _LoginFormState extends State<LoginForm> {
                       email: usernameController.text,
                       password: passwordController.text);
                   if (loginRequest.flag == "true") {
+                    prefs.setString('token', loginRequest.token as String);
                     Navigator.pushNamed(context, '/home');
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

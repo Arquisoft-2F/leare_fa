@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:leare_fa/models/chat/chat_message.dart';
 
 class Chat {

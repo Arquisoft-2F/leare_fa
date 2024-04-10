@@ -8,7 +8,7 @@ class GraphQLUser {
 
   Future<UserModel> userbyId(
     {required String id}) async {
-    String x = r'''query userById ($id: String) {
+    String x = r'''query userById ($id: ID!) {
     userById(id: $id) {
       id,
       name,
