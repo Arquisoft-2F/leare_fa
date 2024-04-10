@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:leare_fa/widgets/module_accordion.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 class CoursePage extends StatelessWidget {
@@ -182,7 +183,9 @@ class CoursePage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
                                   icon: const Icon(
                                     Icons.arrow_back_ios_new_outlined,
                                     color: Color.fromRGBO(255, 255, 255, 1.0),
@@ -276,6 +279,12 @@ class CoursePage extends StatelessWidget {
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black)),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          ModuleAccordion(
+                            moduleList: modules,
                           )
                         ],
                       ),

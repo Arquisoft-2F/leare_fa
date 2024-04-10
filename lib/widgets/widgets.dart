@@ -5,3 +5,4 @@ export 'forms/forms.dart';
 export 'category_badge.dart';
 export 'line_separator.dart';
 export 'instructor_badge.dart';
+export 'module_accordion.dart';
