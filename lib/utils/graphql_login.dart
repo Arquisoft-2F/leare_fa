@@ -31,8 +31,7 @@ class GraphQLLogin {
       if (result.hasException) {
         throw Exception(result.exception);
       }
-      if (result == null ||
-          result.data == null ||
+      if (result.data == null ||
           result.data?['login'] == null) {
         throw Exception("Not login");
       }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:leare_fa/pages/edit_user_page.dart';
+import 'package:leare_fa/pages/user_page.dart';
 import 'pages/pages.dart';
 
 void main() {
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
             secondary: const Color.fromARGB(255, 98, 204, 252)),
         useMaterial3: true,
       ),
-      home: const LandingPage(),
+      home: const EditProfilePage(),
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),

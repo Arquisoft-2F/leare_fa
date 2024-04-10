@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/models/login_model.dart';
 import 'package:leare_fa/utils/graphql_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -18,7 +19,18 @@ class _LoginFormState extends State<LoginForm> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final GraphQLLogin _graphQLLogin = GraphQLLogin();
+  late SharedPreferences prefs;
   bool _obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPref();
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +123,8 @@ class _LoginFormState extends State<LoginForm> {
                 else{
                 LoginModel loginRequest = await _graphQLLogin.login(email: usernameController.text, password: passwordController.text);
                 
-                if (loginRequest == "true") {
+                if (loginRequest.flag == "true") {
+                    prefs.setString('token', loginRequest.token as String);
                     Navigator.pushNamed(context, '/home');
                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
