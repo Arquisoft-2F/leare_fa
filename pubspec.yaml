@@ -38,6 +38,7 @@ dependencies:
   country_picker: ^2.0.25
   video_player: ^2.8.5
   graphql_flutter: ^5.1.2
+  themed: ^5.0.3
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,8 @@ flutter:
     - assets/leare.png
     - assets/background.png
     - assets/landing.mp4
+    - assets/imagen-curso.png
+    - assets/profilepic.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

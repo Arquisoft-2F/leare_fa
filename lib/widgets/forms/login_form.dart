@@ -99,28 +99,28 @@ class _LoginFormState extends State<LoginForm> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-
-                if(usernameController.text.isEmpty || passwordController.text.isEmpty) {
+                if (usernameController.text.isEmpty ||
+                    passwordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Por favor, complete todos los campos'),
                     ),
                   );
-                }
+                } else {
+                  LoginModel loginRequest = await _graphQLLogin.login(
+                      email: usernameController.text,
+                      password: passwordController.text);
 
-                else{
-                LoginModel loginRequest = await _graphQLLogin.login(email: usernameController.text, password: passwordController.text);
-                
-                if (loginRequest == "true") {
+                  if (loginRequest.flag == "true") {
                     Navigator.pushNamed(context, '/home');
-                 } else {
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Usuario o contraseña incorrectos'),
                       ),
                     );
                   }
-              }
+                }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),

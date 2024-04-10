@@ -20,24 +20,21 @@ class MyApp extends StatelessWidget {
     );
 
     return GraphQLProvider(
-      client: client,
-      child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 4, 58, 102),
-            secondary: const Color.fromARGB(255, 98, 204, 252)),
-        useMaterial3: true,
-      ),
-      home: const LandingPage(),
-      routes: {
-        '/login': (context) => const LoginPage(),
-        '/register': (context) => const RegisterPage(),
-        '/home': (context) => const LoggedInPage(),
-      },
-    ));
+        client: client,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 4, 58, 102),
+                secondary: const Color.fromARGB(255, 98, 204, 252)),
+            useMaterial3: true,
+          ),
+          home: const CoursePage(),
+          routes: {
+            '/login': (context) => const LoginPage(),
+            '/register': (context) => const RegisterPage(),
+            '/home': (context) => const LoggedInPage(),
+          },
+        ));
   }
-
-
 }
-
