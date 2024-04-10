@@ -27,7 +27,7 @@ class GraphQLChat {
           document: gql(x),
         ),
       );
-
+      print(result);
       if (result.hasException) {
         throw Exception(result.exception);
       }

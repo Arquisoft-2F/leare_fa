@@ -5,3 +5,4 @@ export 'loggedin_page.dart';
 export 'nav_screen.dart';
 export 'search_page.dart';
 export 'chat_page.dart';
+export 'chats_page.dart';
