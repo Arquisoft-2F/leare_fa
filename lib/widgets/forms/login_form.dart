@@ -123,14 +123,12 @@ class _LoginFormState extends State<LoginForm> {
                     prefs.setString('token', loginRequest.token as String);
                     Navigator.pushNamed(context, '/home');
                   } else {
-                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Usuario o contraseña incorrectos'),
                       ),
                     );
                   }
-                }
                 }
               },
               style: ElevatedButton.styleFrom(
