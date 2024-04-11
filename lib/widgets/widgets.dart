@@ -8,3 +8,5 @@ export 'line_separator.dart';
 export 'course/instructor_badge.dart';
 export 'course/module_accordion.dart';
 export 'section/section_video.dart';
+export 'section/section_tabs.dart';
+export 'section/resource_card.dart';

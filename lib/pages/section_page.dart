@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:leare_fa/widgets/section/section_video.dart';
+import 'package:leare_fa/widgets/widgets.dart';
+// import 'package:leare_fa/widgets/section/section_tabs.dart';
 
 class SectionPage extends StatefulWidget {
   const SectionPage({super.key});
@@ -11,6 +13,16 @@ class SectionPage extends StatefulWidget {
 }
 
 class _SectionPageState extends State<SectionPage> {
+  String sectionName = '¿Qué es Java?';
+  String contenido =
+      'Java es un poderoso lenguaje de programación de propósito general que se destaca por su portabilidad, seguridad y facilidad de uso. Con una sintaxis similar a C++, Java es conocido por su capacidad para desarrollar aplicaciones de escritorio, móviles y web, así como para la creación de aplicaciones empresariales y sistemas embebidos. Su enfoque en la programación orientada a objetos y su amplia variedad de bibliotecas lo convierten en una opción popular para desarrolladores de todo el mundo. Java es un poderoso lenguaje de programación de propósito general que se destaca por su portabilidad, seguridad y facilidad de uso. Con una sintaxis similar a C++, Java es conocido por su capacidad para desarrollar aplicaciones de escritorio, móviles y web, así como para la creación de aplicaciones empresariales y sistemas embebidos. Su enfoque en la programación orientada a objetos y su amplia variedad de bibliotecas lo convierten en una opción popular para desarrolladores de todo el mundo.';
+  List<String> recursos = [
+    'recurso1.pdf',
+    'recurso2.pdf',
+    'recurso3.java',
+    'recurso4.py'
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,35 +77,24 @@ class _SectionPageState extends State<SectionPage> {
                   )
                 ],
               ),
-              Container(
-                width: double.infinity, // Set width to fill the available space
-                // Set height as needed
-                // Container background color for visualization
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: ElevatedButton(
-                            style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            )),
+              TabsSection(
+                content: contenido,
+                resources: recursos,
+                sectionName: sectionName,
+              ),
+              Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
                             onPressed: () {},
-                            child: Text('Contenido'))),
-                    Expanded(
-                        child: ElevatedButton(
-                            style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            )),
+                            icon: Icon(Icons.arrow_back_ios, size: 30)),
+                        IconButton(
                             onPressed: () {},
-                            child: Text('Recursos'))),
-                  ],
-                ),
-              )
+                            icon: Icon(Icons.arrow_forward_ios, size: 30))
+                      ]))
             ],
           ),
         ),
