@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:leare_fa/widgets/module_accordion.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
+class CourseArguments {
+  final String course_id;
+  CourseArguments(this.course_id);
+}
+
 class CoursePage extends StatelessWidget {
   // Variables del fetch
   static const List<Map<String, String>> categories = [
@@ -154,6 +159,9 @@ class CoursePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments as CourseArguments;
+    var course_id = args.course_id;
+
     return Scaffold(
       backgroundColor: Color(0xfff8f9ff),
       floatingActionButton: FloatingActionButton(
@@ -245,7 +253,7 @@ class CoursePage extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            courseName,
+                            courseName + ' ' + course_id,
                             style: TextStyle(
                                 height: 1.2,
                                 color: Colors.black,
