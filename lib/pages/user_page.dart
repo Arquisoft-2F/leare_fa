@@ -4,19 +4,21 @@ import 'package:leare_fa/models/user_model.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'edit_user_page.dart';
+
 class UserProfilePage extends StatefulWidget {
-  const UserProfilePage({super.key});
+  final String? profileUserId;
+  const UserProfilePage({required this.profileUserId, super.key});
   
   @override
   UserProfilePageState createState() => UserProfilePageState();
 }
 
 class UserProfilePageState extends State<UserProfilePage> {
-  
   late SharedPreferences prefs;
   late bool _isLoading = true;
   late UserModel user;
-  
+  late String userId;
   final GraphQLUser _graphQLUser = GraphQLUser();
   @override
   void initState() {
@@ -29,8 +31,10 @@ class UserProfilePageState extends State<UserProfilePage> {
       prefs = await SharedPreferences.getInstance();
       Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
       String userID = jwtDecodedToken['UserID'];
-      user = await _graphQLUser.userbyId(id: userID);
+      user = await _graphQLUser.userbyId(id: widget.profileUserId as String);
       setState(() {
+        userId = userID;
+        user = user;
         _isLoading = false; // Data is fetched, no longer loading
       });
     } catch (error) {
@@ -84,11 +88,11 @@ class UserProfilePageState extends State<UserProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(user.nickname as String),
+                  Text(user.nickname),
                   const SizedBox(width: 10),
                   const Text('|'),
                   const SizedBox(width: 10),
-                  Text(user.nationality as String),
+                  Text(user.nationality),
                 ],
               ),
               const SizedBox(height: 5),
@@ -125,12 +129,22 @@ class UserProfilePageState extends State<UserProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Acción para editar perfil
-                    },
+                  widget.profileUserId == userId ? 
+                  Row(children: [
+                    ElevatedButton(
+                      onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(profileUserId: widget.profileUserId,)));
+                      },
                     child: const Text('Editar'),
                   ),
+                    ElevatedButton(
+                    onPressed: () {
+                      
+                    },
+                    child: const Text('Compartir'),
+                  ),
+                  ],
+                  ):
                   ElevatedButton(
                     onPressed: () {
                       // Acción para compartir perfil

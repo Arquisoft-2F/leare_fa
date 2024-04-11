@@ -10,14 +10,14 @@ class NavScreen extends StatelessWidget {
       '/home',
       '/search',
       '/chats',
-      '/profile',
+      '/profile/me',
     ];
 
     final Map<String, Widget?> pages = {
       '/home': const Center(child: Text('Home Page')),
       '/search': const SearchPage(),
       '/chats': null,
-      '/profile': null,
+      '/profile/me': null,
     };
 
     return Scaffold(

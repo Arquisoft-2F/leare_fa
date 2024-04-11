@@ -6,3 +6,5 @@ export 'nav_screen.dart';
 export 'search_page.dart';
 export 'chat_page.dart';
 export 'chats_page.dart';
+export 'user_page.dart';
+export 'edit_user_page.dart';

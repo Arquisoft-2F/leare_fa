@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/pages/chat_page.dart';
+import 'package:leare_fa/pages/edit_user_page.dart';
 import 'package:leare_fa/pages/user_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
-void main() {
-  runApp(const MyApp());
+
+
+void main() async 
+{
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  runApp(MyApp(token: prefs.getString('token')));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? token;
 
+  const MyApp({
+    required this.token,
+    super.key
+    });
+  
   @override
   Widget build(BuildContext context) {
+    final String? userID = JwtDecoder.decode(token as String)['UserID'];
     final HttpLink httpLink = HttpLink('http://35.215.20.21:5555/graphql');
     final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
       GraphQLClient(
@@ -39,7 +53,7 @@ class MyApp extends StatelessWidget {
             '/search': (context) => const SearchPage(),
             '/chat': (context) => const ChatPage(),
             '/chats': (context) => const ChatsPage(),
-            '/profile': (context) => const UserProfilePage(),
+            '/profile/me': (context) => UserProfilePage(profileUserId: userID),
           },
         ));
   }
