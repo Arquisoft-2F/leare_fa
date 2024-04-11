@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class ChatPageState extends State<ChatPage> {
+  late SharedPreferences prefs;
   bool isLoaing = true;
   ChatModel? chat;
   String? user_id;
@@ -90,6 +93,17 @@ class ChatPageState extends State<ChatPage> {
   }
 
   void _loadMessages() async {
+    try {
+      prefs = await SharedPreferences.getInstance();
+      Map<String, dynamic> jwtDecodedToken =
+          JwtDecoder.decode(prefs.getString('token') as String);
+      String userID = jwtDecodedToken['UserID'];
+      String nickname = jwtDecodedToken['Username'];
+      _user = types.User(id: userID, firstName: nickname);
+    } catch (error) {
+      // Handle error if fetching data fails
+      print("Error fetching user data: $error");
+    }
     List<MessageModel> mess = [];
     if (chat != null) {
       print("HA");
@@ -117,10 +131,6 @@ class ChatPageState extends State<ChatPage> {
             updatedAt: m.update?.millisecondsSinceEpoch));
       }
     }
-    _user = const types.User(
-      id: 'm.sender_id',
-      firstName: 'm.sender_nickname',
-    );
     _messages = messagesnew.reversed.toList();
     _users = newUsers;
     setState(() {});
