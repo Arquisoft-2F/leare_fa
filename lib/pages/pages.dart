@@ -6,3 +6,7 @@ export 'nav_screen.dart';
 export 'search_page.dart';
 export 'chat_page.dart';
 export 'chats_page.dart';
+
+export 'course_page_mock.dart';
+export 'course_page.dart';
+export 'pruebas_curso.dart';
