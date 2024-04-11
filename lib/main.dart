@@ -4,6 +4,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/pages/chat_page.dart';
 import 'package:leare_fa/pages/edit_user_page.dart';
 import 'package:leare_fa/pages/user_page.dart';
+import 'package:leare_fa/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
@@ -45,15 +46,16 @@ class MyApp extends StatelessWidget {
                 secondary: const Color.fromARGB(255, 98, 204, 252)),
             useMaterial3: true,
           ),
-          home: const LandingPage(),
+          home: const SectionPage(),
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
             '/home': (context) => const NavScreen(),
             '/search': (context) => const SearchPage(),
-            '/chat': (context) => const ChatPage(),
+            // '/chat': (context) => const ChatPage(),
             '/chats': (context) => const ChatsPage(),
             '/profile/me': (context) => UserProfilePage(profileUserId: userID),
+            '/course': (context) => const CoursePage()
           },
         ));
   }

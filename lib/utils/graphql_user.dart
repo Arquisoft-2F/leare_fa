@@ -6,8 +6,7 @@ class GraphQLUser {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
   GraphQLClient client = graphQlConfig.clientToQuery();
 
-  Future<UserModel> userbyId(
-    {required String id}) async {
+  Future<UserModel> userbyId({required String id}) async {
     String x = r'''query userById ($id: ID!) {
     userById(id: $id) {
       id,
@@ -39,8 +38,7 @@ class GraphQLUser {
       if (result.hasException) {
         throw Exception(result.exception);
       }
-      if (result.data == null ||
-          result.data?['userById'] == null) {
+      if (result.data == null || result.data?['userById'] == null) {
         throw Exception("User not found");
       }
       UserModel res = UserModel.fromMap(map: result.data?['userById']);

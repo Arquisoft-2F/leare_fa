@@ -16,7 +16,7 @@ class NavScreen extends StatelessWidget {
     final Map<String, Widget?> pages = {
       '/home': const Center(child: Text('Home Page')),
       '/search': const SearchPage(),
-      '/chats': null,
+      '/chats': const ChatsPage(),
       '/profile/me': null,
     };
 
