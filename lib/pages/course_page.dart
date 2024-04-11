@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:leare_fa/widgets/module_accordion.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
+//Clase para recibir los argumentos
 class CourseArguments {
   final String course_id;
   CourseArguments(this.course_id);
 }
+//Clase para recibir los argumentos
 
 class CoursePage extends StatelessWidget {
   // Variables del fetch
@@ -159,8 +161,10 @@ class CoursePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Recibir los argumentos del socio
     final args = ModalRoute.of(context)?.settings.arguments as CourseArguments;
     var course_id = args.course_id;
+    // Recibir los argumentos del socio
 
     return Scaffold(
       backgroundColor: Color(0xfff8f9ff),
