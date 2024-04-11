@@ -1,10 +1,10 @@
 class UserModel {
-  final String id;
-  final String name;
-  final String lastname;
-  final String nickname;
-  final String email;
-  final String nationality;
+  final String? id;
+  final String? name;
+  final String? lastname;
+  final String? nickname;
+  final String? email;
+  final String? nationality;
   final String? picture_id;
   final String? web_site;
   final String? biography;
@@ -13,12 +13,12 @@ class UserModel {
   final String? twitter_link;
 
   UserModel({
-    required this.id,
-    required this.name,
-    required this.lastname,
-    required this.nickname,
-    required this.email,
-    required this.nationality,
+    this.id,
+    this.name,
+    this.lastname,
+    this.nickname,
+    this.email,
+    this.nationality,
     this.picture_id,
     this.web_site,
     this.biography,

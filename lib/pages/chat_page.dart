@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:web_socket_channel/io.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';

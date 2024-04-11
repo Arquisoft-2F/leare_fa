@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:leare_fa/models/user_model.dart';
+import 'package:leare_fa/utils/graphql_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -8,8 +12,45 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class UserProfilePageState extends State<UserProfilePage> {
+  
+  late SharedPreferences prefs;
+  late bool _isLoading = true;
+  late UserModel user;
+  
+  final GraphQLUser _graphQLUser = GraphQLUser();
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  void fetchUserData() async {
+    try {
+      prefs = await SharedPreferences.getInstance();
+      Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
+      String userID = jwtDecodedToken['UserID'];
+      user = await _graphQLUser.userbyId(id: userID);
+      setState(() {
+        _isLoading = false; // Data is fetched, no longer loading
+      });
+    } catch (error) {
+      // Handle error if fetching data fails
+      print("Error fetching user data: $error");
+      setState(() {
+        user = user;
+        _isLoading = false; // Loading indicator should be turned off even in case of error
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    else{
     return Scaffold(
       appBar: AppBar(
         title: const Text('Perfil'),
@@ -32,22 +73,22 @@ class UserProfilePageState extends State<UserProfilePage> {
                 backgroundImage: AssetImage('assets/profile_picture.jpg'), 
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Nombre de Usuario',
-                style: TextStyle(
+              Text(
+                '${user.name} ${user.lastname}',
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 5),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Username'),
-                  SizedBox(width: 10),
-                  Text('|'),
-                  SizedBox(width: 10),
-                  Text('Nacionalidad'),
+                  Text(user.nickname as String),
+                  const SizedBox(width: 10),
+                  const Text('|'),
+                  const SizedBox(width: 10),
+                  Text(user.nationality as String),
                 ],
               ),
               const SizedBox(height: 5),
@@ -112,8 +153,8 @@ class UserProfilePageState extends State<UserProfilePage> {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Una descripción bien aspera mi rey',
+              Text(
+                user.biography != null ? user.biography as String : 'Sin biografía',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -136,5 +177,6 @@ class UserProfilePageState extends State<UserProfilePage> {
         ),
       ),
     );
+    }
   }
 }

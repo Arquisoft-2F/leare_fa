@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,42 +17,29 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onPrimaryContainer,),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              const Image(
-                image: AssetImage('assets/background.png'),
-                width: double.infinity,
-                height: 270,
-              ),
-              // Dark low opacity layer
-              Container(
-                height: 270,
-                color: Colors.black.withOpacity(0.2),
-              ),
-              Positioned(
-                top: 30.0,
-                left: 10.0,
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back_ios_new,
-                        color: Colors.white)),
-              ),
-            ],
+          const SizedBox(
+            height: 180,
           ),
           Expanded(
             child: Container(
-              transform: Matrix4.translationValues(0.0, -30.0, 0.0),
-              height: 100,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
                 ),
@@ -81,8 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const LoginForm(),
-                    const SizedBox(height: 20),
+                    const Expanded(child: LoginForm()),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -117,6 +104,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+          ),
+          Container(
+            color: Colors.white,
           ),
         ],
       ),
