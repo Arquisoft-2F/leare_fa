@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:leare_fa/models/chat/chat_response.dart';
-import 'package:leare_fa/utils/graphql_chat.dart';
+import 'package:leare_fa/utils/chat/graphql_chat.dart';
 import 'package:leare_fa/widgets/chat/chat_card.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
@@ -70,13 +70,12 @@ class ChatsPageState extends State<ChatsPage> {
                 )
               : chats!.isEmpty
                   ? const Center(child: Text('No perteneces a ningún chat'))
-                  : Expanded(
-                      child: ListView.builder(
-                          itemCount: chats!.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ChatCard(chat: chats![index].chat);
-                          })),
+                  : ListView.builder(
+                      itemCount: chats!.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ChatCard(chat: chats![index].chat);
+                      }),
         ));
   }
 }

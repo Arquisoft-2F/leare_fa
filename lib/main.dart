@@ -30,13 +30,13 @@ class MyApp extends StatelessWidget {
                 secondary: const Color.fromARGB(255, 98, 204, 252)),
             useMaterial3: true,
           ),
-          home: const LandingPage(),
+          home: const ChatsPage(),
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
             '/home': (context) => const NavScreen(),
             '/search': (context) => const SearchPage(),
-            '/chat': (context) => const ChatPage(),
+            // '/chat': (context) => const ChatPage(),
             '/chats': (context) => const ChatsPage(),
           },
         ));

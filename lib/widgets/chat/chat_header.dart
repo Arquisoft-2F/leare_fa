@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
@@ -10,38 +11,21 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:leare_fa/utils/graphql_chat.dart';
+import 'package:leare_fa/models/chat/chat_response.dart';
+import 'package:leare_fa/utils/chat/graphql_chat.dart';
+import 'package:leare_fa/utils/chat/utils_chat.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 
-class ChatHeader extends StatefulWidget implements PreferredSizeWidget {
-  ChatHeader({Key? key})
+class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
+  final ChatModel? chat;
+
+  ChatHeader({Key? key, this.chat})
       : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
   @override
   final Size preferredSize;
-
-  @override
-  State<ChatHeader> createState() => ChatHeaderState();
-}
-
-class ChatHeaderState extends State<ChatHeader> {
-  final GraphQLChat _graphQLChat = GraphQLChat();
-  late Chat chat;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadInfo();
-  }
-
-  void _loadInfo() async {
-    // Chat chats = _graphQLChat.getChat();
-    // setState(() {
-    //   chat = chats;
-    // });
-  }
 
   @override
   AppBar build(BuildContext context) {
@@ -53,16 +37,21 @@ class ChatHeaderState extends State<ChatHeader> {
           Navigator.pushNamed(context, '/home');
         },
       ),
-      title: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.yellow,
-              // backgroundImage: NetworkImage(userAvatarUrl),
-              child: Text('EB'),
-            ),
-            Text(overflow: TextOverflow.fade, softWrap: false, 'EstebanQuito')
-          ]),
+      title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Padding(
+          padding: EdgeInsets.all(16.0),
+          child: chat != null && chat?.picture != "n/a"
+              ? CircleAvatar(
+                  backgroundImage: NetworkImage(chat!.picture as String))
+              : CircleAvatar(
+                  backgroundColor:
+                      Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
+                          .withOpacity(1.0),
+                  child: Text(getImageLetters(chat!)),
+                ),
+        ),
+        Text(overflow: TextOverflow.fade, softWrap: false, chat!.name)
+      ]),
       actions: [
         IconButton(
           icon: const Icon(Icons.exit_to_app_rounded),

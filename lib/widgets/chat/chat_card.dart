@@ -1,46 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:leare_fa/pages/chat_page.dart';
+import 'package:leare_fa/utils/chat/utils_chat.dart';
 import 'dart:math' as math;
 import '../../models/chat/chat_response.dart';
 
 class ChatCard extends StatelessWidget {
-  final Chat chat;
+  final ChatModel chat;
 
   const ChatCard({super.key, required this.chat});
-
-  String getImageLetters() {
-    String letters = "";
-    final splitted = chat.name.split(' ');
-    for (String word in splitted) {
-      letters += word[0].toUpperCase();
-    }
-    return letters;
-  }
-
-  String convertDate(DateTime? x) {
-    String res = "";
-    if (x?.year != null) {
-      res += x!.year.toString();
-      res += "-";
-    }
-    if (x?.month != null) {
-      res += x!.month.toString();
-      res += "-";
-    }
-    if (x?.day != null) {
-      res += x!.day.toString();
-      res += "-";
-    }
-    return res.substring(0, res.length - 1);
-  }
-
-  String getDate() {
-    if (chat.last_message?.update != null) {
-      return convertDate(chat.last_message!.update);
-    } else if (chat.creation != null) {
-      return convertDate(chat.creation);
-    }
-    return "";
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +22,7 @@ class ChatCard extends StatelessWidget {
                       Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
                           .withOpacity(1.0),
                   radius: 30,
-                  child: Text(getImageLetters()),
+                  child: Text(getImageLetters(chat)),
                 ),
           title: Row(
             children: [
@@ -73,7 +40,18 @@ class ChatCard extends StatelessWidget {
                   : ""),
             ],
           ),
-          trailing: Text(getDate()),
+          trailing: Text(getDate(chat)),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ChatPage(),
+                settings: RouteSettings(
+                  arguments: chat,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
