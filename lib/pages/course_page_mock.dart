@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:leare_fa/widgets/module_accordion.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
-class CoursePage extends StatelessWidget {
+class CoursePageMock extends StatelessWidget {
   // Variables del fetch
   static const List<Map<String, String>> categories = [
     {"category_name": "Tecnología"},
@@ -150,16 +150,12 @@ class CoursePage extends StatelessWidget {
   ];
   static String moduleAmount = modules.length.toString();
   // Variables del fetch
-  const CoursePage({super.key});
+  const CoursePageMock({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfff8f9ff),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.chat),
-        onPressed: () {},
-      ),
       body: SafeArea(
         child: ListView(
           children: [
