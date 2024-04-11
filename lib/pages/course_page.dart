@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:leare_fa/widgets/module_accordion.dart';
+import 'package:leare_fa/widgets/course/module_accordion.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 //Clase para recibir los argumentos
