@@ -5,7 +5,6 @@ import 'package:leare_fa/models/user_model.dart';
 class GraphQLUser {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
 
-
   Future<UserModel> userbyId({required String id}) async {
     String x = r'''query userById ($id: ID!) {
     userById(id: $id) {

@@ -1,11 +1,17 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:leare_fa/models/user_model.dart';
+import 'package:leare_fa/utils/graphql_register.dart';
 import 'package:leare_fa/widgets/my_button.dart';
 import 'package:leare_fa/widgets/my_textfield.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:leare_fa/widgets/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  const RegisterPage({Key? key});
 
   @override
   RegisterPageState createState() => RegisterPageState();
@@ -17,6 +23,7 @@ class RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmController = TextEditingController();
+  final roleController = TextEditingController();
 
   // Info
   final firstnameController = TextEditingController();
@@ -30,11 +37,26 @@ class RegisterPageState extends State<RegisterPage> {
   final linkedinController = TextEditingController();
   final websiteController = TextEditingController();
 
+  late UserModel user;
+  late SharedPreferences prefs;
+
   String country = '';
   String currentSection = 'credentials';
 
-  
-  void registerUser() {
+  @override
+  void initState(){
+    super.initState();
+    initSharedPref();
+    setState(() {
+        roleController.text = '1';
+    });
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<void> registerUser() async {
     // Implement registration logic here
     if (usernameController.text.isNotEmpty &&
         emailController.text.isNotEmpty &&
@@ -42,8 +64,46 @@ class RegisterPageState extends State<RegisterPage> {
         confirmController.text.isNotEmpty &&
         firstnameController.text.isNotEmpty &&
         lastnameController.text.isNotEmpty &&
-        country.isNotEmpty) {
-      print('User registered'); // [TODO] Implement registration logic
+        country.isNotEmpty && roleController.text.isNotEmpty) {
+      
+      user = UserModel(
+        id: '',
+        nickname: usernameController.text,
+        email: emailController.text,
+        name: firstnameController.text,
+        lastname: lastnameController.text,
+        nationality: country,
+        biography: biographyController.text,
+        facebook_link: facebookController.text,
+        twitter_link: twitterController.text,
+        linkedin_link: linkedinController.text,
+        web_site: websiteController.text,
+      );
+
+       var res = await GraphQLRegister().createUser(
+        userModel: user,
+        password: passwordController.text,
+        confirmPassword: confirmController.text,
+        role: roleController.text,
+      );
+
+      if (res != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Usuario registrado exitosamente'),
+          ),
+        );
+        prefs.setString('token', res);
+        Navigator.pushNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al registrar el usuario'),
+          ),
+        );
+      }
+    
+    
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -64,6 +124,7 @@ class RegisterPageState extends State<RegisterPage> {
           'email': emailController,
           'password': passwordController,
           'confirm': confirmController,
+          'role': roleController,
         }),
         'action': () {
           setState(() {
@@ -104,121 +165,113 @@ class RegisterPageState extends State<RegisterPage> {
       },
     };
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            if (currentSection == 'credentials') {
-              Navigator.pop(context);
-            } else {
-              setState(() {
-                currentSection = currentSection == 'socials' ? 'info' : 'credentials';
-              });
-            }
-          },
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 15,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                if (currentSection == 'credentials') {
+                  Navigator.pop(context);
+                } else {
+                  setState(() {
+                    currentSection = currentSection == 'socials' ? 'info' : 'credentials';
+                  });
+                }
+              },
             ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 40.0,
-                      left: 25.0,
-                      right: 25.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          registerSections[currentSection]!['title'] as String,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          registerSections[currentSection]!['subtitle'] as String,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(height: 10.0),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              registerSections[currentSection]!['form'] as Widget,
-                              const SizedBox(height: 20.0),
-                              ElevatedButton(
-                                onPressed: registerSections[currentSection]!['action'] as void Function(),
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(double.infinity, 50),
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                                ),
-                                child: Text(currentSection == 'socials' ? 'Registrarse' : 'Siguiente'),
-                              )
-                            ],
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Divider(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              thickness: 1,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "Ya tienes una cuenta?",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(context, '/login');
-                                  },
-                                  child: Text(
-                                    'Inicia Sesión',
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
                 ),
               ),
-            )
-          ],
-        ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 40.0,
+                  left: 25.0,
+                  right: 25.0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      registerSections[currentSection]!['title'] as String,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      registerSections[currentSection]!['subtitle'] as String,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 10.0),
+                    Column(
+                      children: [
+                        registerSections[currentSection]!['form'] as Widget,
+                        const SizedBox(height: 20.0),
+                        ElevatedButton(
+                          onPressed: registerSections[currentSection]!['action'] as void Function(),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 50),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          ),
+                          child: Text(currentSection == 'socials' ? 'Registrarse' : 'Siguiente'),
+                        ),
+                        const SizedBox(height: 20.0),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Divider(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          thickness: 1,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Ya tienes una cuenta?",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/login');
+                              },
+                              child: Text(
+                                'Inicia Sesión',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -158,6 +158,44 @@ class _RegisterCredentialsFormState extends State<RegisterCredentialsForm> {
                 ],
               ),
             ),
+Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Tipo de Usuario*',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                DropdownButtonFormField<String>(
+                  value: widget.controllers['role']?.text,
+                  items: const [
+                    DropdownMenuItem(
+                      value: '1',
+                      child: Text('Estudiante'),
+                    ),
+                    DropdownMenuItem(
+                      value: '2',
+                      child: Text('Profesor'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      widget.controllers['role']?.text = value!;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
