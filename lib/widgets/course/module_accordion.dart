@@ -11,8 +11,8 @@ class ModuleAccordion extends StatelessWidget {
   Widget build(BuildContext context) {
     return Accordion(
       disableScrolling: true,
-      headerBorderColor: const Color(0xffd3e4ff),
-      headerBorderColorOpened: const Color(0xffd3e4ff),
+      headerBorderColor: Theme.of(context).colorScheme.primaryContainer,
+      headerBorderColorOpened: Theme.of(context).colorScheme.inversePrimary,
       // headerBorderWidth: 1,
       headerBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
       headerBackgroundColorOpened: Theme.of(context).colorScheme.inversePrimary,
