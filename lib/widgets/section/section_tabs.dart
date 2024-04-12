@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 class TabsSection extends StatelessWidget {
@@ -41,15 +40,15 @@ class TabsSection extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(sectionName,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold)),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Text(content,
                                   textAlign: TextAlign.justify,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.normal)),
                             ],

@@ -6,14 +6,14 @@ class PruebasCurso extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var course_id = "1000";
+    var courseId = "1000";
     return Scaffold(
       body: Container(
         child: ElevatedButton(
-          child: Text('Entrar a curso'),
+          child: const Text('Entrar a curso'),
           onPressed: () {
             Navigator.pushNamed(context, '/course',
-                arguments: CourseArguments(course_id));
+                arguments: CourseArguments(courseId));
           },
         ),
       ),

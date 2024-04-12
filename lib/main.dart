@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:leare_fa/pages/chat_page.dart';
-import 'package:leare_fa/pages/edit_user_page.dart';
-import 'package:leare_fa/pages/user_page.dart';
-import 'package:leare_fa/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 

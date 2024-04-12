@@ -8,7 +8,7 @@ class CategoryBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5.0),
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: IntrinsicWidth(
         child: Container(
           decoration: BoxDecoration(
@@ -20,7 +20,7 @@ class CategoryBadge extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Text(
                 category_name!,
-                style: TextStyle(
+                style: const TextStyle(
                     color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w500),

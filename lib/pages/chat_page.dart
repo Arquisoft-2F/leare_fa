@@ -5,17 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:leare_fa/models/chat/chat_message.dart';
 import 'package:leare_fa/models/chat/chat_response.dart';
 import 'package:leare_fa/utils/chat/graphql_chat.dart';
-import 'package:mime/mime.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../widgets/chat/chat_header.dart';
@@ -38,7 +32,7 @@ class ChatPageState extends State<ChatPage> {
   List<types.User> _users = [];
   types.User _user = const types.User(id: "");
   WebSocketChannel? _channel;
-  Map<String, types.User> users = Map<String, types.User>();
+  Map<String, types.User> users = <String, types.User>{};
 
   @override
   void didChangeDependencies() {
@@ -66,7 +60,7 @@ class ChatPageState extends State<ChatPage> {
       try {
         print('Connecting to WebSocket...2');
         _channel = IOWebSocketChannel.connect(
-          Uri.parse('ws://35.215.20.21:8001/ws/' + chat!.id),
+          Uri.parse('ws://35.215.20.21:8001/ws/${chat!.id}'),
         );
         print('Connecting to WebSocket...3');
         _loadMessages();
@@ -360,7 +354,6 @@ class ChatPageState extends State<ChatPage> {
             ],
           ),
           Bubble(
-            child: child,
             color: _user.id != message.author.id ||
                     message.type == types.MessageType.image
                 ? const Color(0xfff5f5f7)
@@ -373,6 +366,7 @@ class ChatPageState extends State<ChatPage> {
                 : _user.id != message.author.id
                     ? BubbleNip.leftBottom
                     : BubbleNip.rightBottom,
+            child: child,
           )
         ],
       );

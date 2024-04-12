@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leare_fa/widgets/course/module_accordion.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 class CoursePageMock extends StatelessWidget {
@@ -155,7 +154,7 @@ class CoursePageMock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff8f9ff),
+      backgroundColor: const Color(0xfff8f9ff),
       body: SafeArea(
         child: ListView(
           children: [
@@ -237,10 +236,10 @@ class CoursePageMock extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 21),
+                      padding: const EdgeInsets.symmetric(horizontal: 21),
                       child: Column(
                         children: [
-                          Text(
+                          const Text(
                             courseName,
                             style: TextStyle(
                                 height: 1.2,
@@ -248,10 +247,10 @@ class CoursePageMock extends StatelessWidget {
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
-                          Text(
+                          const Text(
                             description,
                             textAlign: TextAlign.justify,
                             style: TextStyle(
@@ -260,18 +259,18 @@ class CoursePageMock extends StatelessWidget {
                                 fontSize: 20,
                                 fontWeight: FontWeight.normal),
                           ),
-                          LineSeparator(),
-                          InstructorBadge(
+                          const LineSeparator(),
+                          const InstructorBadge(
                             profilePic: profilePic,
                             nombre: nombre,
                             apellido: apellido,
                             nickname: nickname,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
-                          LineSeparator(),
-                          Container(
+                          const LineSeparator(),
+                          SizedBox(
                             width: double.infinity,
                             child: Text('$moduleAmount modulos',
                                 textAlign: TextAlign.left,
@@ -280,10 +279,10 @@ class CoursePageMock extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black)),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          ModuleAccordion(
+                          const ModuleAccordion(
                             moduleList: modules,
                           )
                         ],

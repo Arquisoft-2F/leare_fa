@@ -17,13 +17,13 @@ class InstructorBadge extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color(0xffdfe2eb),
+          color: const Color(0xffdfe2eb),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 2,
               blurRadius: 4,
-              offset: Offset(0, 4), // changes position of shadow
+              offset: const Offset(0, 4), // changes position of shadow
             ),
           ]),
       child: Center(
@@ -40,9 +40,9 @@ class InstructorBadge extends StatelessWidget {
               ),
             ),
             Container(
-                height: 3, width: double.infinity, color: Color(0xff43474e)),
+                height: 3, width: double.infinity, color: const Color(0xff43474e)),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Center(
                   child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,23 +55,23 @@ class InstructorBadge extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Container(
                     child: Flexible(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(nombre + ' ' + apellido,
+                          Text('$nombre $apellido',
                               textAlign: TextAlign.center,
                               maxLines: null,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   height: 1.2,
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xff43474e))),
                           Text(nickname,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   height: 1.2,
                                   fontSize: 20,
                                   fontWeight: FontWeight.normal,
@@ -80,7 +80,7 @@ class InstructorBadge extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   IconButton(
                       onPressed: () {},
                       icon: const Icon(

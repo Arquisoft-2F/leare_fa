@@ -40,7 +40,7 @@ class GraphQLSearch {
       if (result.hasException) {
         throw Exception(result.exception);
       }
-      if (result == null || result.data == null || result.data?['getPosts'] == null) {
+      if (result.data == null || result.data?['getPosts'] == null) {
         throw Exception("Not search");
       }
 

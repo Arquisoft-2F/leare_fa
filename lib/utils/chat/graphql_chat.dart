@@ -47,7 +47,7 @@ class GraphQLChat {
     }
   }
 
-  Future<List<MessageModel>> getMessages(String chat_id) async {
+  Future<List<MessageModel>> getMessages(String chatId) async {
     String x = r'''
       query Messages($chat_id: ID!){
         chatMessages(chat_id:$chat_id){
@@ -68,7 +68,7 @@ class GraphQLChat {
           fetchPolicy: FetchPolicy.noCache,
           document: gql(x),
           variables: {
-            'chat_id': chat_id,
+            'chat_id': chatId,
           },
         ),
       );

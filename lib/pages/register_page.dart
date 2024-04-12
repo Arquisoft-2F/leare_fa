@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leare_fa/widgets/my_button.dart';
-import 'package:leare_fa/widgets/my_textfield.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 class RegisterPage extends StatefulWidget {
