@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/pages/pages.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NavScreen extends StatelessWidget {
   const NavScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -10,14 +13,12 @@ class NavScreen extends StatelessWidget {
       '/home',
       '/search',
       '/chats',
-      '/profile/me',
     ];
 
     final Map<String, Widget?> pages = {
       '/home': const Center(child: Text('Home Page')),
       '/search': const SearchPage(),
       '/chats': const ChatsPage(),
-      '/profile/me': null,
     };
 
     return Scaffold(
@@ -54,7 +55,18 @@ class NavScreen extends StatelessWidget {
           ),
         ],
         currentIndex: routes.indexOf(ModalRoute.of(context)!.settings.name!),
-        onTap: (index) => Navigator.pushNamed(context, routes[index]),
+        onTap: (index) async { 
+            if (index == 3) {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
+              String userID = jwtDecodedToken['UserID'];
+              Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfilePage(profileUserId: userID)));
+            }
+            else {
+              Navigator.pushNamed(context, routes[index]);
+            }
+
+          },
       ),
       body: pages[ModalRoute.of(context)!.settings.name!],
     );

@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    final String? userID = JwtDecoder.decode(token as String)['UserID'];
     final HttpLink httpLink = HttpLink('http://35.215.20.21:5555/graphql');
     final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
       GraphQLClient(
@@ -46,7 +45,7 @@ class MyApp extends StatelessWidget {
                 secondary: const Color.fromARGB(255, 98, 204, 252)),
             useMaterial3: true,
           ),
-          home: const SectionPage(),
+          home: const LandingPage(),
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
@@ -54,7 +53,7 @@ class MyApp extends StatelessWidget {
             '/search': (context) => const SearchPage(),
             // '/chat': (context) => const ChatPage(),
             '/chats': (context) => const ChatsPage(),
-            '/profile/me': (context) => UserProfilePage(profileUserId: userID),
+            // '/profile/me': (context) => UserProfilePage(profileUserId: userID),
             '/course': (context) => const CoursePage()
           },
         ));

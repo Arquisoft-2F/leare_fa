@@ -5,7 +5,6 @@ import 'package:leare_fa/models/chat/chat_response.dart';
 
 class GraphQLChat {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
-  GraphQLClient client = graphQlConfig.clientToQuery();
 
   Future<List<ResponseChatModel>> getMyChats() async {
     String x = r'''query Chats {
@@ -22,6 +21,7 @@ class GraphQLChat {
     }
   ''';
     try {
+      GraphQLClient client = await graphQlConfig.clientToQuery();
       QueryResult result = await client.query(
         QueryOptions(
           fetchPolicy: FetchPolicy.noCache,
@@ -62,6 +62,7 @@ class GraphQLChat {
       }
   ''';
     try {
+      GraphQLClient client = await graphQlConfig.clientToQuery();
       QueryResult result = await client.query(
         QueryOptions(
           fetchPolicy: FetchPolicy.noCache,

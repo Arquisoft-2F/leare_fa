@@ -1,16 +1,18 @@
 class UserModel {
-  final String id;
-  final String name;
-  final String lastname;
-  final String nickname;
-  final String email;
-  final String nationality;
+  String id;
+  String name;
+  String lastname;
+  String nickname;
+  String email;
+  String nationality;
   String? picture_id;
   String? web_site;
   String? biography;
   String? linkedin_link;
   String? facebook_link;
   String? twitter_link;
+  String? created_at;
+  String? updated_at;
 
   UserModel({
     required this.id,
@@ -25,6 +27,8 @@ class UserModel {
     this.linkedin_link,
     this.facebook_link,
     this.twitter_link,
+    this.created_at,
+    this.updated_at,
   });
 
   static UserModel fromMap({required Map map}) { 
@@ -79,6 +83,20 @@ class UserModel {
           userModel.twitter_link = "n/a";
         }
         
+        if (map['created_at'] != null) {
+          userModel.created_at = map['created_at'];
+        }
+        else {
+          userModel.created_at = "n/a";
+        }
+
+        if (map['updated_at'] != null) {
+          userModel.updated_at = map['updated_at'];
+        }
+        else {
+          userModel.updated_at = "n/a";
+        }
+
         return userModel;
   }
 }

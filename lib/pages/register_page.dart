@@ -127,7 +127,7 @@ class RegisterPageState extends State<RegisterPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(
-              height: 100,
+              height: 15,
             ),
             Expanded(
               child: Container(

@@ -4,7 +4,6 @@ import 'package:leare_fa/models/models.dart';
 
 class GraphQLSearch {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
-  GraphQLClient client = graphQlConfig.clientToQuery();
 
   Future<List<SearchModel>> search({ required String q }) async {
     String x = r'''query Search($q: String!) {
@@ -28,6 +27,7 @@ class GraphQLSearch {
     }
     ''';
     try {
+      GraphQLClient client = await graphQlConfig.clientToQuery();
       QueryResult result = await client.query(
         QueryOptions(
           fetchPolicy: FetchPolicy.noCache,
