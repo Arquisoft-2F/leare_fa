@@ -5,8 +5,13 @@ import 'package:leare_fa/models/user_model.dart';
 class GraphQLRegister {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
 
-  Future<UserModel> createUser(
-    {required UserModel userModel}) async {
+    static String _escapeString(String input) {
+    // Replace newline characters with escaped characters
+    return input.replaceAll('\n', ' ');
+  }
+
+  Future<String> createUser(
+    {required UserModel userModel, required String password, required String confirmPassword, required String role}) async {
 
      Map<String, dynamic> userMap = {
     'name': '"${userModel.name}"', // Include quotation marks around the value
@@ -16,29 +21,29 @@ class GraphQLRegister {
     'nationality': '"${userModel.nationality}"',
     'picture_id': '"${userModel.picture_id}"',
     'web_site': '"${userModel.web_site}"', 
-    'biography': '"${userModel.biography}"', 
+    'biography': '"${_escapeString(userModel.biography as String)}"', 
     'linkedin_link': '"${userModel.linkedin_link}"', 
     'facebook_link': '"${userModel.facebook_link}"', 
     'twitter_link': '"${userModel.twitter_link}"',
-    'created_at': '"${userModel.created_at}"',
-    'updated_at': '"${userModel.updated_at}"',
 
   };
     String x = '''mutation CreateUser {
-    createUser(user: $userMap) {
-      
-      id,
-      name,
-      lastname,
-      nickname,
-      email,
-      nationality,
-      picture_id,
-      web_site,
-      biography,
-      linkedin_link,
-      facebook_link,
-      twitter_link
+    createUser(user: $userMap, password: "$password", confirmPassword: "$confirmPassword", rol: "$role") {
+      users {
+        id,
+        name,
+        lastname,
+        nickname,
+        email,
+        nationality,
+        picture_id,
+        web_site,
+        biography,
+        linkedin_link,
+        facebook_link,
+        twitter_link
+      }
+      token
     }
   }
 ''';
@@ -55,11 +60,11 @@ class GraphQLRegister {
         throw Exception(result.exception);
       }
       if (result.data == null ||
-          result.data?['updateMe'] == null) {
-        throw Exception("User not found");
+          result.data?['createUser'] == null) {
+        throw Exception("User not created");
       }
-      UserModel res = UserModel.fromMap(map: result.data?['updateMe']);
-
+      String res = result.data?['createUser']['token'];
+      print(res);
       return res;
     } catch (error) {
       throw Exception(error);
