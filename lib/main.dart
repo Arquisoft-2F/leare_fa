@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
     return GraphQLProvider(
         client: client,
         child: MaterialApp(
-          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
                 seedColor: const Color.fromARGB(255, 4, 58, 102),
