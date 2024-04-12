@@ -161,7 +161,7 @@ class CoursePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Recibir los argumentos del socio
-    final args = ModalRoute.of(context)?.settings.arguments as CourseArguments;
+    final args = (ModalRoute.of(context)?.settings.arguments ?? CourseArguments('')) as CourseArguments;
     var courseId = args.course_id;
     // Recibir los argumentos del socio
 
