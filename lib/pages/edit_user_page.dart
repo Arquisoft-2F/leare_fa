@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/user_model.dart';
+import 'package:leare_fa/utils/graphql_edit_user.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,6 +15,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _nicknameController = TextEditingController();
@@ -24,6 +26,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _facebookController = TextEditingController();
   final TextEditingController _webpageController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+
   late String? userId;
   late bool isEditingUser = false;
   late bool isEditingBio = false;
@@ -31,6 +34,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late bool _isLoading = true;
   late UserModel user;
   final GraphQLUser _graphQLUser = GraphQLUser();
+  final GraphQLEditUser _graphQLEditUser = GraphQLEditUser();
 
   @override
   void initState() {
@@ -48,6 +52,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
         userId = userId;
         user = user;
         _isLoading = false;
+
+       _nameController.text = user.name;
+       _lastNameController.text = user.lastname;
+       _nicknameController.text = user.nickname;
+       _emailController.text = user.email;
+       _nationalityController.text = user.nationality;
+       _linkedinController.text = user.linkedin_link as String;
+       _twitterController.text = user.twitter_link as String;
+       _facebookController.text = user.facebook_link as String;
+       _webpageController.text = user.web_site as String;
+       _bioController.text = user.biography as String;
+
          // Data is fetched, no longer loading
       });
     } catch (error) {
@@ -76,7 +92,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, true);
           },
         ),
       ),
@@ -129,49 +145,59 @@ class _EditProfilePageState extends State<EditProfilePage> {
             const SizedBox(height: 10),
             isEditingUser ? Column(
               children: [
-                TextField(
+                TextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: user.name),
+                  decoration: const InputDecoration(labelText: "Nombre"),
                 ),
-                TextField(
+                TextFormField(
                   controller: _lastNameController,
-                  decoration: InputDecoration(labelText: user.lastname),
+                  decoration: const InputDecoration(labelText: "Apellido"),
                 ),
-                TextField(
+                TextFormField(
                   controller: _nicknameController,
-                  decoration: InputDecoration(labelText: user.nickname),
+                  decoration: const InputDecoration(labelText: "Username"),
                 ),
-                TextField(
+                TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: user.email),
+                  decoration: const InputDecoration(labelText: "Username"),
                 ),
-                TextField(
+                TextFormField(
                   controller: _nationalityController,
-                  decoration: InputDecoration(labelText: user.nationality),
+                  decoration: const InputDecoration(labelText: "Nacionalidad"),
                 ),
-                TextField(
+                TextFormField(
                   controller: _linkedinController,
-                  decoration: InputDecoration(labelText: user.linkedin_link),
+                  decoration: const InputDecoration(labelText: "LinkedIn"),
                 ),
-                TextField(
+                TextFormField(
                   controller: _twitterController,
-                  decoration: InputDecoration(labelText: user.twitter_link),
+                  decoration: const InputDecoration(labelText: "Twitter"),
                 ),
-                TextField(
+                TextFormField(
                   controller: _facebookController,
-                  decoration: InputDecoration(labelText: user.facebook_link),
+                  decoration: const InputDecoration(labelText: "Facebook"),
                 ),
-                TextField(
+                TextFormField(
                   controller: _webpageController,
-                  decoration: InputDecoration(labelText: user.web_site),
+                  decoration: const InputDecoration(labelText: "Pagina Web"),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {
-                    // Acción para guardar cambios
+                  onPressed: () async {
                     setState(() {
                       isEditingUser = false;
+                      user.name = _nameController.text;
+                      user.lastname = _lastNameController.text;
+                      user.nickname = _nicknameController.text;
+                      user.email = _emailController.text;
+                      user.nationality = _nationalityController.text;
+                      user.linkedin_link = _linkedinController.text;
+                      user.twitter_link = _twitterController.text;
+                      user.facebook_link = _facebookController.text;
+                      user.web_site = _webpageController.text;
+                      user.updated_at = DateTime.now().toString();
                     });
+                    await _graphQLEditUser.updateMe(userModel: user);
                   },
                   child: const Text('Guardar cambios'),
                 ),
@@ -207,6 +233,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     setState(() {
                       isEditingBio = !isEditingBio;
                     });
+                  
                   }, 
                   icon: const Icon(Icons.edit),
               )
@@ -217,17 +244,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
               TextField(
               controller: _bioController,
               maxLines: null, // Allows unlimited lines
-              decoration: InputDecoration(
-                hintText: user.biography,
-                border: const OutlineInputBorder(),
+              decoration: const InputDecoration(
+                hintText: 'Biografía',
+                border: OutlineInputBorder(),
               )),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // Acción para guardar cambios
                     setState(() {
                       isEditingBio = false;
+                      user.biography = _bioController.text;
+                      user.updated_at = DateTime.now().toString();
                     });
+                    await _graphQLEditUser.updateMe(userModel: user);
                   },
                   child: const Text('Guardar cambios'),
                 ),

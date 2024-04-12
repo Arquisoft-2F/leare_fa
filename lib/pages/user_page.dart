@@ -132,8 +132,13 @@ class UserProfilePageState extends State<UserProfilePage> {
                   widget.profileUserId == userId ? 
                   Row(children: [
                     ElevatedButton(
-                      onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(profileUserId: widget.profileUserId,)));
+                      onPressed: () async {
+                      bool res = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(profileUserId: widget.profileUserId,)));
+                      if (res){
+                        setState(() {
+                          fetchUserData();
+                        });
+                      }
                       },
                     child: const Text('Editar'),
                   ),

@@ -4,7 +4,7 @@ import 'package:leare_fa/models/user_model.dart';
 
 class GraphQLUser {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
-  GraphQLClient client = graphQlConfig.clientToQuery();
+
 
   Future<UserModel> userbyId({required String id}) async {
     String x = r'''query userById ($id: ID!) {
@@ -25,6 +25,7 @@ class GraphQLUser {
   }
 ''';
     try {
+      GraphQLClient client = await graphQlConfig.clientToQuery();
       QueryResult result = await client.query(
         QueryOptions(
           fetchPolicy: FetchPolicy.noCache,

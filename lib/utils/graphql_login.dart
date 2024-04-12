@@ -4,7 +4,6 @@ import 'package:leare_fa/models/models.dart';
 
 class GraphQLLogin {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
-  GraphQLClient client = graphQlConfig.clientToQuery();
 
   Future<LoginModel> login(
       {required String email, required String password}) async {
@@ -17,6 +16,7 @@ class GraphQLLogin {
   }
 ''';
     try {
+      GraphQLClient client = await graphQlConfig.clientToQuery();
       QueryResult result = await client.mutate(
         MutationOptions(
           fetchPolicy: FetchPolicy.noCache,

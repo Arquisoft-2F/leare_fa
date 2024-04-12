@@ -2,10 +2,10 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/graphql_config.dart';
 import 'package:leare_fa/models/user_model.dart';
 
-class GraphQLEditUser {
+class GraphQLRegister {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
 
-  Future<UserModel> updateMe(
+  Future<UserModel> createUser(
     {required UserModel userModel}) async {
 
      Map<String, dynamic> userMap = {
@@ -14,7 +14,7 @@ class GraphQLEditUser {
     'nickname': '"${userModel.nickname}"',
     'email': '"${userModel.email}"',
     'nationality': '"${userModel.nationality}"',
-    'picture_id': '"${userModel.picture_id}"', 
+    'picture_id': '"${userModel.picture_id}"',
     'web_site': '"${userModel.web_site}"', 
     'biography': '"${userModel.biography}"', 
     'linkedin_link': '"${userModel.linkedin_link}"', 
@@ -24,8 +24,9 @@ class GraphQLEditUser {
     'updated_at': '"${userModel.updated_at}"',
 
   };
-    String x = '''mutation updateMe {
-    updateMe(user: $userMap) {
+    String x = '''mutation CreateUser {
+    createUser(user: $userMap) {
+      
       id,
       name,
       lastname,
