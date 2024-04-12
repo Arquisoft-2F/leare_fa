@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leare_fa/widgets/course/module_accordion.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 //Clase para recibir los argumentos
@@ -163,13 +162,13 @@ class CoursePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Recibir los argumentos del socio
     final args = ModalRoute.of(context)?.settings.arguments as CourseArguments;
-    var course_id = args.course_id;
+    var courseId = args.course_id;
     // Recibir los argumentos del socio
 
     return Scaffold(
-      backgroundColor: Color(0xfff8f9ff),
+      backgroundColor: const Color(0xfff8f9ff),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.chat),
+        child: const Icon(Icons.chat),
         onPressed: () {},
       ),
       body: SafeArea(
@@ -253,21 +252,21 @@ class CoursePage extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 21),
+                      padding: const EdgeInsets.symmetric(horizontal: 21),
                       child: Column(
                         children: [
                           Text(
-                            courseName + ' ' + course_id,
-                            style: TextStyle(
+                            '$courseName $courseId',
+                            style: const TextStyle(
                                 height: 1.2,
                                 color: Colors.black,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
-                          Text(
+                          const Text(
                             description,
                             textAlign: TextAlign.justify,
                             style: TextStyle(
@@ -276,18 +275,18 @@ class CoursePage extends StatelessWidget {
                                 fontSize: 20,
                                 fontWeight: FontWeight.normal),
                           ),
-                          LineSeparator(),
-                          InstructorBadge(
+                          const LineSeparator(),
+                          const InstructorBadge(
                             profilePic: profilePic,
                             nombre: nombre,
                             apellido: apellido,
                             nickname: nickname,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
-                          LineSeparator(),
-                          Container(
+                          const LineSeparator(),
+                          SizedBox(
                             width: double.infinity,
                             child: Text('$moduleAmount modulos',
                                 textAlign: TextAlign.left,
@@ -296,10 +295,10 @@ class CoursePage extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black)),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          ModuleAccordion(
+                          const ModuleAccordion(
                             moduleList: modules,
                           )
                         ],

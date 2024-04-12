@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:leare_fa/models/login_model.dart';
-import 'package:leare_fa/pages/user_page.dart';
 import 'package:leare_fa/utils/graphql_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

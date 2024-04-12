@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:leare_fa/widgets/section/section_video.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 // import 'package:leare_fa/widgets/section/section_tabs.dart';
 
@@ -32,7 +31,7 @@ class _SectionPageState extends State<SectionPage> {
             children: [
               Stack(
                 children: [
-                  SectionVideo(),
+                  const SectionVideo(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -90,10 +89,10 @@ class _SectionPageState extends State<SectionPage> {
                       children: [
                         IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.arrow_back_ios, size: 30)),
+                            icon: const Icon(Icons.arrow_back_ios, size: 30)),
                         IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.arrow_forward_ios, size: 30))
+                            icon: const Icon(Icons.arrow_forward_ios, size: 30))
                       ]))
             ],
           ),

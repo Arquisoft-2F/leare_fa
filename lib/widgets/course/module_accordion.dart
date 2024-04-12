@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:accordion/accordion.dart';
-import 'package:accordion/accordion_section.dart';
 import 'package:accordion/controllers.dart';
 
 class ModuleAccordion extends StatelessWidget {

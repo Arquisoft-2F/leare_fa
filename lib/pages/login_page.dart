@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 class LoginPage extends StatefulWidget {

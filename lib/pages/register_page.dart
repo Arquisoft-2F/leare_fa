@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:leare_fa/models/user_model.dart';
 import 'package:leare_fa/utils/graphql_register.dart';
-import 'package:leare_fa/widgets/my_button.dart';
-import 'package:leare_fa/widgets/my_textfield.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
