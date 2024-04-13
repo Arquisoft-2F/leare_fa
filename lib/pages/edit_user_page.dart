@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/user_model.dart';
+import 'package:leare_fa/pages/pages.dart';
+import 'package:leare_fa/utils/graphql_delete_user.dart';
+import 'package:leare_fa/utils/graphql_edit_password.dart';
 import 'package:leare_fa/utils/graphql_edit_user.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,15 +29,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _facebookController = TextEditingController();
   final TextEditingController _webpageController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _oldpasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
 
   late String? userId;
   late bool isEditingUser = false;
   late bool isEditingBio = false;
+  late bool isChangingPassword = false;
   late SharedPreferences prefs;
   late bool _isLoading = true;
   late UserModel user;
   final GraphQLUser _graphQLUser = GraphQLUser();
   final GraphQLEditUser _graphQLEditUser = GraphQLEditUser();
+  final GraphQLEditPassword _graphQLEditPassword = GraphQLEditPassword();
+  final GraphQLDeleteUser _graphQLDeleteUser = GraphQLDeleteUser();
 
   @override
   void initState() {
@@ -75,6 +83,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _isLoading = false; // Loading indicator should be turned off even in case of error
       });
     }
+  }
+
+  void _showDeleteAccountConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Eliminar cuenta"),
+          content: const Text("¿Estás seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer."),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await _graphQLDeleteUser.deleteMe();
+                await prefs.clear();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LandingPage())); // Close the dialog
+              },
+              child: const Text("Eliminar"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("Cancelar"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
 
@@ -278,15 +314,66 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Acción para cambiar contraseña
-              },
-              child: const Text('Cambiar contraseña'),
+             ElevatedButton(
+      onPressed: () {
+        setState(() {
+          isChangingPassword = !isChangingPassword; // Toggle the value
+        });
+      },
+      child: const Text('Cambiar contraseña'),
+    ),
+
+          if (isChangingPassword) // Conditionally display the password fields
+            Column(
+              children: [
+                const SizedBox(height: 10),
+                const Divider(),
+                TextFormField(
+                  controller: _oldpasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: "Contraseña actual"),
+                ),
+                TextFormField(
+                  controller: _newPasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: "Nueva contraseña"),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    // Acción para cambiar contraseña
+                    setState(() {
+                      isChangingPassword = false;
+                    });
+                    String res = await _graphQLEditPassword.changePassword(
+                      oldPassword: _oldpasswordController.text,
+                      newPassword: _newPasswordController.text,
+                      id: widget.profileUserId as String);
+                    if (res == 'true') {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Contraseña cambiada con éxito'),
+                        ),
+                      );
+                    }
+                    else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Error al cambiar contraseña'),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Confirmar cambio de contraseña'),
+                ),
+                const SizedBox(height: 10),
+                const Divider(),
+              ],
             ),
+
             ElevatedButton(
               onPressed: () {
-                // Acción para eliminar cuenta
+                _showDeleteAccountConfirmationDialog();
               },
               child: const Text('Eliminar cuenta', style: TextStyle(color: Colors.red),
             ),
