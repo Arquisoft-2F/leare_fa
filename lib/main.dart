@@ -3,10 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
-
-
-void main() async 
-{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   runApp(MyApp(token: prefs.getString('token')));
@@ -15,11 +12,8 @@ void main() async
 class MyApp extends StatelessWidget {
   final String? token;
 
-  const MyApp({
-    required this.token,
-    super.key
-    });
-  
+  const MyApp({required this.token, super.key});
+
   @override
   Widget build(BuildContext context) {
     final HttpLink httpLink = HttpLink('http://35.215.20.21:5555/graphql');
@@ -49,7 +43,8 @@ class MyApp extends StatelessWidget {
             // '/chat': (context) => const ChatPage(),
             '/chats': (context) => const ChatsPage(),
             // '/profile/me': (context) => UserProfilePage(profileUserId: userID),
-            '/course': (context) => const CoursePage()
+            '/course': (context) => const CoursePage(),
+            '/editcourse': (context) => const EditCoursePage(),
           },
         ));
   }

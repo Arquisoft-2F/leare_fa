@@ -10,3 +10,4 @@ export 'course/module_accordion.dart';
 export 'section/section_video.dart';
 export 'section/section_tabs.dart';
 export 'section/resource_card.dart';
+export 'edit_course/edit_course_form.dart';

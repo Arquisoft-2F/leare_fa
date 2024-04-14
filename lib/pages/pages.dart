@@ -12,3 +12,4 @@ export 'pruebas_curso.dart';
 export 'section_page.dart';
 export 'user_page.dart';
 export 'edit_user_page.dart';
+export 'edit_course_page.dart';
