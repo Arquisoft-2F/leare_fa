@@ -85,6 +85,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  void _logout() async {
+    await prefs.clear();
+    Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LandingPage()),
+                  (route) => false,
+                ); // Close the dialog
+  }
+
   void _showDeleteAccountConfirmationDialog() {
     showDialog(
       context: context,
@@ -97,7 +106,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
               onPressed: () async {
                 await _graphQLDeleteUser.deleteMe();
                 await prefs.clear();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LandingPage())); // Close the dialog
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LandingPage()),
+                  (route) => false,
+                ); // Close the dialog
               },
               child: const Text("Eliminar"),
             ),
@@ -131,6 +144,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Navigator.pop(context, true);
           },
         ),
+        actions: [ 
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout
+            )
+          ],
+        
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
