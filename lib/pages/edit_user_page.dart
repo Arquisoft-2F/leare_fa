@@ -234,7 +234,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [ElevatedButton(
                     onPressed: () async {
-                     var res = await uploadFile(file: File(img!.file), file_name: 'pp${widget.profileUserId!}', data_type: 'imagen', user_id: widget.profileUserId!);
+                     var res = await uploadFile(file: File(img!.file), file_name: 'pp_${widget.profileUserId!}', data_type: 'imagen', user_id: widget.profileUserId!);
                      if (res != ''){
                         setState(() {
                           user.picture_id = res;

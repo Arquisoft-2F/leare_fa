@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/user_model.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
@@ -106,27 +108,47 @@ class UserProfilePageState extends State<UserProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.work),
-                    onPressed: () {
-                      // Abrir LinkedIn
+                    icon: const FaIcon(FontAwesomeIcons.linkedin),
+                    onPressed: () async {
+                        await Clipboard.setData(ClipboardData(text: user.linkedin_link!));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Enlace de LinkedIn copiado al portapapeles'),
+                          ),
+                        );
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.facebook),
-                    onPressed: () {
-                      // Abrir Facebook
+                    icon: const FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: () async {
+                          await Clipboard.setData(ClipboardData(text: user.facebook_link!));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Enlace de Facebook copiado al portapapeles'),
+                          ),
+                        );
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.media_bluetooth_off),
-                    onPressed: () {
-                      // Abrir Twitter
+                    icon: const FaIcon(FontAwesomeIcons.twitter),
+                    onPressed: () async {
+                          await Clipboard.setData(ClipboardData(text: user.twitter_link!));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Enlace de Twitter copiado al portapapeles'),
+                          ),
+                        );
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.language),
-                    onPressed: () {
-                      // Abrir página web
+                    onPressed: () async {
+                          await Clipboard.setData(ClipboardData(text: user.web_site!));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Enlace de Sitio Web copiado al portapapeles'),
+                          ),
+                        );
                     },
                   ),
                 ],
