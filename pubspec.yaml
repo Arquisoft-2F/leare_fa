@@ -46,6 +46,7 @@ dependencies:
   bubble: ^1.2.1
   themed: ^5.0.3
   accordion: ^2.6.0
+  http: ^1.2.1
 
   flutter_chat_types: any
 dev_dependencies:

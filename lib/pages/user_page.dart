@@ -72,9 +72,15 @@ class UserProfilePageState extends State<UserProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 10),
+              user.picture_id != 'n/a' && user.picture_id != 'NotFound' ?
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(user.picture_id as String), 
+              ) 
+              :
               const CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('assets/profile_picture.jpg'), 
+                backgroundImage: NetworkImage('https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'), 
               ),
               const SizedBox(height: 10),
               Text(
@@ -141,12 +147,6 @@ class UserProfilePageState extends State<UserProfilePage> {
                       }
                       },
                     child: const Text('Editar'),
-                  ),
-                    ElevatedButton(
-                    onPressed: () {
-                      
-                    },
-                    child: const Text('Compartir'),
                   ),
                   ],
                   ):
