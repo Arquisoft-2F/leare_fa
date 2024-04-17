@@ -5,6 +5,21 @@ import 'package:leare_fa/models/user_model.dart';
 class GraphQLEditUser {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
 
+    static String _escapeString(String input) {
+    // Replace newline characters with escaped characters
+    return input.replaceAll('\n', ' ');
+  }
+
+  String getLastPartOfUrl(String url) {
+  RegExp regex = RegExp(r'/([^/]+)$');
+  Match? match = regex.firstMatch(url);
+  if (match != null) {
+    return match.group(1)!;
+  } else {
+    return url;
+    } // or throw an error, depending on your use case
+}
+
   Future<UserModel> updateMe(
     {required UserModel userModel}) async {
 
@@ -14,9 +29,9 @@ class GraphQLEditUser {
     'nickname': '"${userModel.nickname}"',
     'email': '"${userModel.email}"',
     'nationality': '"${userModel.nationality}"',
-    'picture_id': '"${userModel.picture_id}"', 
+    'picture_id': '"${getLastPartOfUrl(userModel.picture_id!)}"', 
     'web_site': '"${userModel.web_site}"', 
-    'biography': '"${userModel.biography}"', 
+    'biography': '"${_escapeString(userModel.biography as String)}"',
     'linkedin_link': '"${userModel.linkedin_link}"', 
     'facebook_link': '"${userModel.facebook_link}"', 
     'twitter_link': '"${userModel.twitter_link}"',

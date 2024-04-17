@@ -19,7 +19,7 @@ class GraphQLRegister {
     'nickname': '"${userModel.nickname}"',
     'email': '"${userModel.email}"',
     'nationality': '"${userModel.nationality}"',
-    'picture_id': '"${userModel.picture_id}"',
+    'picture_id': null,
     'web_site': '"${userModel.web_site}"', 
     'biography': '"${_escapeString(userModel.biography as String)}"', 
     'linkedin_link': '"${userModel.linkedin_link}"', 

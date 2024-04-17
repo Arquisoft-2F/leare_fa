@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/user_model.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
@@ -72,9 +74,15 @@ class UserProfilePageState extends State<UserProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 10),
+              user.picture_id != 'n/a' && user.picture_id != 'NotFound' ?
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(user.picture_id as String), 
+              ) 
+              :
               const CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('assets/profile_picture.jpg'), 
+                backgroundImage: NetworkImage('https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'), 
               ),
               const SizedBox(height: 10),
               Text(
@@ -100,27 +108,47 @@ class UserProfilePageState extends State<UserProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.work),
-                    onPressed: () {
-                      // Abrir LinkedIn
+                    icon: const FaIcon(FontAwesomeIcons.linkedin),
+                    onPressed: () async {
+                        await Clipboard.setData(ClipboardData(text: user.linkedin_link!));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Enlace de LinkedIn copiado al portapapeles'),
+                          ),
+                        );
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.facebook),
-                    onPressed: () {
-                      // Abrir Facebook
+                    icon: const FaIcon(FontAwesomeIcons.facebook),
+                    onPressed: () async {
+                          await Clipboard.setData(ClipboardData(text: user.facebook_link!));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Enlace de Facebook copiado al portapapeles'),
+                          ),
+                        );
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.media_bluetooth_off),
-                    onPressed: () {
-                      // Abrir Twitter
+                    icon: const FaIcon(FontAwesomeIcons.twitter),
+                    onPressed: () async {
+                          await Clipboard.setData(ClipboardData(text: user.twitter_link!));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Enlace de Twitter copiado al portapapeles'),
+                          ),
+                        );
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.language),
-                    onPressed: () {
-                      // Abrir página web
+                    onPressed: () async {
+                          await Clipboard.setData(ClipboardData(text: user.web_site!));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Enlace de Sitio Web copiado al portapapeles'),
+                          ),
+                        );
                     },
                   ),
                 ],
@@ -133,20 +161,14 @@ class UserProfilePageState extends State<UserProfilePage> {
                   Row(children: [
                     ElevatedButton(
                       onPressed: () async {
-                      bool res = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(profileUserId: widget.profileUserId,)));
-                      if (res){
+                      var res = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(profileUserId: widget.profileUserId,)));
+                      if (res!=null && res){
                         setState(() {
                           fetchUserData();
                         });
                       }
                       },
                     child: const Text('Editar'),
-                  ),
-                    ElevatedButton(
-                    onPressed: () {
-                      
-                    },
-                    child: const Text('Compartir'),
                   ),
                   ],
                   ):

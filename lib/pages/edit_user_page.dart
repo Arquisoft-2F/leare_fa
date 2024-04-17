@@ -1,12 +1,22 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:leare_fa/models/image_model.dart';
 import 'package:leare_fa/models/user_model.dart';
 import 'package:leare_fa/pages/pages.dart';
 import 'package:leare_fa/utils/graphql_delete_user.dart';
 import 'package:leare_fa/utils/graphql_edit_password.dart';
 import 'package:leare_fa/utils/graphql_edit_user.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
+import 'package:leare_fa/utils/image_upload.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../utils/image_utils.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String? profileUserId;
@@ -32,10 +42,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _oldpasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
 
+  ImageModel? img;
   late String? userId;
   late bool isEditingUser = false;
   late bool isEditingBio = false;
   late bool isChangingPassword = false;
+  late bool isPictureChanged = false;
   late SharedPreferences prefs;
   late bool _isLoading = true;
   late UserModel user;
@@ -48,6 +60,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     fetchUserData();
+  }
+  
+  void selectImage() async {
+    ImageModel image = await pickImage(source: ImageSource.gallery);
+    if (image.base64 == null) {
+      return;
+    }
+    setState(() {
+      isPictureChanged = true;
+      img = image;
+    });
   }
 
   void fetchUserData() async {
@@ -72,17 +95,46 @@ class _EditProfilePageState extends State<EditProfilePage> {
        _webpageController.text = user.web_site as String;
        _bioController.text = user.biography as String;
 
-         // Data is fetched, no longer loading
       });
     } catch (error) {
-      // Handle error if fetching data fails
       print("Error fetching user data: $error");
       setState(() {
         userId = userId;
         user = user;
-        _isLoading = false; // Loading indicator should be turned off even in case of error
+        _isLoading = false;
       });
     }
+  }
+
+    void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Cerrar sesión"),
+          content: const Text("¿Desear cerrar sesión?"),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                  await prefs.clear();
+                  Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LandingPage()),
+                  (route) => false,
+                );
+              },
+              child: const Text("Confirmar"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancelar"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showDeleteAccountConfirmationDialog() {
@@ -97,13 +149,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
               onPressed: () async {
                 await _graphQLDeleteUser.deleteMe();
                 await prefs.clear();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LandingPage())); // Close the dialog
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LandingPage()),
+                  (route) => false,
+                );
               },
               child: const Text("Eliminar"),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(); 
               },
               child: const Text("Cancelar"),
             ),
@@ -118,7 +174,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(backgroundColor: Colors.white),
       );
     }
     else{
@@ -131,6 +187,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Navigator.pop(context, true);
           },
         ),
+        actions: [ 
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _showLogoutConfirmationDialog,
+            )
+          ],
+        
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -141,17 +204,72 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Center(
               child: Column(
                 children: [
+                  Stack(
+                    children: [
+                      img != null ? 
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: MemoryImage(img?.base64 as Uint8List),
+                  ) : user.picture_id != 'n/a' && user.picture_id != 'NotFound' ?
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: 
+                    NetworkImage(user.picture_id!), // Imagen de perfil actual
+                  )
+                  :
                   const CircleAvatar(
                     radius: 60,
-                    backgroundImage: AssetImage('assets/profile_picture.jpg'), // Imagen de perfil actual
+                    backgroundImage: 
+                    NetworkImage('https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'), // Imagen de perfil por defecto
+                  ),
+                  Positioned(
+                    bottom: -10, 
+                    left: 80, 
+                    child: IconButton(onPressed: selectImage, icon: const Icon(Icons.camera_alt))
+                    ),
+                    ],
                   ),
                   const SizedBox(height: 10),
-                  TextButton(
-                    onPressed: () {
-                      // Acción para editar imagen de perfil
+                  isPictureChanged ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [ElevatedButton(
+                    onPressed: () async {
+                     var res = await uploadFile(file: File(img!.file), file_name: 'pp_${widget.profileUserId!}', data_type: 'imagen', user_id: widget.profileUserId!);
+                     if (res != ''){
+                        setState(() {
+                          user.picture_id = res;
+                          user.updated_at = DateTime.now().toString();
+                          isPictureChanged = false;
+                        });
+                        await _graphQLEditUser.updateMe(userModel: user);
+                     }
+                     else {
+                       ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Error al subir imagen'),
+                        ),
+                      );
+                     }
+                     ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Imagen subida con éxito'),
+                        ),
+                      );
+
                     },
-                    child: const Text('Editar imagen de perfil'),
+                    child: const Text('Guardar cambios'),
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        isPictureChanged = false;
+                        img = null;
+                      });
+                    },
+                    child: const Text('Cancelar cambios', style: TextStyle(color: Colors.red)),
+                    ),
+                  ],
+                  ) : const SizedBox.shrink(),
                 ],
               ),
             ),
@@ -169,7 +287,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    // Acción para editar información de perfil
                     setState(() {
                       isEditingUser = !isEditingUser;
                     });

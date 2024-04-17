@@ -47,6 +47,8 @@ dependencies:
   themed: ^5.0.3
   accordion: ^2.6.0
   carousel_slider: ^4.2.1
+  http: ^1.2.1
+  font_awesome_flutter: ^10.7.0
 
   flutter_chat_types: any
 dev_dependencies:
