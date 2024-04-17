@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class EditCourseForm extends StatefulWidget {
   const EditCourseForm({super.key});
@@ -30,14 +29,14 @@ class _EditCourseFormState extends State<EditCourseForm> {
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 17,
                       fontWeight: FontWeight.normal)),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
-              TextField(
+              const TextField(
                 maxLines: null,
                 enableSuggestions: true,
                 keyboardType: TextInputType.multiline,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Nombre del curso',
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
@@ -48,7 +47,7 @@ class _EditCourseFormState extends State<EditCourseForm> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 14,
           ),
           Column(
@@ -59,14 +58,14 @@ class _EditCourseFormState extends State<EditCourseForm> {
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 17,
                       fontWeight: FontWeight.normal)),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
-              TextField(
+              const TextField(
                 maxLines: null,
                 enableSuggestions: true,
                 keyboardType: TextInputType.multiline,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Descripción del curso',
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
@@ -77,7 +76,7 @@ class _EditCourseFormState extends State<EditCourseForm> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 14,
           ),
           Container(
@@ -91,7 +90,7 @@ class _EditCourseFormState extends State<EditCourseForm> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 14,
           ),
           Container(
@@ -101,10 +100,10 @@ class _EditCourseFormState extends State<EditCourseForm> {
                   return CheckboxExample(category_name: cat['category_name']);
                 }).toList()),
           ),
-          SizedBox(
+          const SizedBox(
             height: 14,
           ),
-          Container(child: RadioExample())
+          Container(child: const RadioExample())
         ],
       ),
     );
@@ -128,7 +127,7 @@ class _RadioExampleState extends State<RadioExample> {
       children: <Widget>[
         Row(
           children: [
-            Text(
+            const Text(
               'Público',
               style: TextStyle(
                 fontSize: 18,
@@ -143,14 +142,14 @@ class _RadioExampleState extends State<RadioExample> {
                 });
               },
             ),
-            SizedBox(
+            const SizedBox(
               width: 8,
             )
           ],
         ),
         Row(
           children: [
-            Text(
+            const Text(
               'Privado',
               style: TextStyle(
                 fontSize: 18,
@@ -189,16 +188,16 @@ class _CheckboxExampleState extends State<CheckboxExample> {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-            color: Color(0xffdae3fb),
+            color: const Color(0xffdae3fb),
             border: Border.all(color: Colors.blueAccent, width: 2),
             borderRadius: BorderRadius.circular(20)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
-            Text(widget.category_name!, style: TextStyle(fontSize: 18)),
+            Text(widget.category_name!, style: const TextStyle(fontSize: 18)),
             Checkbox(
               checkColor: Colors.white,
               activeColor: Colors.blue,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leare_fa/widgets/forms/forms.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 class EditCoursePage extends StatelessWidget {
@@ -12,7 +11,7 @@ class EditCoursePage extends StatelessWidget {
         backgroundColor: colorScheme.surface,
         body: SafeArea(
           child: ListView(
-            children: [
+            children: const [
               Padding(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   child: Column(

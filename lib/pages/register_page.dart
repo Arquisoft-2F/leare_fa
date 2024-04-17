@@ -1,14 +1,12 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:leare_fa/models/user_model.dart';
 import 'package:leare_fa/utils/graphql_register.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key});
+  const RegisterPage({super.key});
 
   @override
   RegisterPageState createState() => RegisterPageState();
@@ -84,22 +82,14 @@ class RegisterPageState extends State<RegisterPage> {
         role: roleController.text,
       );
 
-      if (res != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Usuario registrado exitosamente'),
-          ),
-        );
-        prefs.setString('token', res);
-        Navigator.pushNamed(context, '/home');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error al registrar el usuario'),
-          ),
-        );
-      }
-    
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Usuario registrado exitosamente'),
+        ),
+      );
+      prefs.setString('token', res);
+      Navigator.pushNamed(context, '/home');
+        
     
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

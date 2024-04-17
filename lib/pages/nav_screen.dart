@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:leare_fa/pages/home_page.dart';
 import 'package:leare_fa/pages/pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +17,7 @@ class NavScreen extends StatelessWidget {
     ];
 
     final Map<String, Widget?> pages = {
-      '/home': const Center(child: Text('Home Page')),
+      '/home': const HomePage(),
       '/search': const SearchPage(),
       '/chats': const ChatsPage(),
     };
