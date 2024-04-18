@@ -32,10 +32,9 @@ class _CoursePageState extends State<CoursePage> {
       created_at: '',
       updated_at: '',
       categories: [],
-      modules: []
-  );
+      modules: []);
   final GraphQLCourse _graphQLCourse = GraphQLCourse();
-
+  var args;
   static const String profilePic = "assets/profilepic.png";
   static const String nombre = "Santiago";
   static const String apellido = "Guerrero";
@@ -45,13 +44,19 @@ class _CoursePageState extends State<CoursePage> {
   void initState() {
     super.initState();
     print("Pase al init");
-    // final args = (ModalRoute.of(context)?.settings.arguments ??
-    //     CourseArguments('')) as CourseArguments;
-    var courseId = widget.course_id;
-    if (courseId != '') {
-      fetchCourseData(courseId);
-    }
-    
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        args = (ModalRoute.of(context)?.settings.arguments ??
+            CourseArguments('')) as CourseArguments;
+      });
+      print(args);
+      var courseId = args.course_id;
+      print("CourseId es:");
+      print(courseId);
+      if (courseId != '') {
+        fetchCourseData(courseId);
+      }
+    });
   }
 
   void fetchCourseData(String courseId) async {
@@ -74,10 +79,10 @@ class _CoursePageState extends State<CoursePage> {
     //     CourseArguments('')) as CourseArguments;
     // var courseId = args.course_id;
     // Recibir los argumentos del socio
-    final args = (ModalRoute.of(context)?.settings.arguments ??
-        CourseArguments('')) as CourseArguments;
-    var courseId = args.course_id;
-    fetchCourseData(courseId);
+    // final args = (ModalRoute.of(context)?.settings.arguments ??
+    //     CourseArguments('')) as CourseArguments;
+    // var courseId = args.course_id;
+    // fetchCourseData(courseId);
     var categories = course.categories;
     var description = course.course_description;
 
