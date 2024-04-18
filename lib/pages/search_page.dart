@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leare_fa/models/search_model.dart';
+import 'package:leare_fa/pages/course_page.dart';
 import 'package:leare_fa/utils/graphql_search.dart';
 import 'package:leare_fa/widgets/search_page/category_result.dart';
 import 'package:leare_fa/widgets/search_page/user_result.dart';
@@ -131,7 +132,7 @@ class _SearchPageState extends State<SearchPage> {
                   ]+_searchResultsFiltered.map((result) {
 
                     final Map<String, Widget> resultTiles = {
-                      "Course": CourseResult(searchResult: result, onTap: () => print('Course Tap'),),
+                      "Course": CourseResult(searchResult: result, onTap: () => Navigator.pushNamed(context, '/course', arguments: CourseArguments(result.post.id)),),
                       "Category": CategoryResult(searchResult: result, onTap: () => print('Category Tap'),),
                       "User": UserResult(searchResult: result, onTap: () => print('user Tap'),),
                     };
