@@ -31,7 +31,7 @@ class CourseModel {
       course_name: map['course_name'],
       course_description: map['course_description'],
       creator_id: map['creator_id'],
-      chat_id: map['chat_id'],
+      chat_id: map['chat_id'] != null ? map['chat_id'] : '',
       is_public: map['is_public'],
       picture_id: map['picture_id'],
       created_at: map['created_at'],
@@ -111,7 +111,9 @@ class SectionModel {
       section_name: map['section_name'],
       section_content: map['section_content'],
       video_id: map['video_id'],
-      files_array: List<String>.from(map['files_array']),
+      files_array: map['files_array'] != null
+          ? List<String>.from(map['files_array'])
+          : [],
       pos_index: map['pos_index'],
     );
     return sectionModel;

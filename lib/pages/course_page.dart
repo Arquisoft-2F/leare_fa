@@ -11,7 +11,8 @@ class CourseArguments {
 //Clase para recibir los argumentos
 
 class CoursePage extends StatefulWidget {
-  const CoursePage({super.key});
+  final String course_id;
+  const CoursePage({super.key, this.course_id = ''});
 
   @override
   State<CoursePage> createState() => _CoursePageState();
@@ -20,7 +21,19 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   // static String moduleAmount = modules.length.toString();
   bool isLoading = true;
-  late CourseModel course;
+  late CourseModel course = CourseModel(
+      course_id: '',
+      course_name: '',
+      course_description: '',
+      creator_id: '',
+      chat_id: '',
+      is_public: false,
+      picture_id: '',
+      created_at: '',
+      updated_at: '',
+      categories: [],
+      modules: []
+  );
   final GraphQLCourse _graphQLCourse = GraphQLCourse();
 
   static const String profilePic = "assets/profilepic.png";
@@ -28,12 +41,18 @@ class _CoursePageState extends State<CoursePage> {
   static const String apellido = "Guerrero";
   static const String nickname = "sangue19";
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   print("Pase al init");
-  //   // fetchCourseData();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    print("Pase al init");
+    // final args = (ModalRoute.of(context)?.settings.arguments ??
+    //     CourseArguments('')) as CourseArguments;
+    var courseId = widget.course_id;
+    if (courseId != '') {
+      fetchCourseData(courseId);
+    }
+    
+  }
 
   void fetchCourseData(String courseId) async {
     try {

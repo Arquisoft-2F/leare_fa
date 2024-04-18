@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
+import 'package:leare_fa/models/course_model.dart';
 
 class ModuleAccordion extends StatelessWidget {
-  final moduleList;
+  final List<ModuleModel> moduleList;
   static const listaPrueba = ['1', '2', '3'];
   const ModuleAccordion({super.key, required this.moduleList});
 
@@ -29,8 +30,8 @@ class ModuleAccordion extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimaryContainer, size: 30),
       contentVerticalPadding: 10,
       children: moduleList.map<AccordionSection>((module) {
-        var moduleName = module['module_name'];
-        var sections = module['sections'];
+        var moduleName = module.module_name;
+        var sections = module.sections;
         return AccordionSection(
             isOpen: false,
             header: Text(moduleName,
@@ -40,7 +41,7 @@ class ModuleAccordion extends StatelessWidget {
                     fontWeight: FontWeight.bold)),
             content: Column(
               children: sections.map<Padding>((section) {
-                var sectionName = section['section_name'];
+                var sectionName = section.section_name;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Text(
