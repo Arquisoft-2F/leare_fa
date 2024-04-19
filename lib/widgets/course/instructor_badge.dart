@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class InstructorBadge extends StatelessWidget {
-  final String profilePic;
+  final String? profilePic;
   final String nombre;
   final String apellido;
   final String nickname;
@@ -29,7 +29,7 @@ class InstructorBadge extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-             Padding(
+            Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 'Instructor',
@@ -44,9 +44,10 @@ class InstructorBadge extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Center(
                   child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CircleAvatar(
-                    foregroundImage: AssetImage(profilePic),
+                    foregroundImage: NetworkImage(profilePic!),
                     radius: 30,
                   ),
                   const SizedBox(width: 9.0),

@@ -61,7 +61,8 @@ class NavScreen extends StatelessWidget {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
               String userID = jwtDecodedToken['UserID'];
-              Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfilePage(profileUserId: userID)));
+              print(userID);
+              Navigator.pushNamed(context, '/profile', arguments: UserArguments(userID));
             }
             else {
               Navigator.pushNamed(context, routes[index]);

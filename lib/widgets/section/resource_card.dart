@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 class ResourceCard extends StatelessWidget {
   final String resourceName;
-  const ResourceCard({super.key, required this.resourceName});
+  final String resourceUrl;
+  const ResourceCard(
+      {super.key, required this.resourceName, required this.resourceUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,8 @@ class ResourceCard extends StatelessWidget {
                   color: const Color(0xffd3e4ff),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(7),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -24,7 +28,16 @@ class ResourceCard extends StatelessWidget {
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.normal),
                         ),
-                        const Icon(Icons.file_download)
+                        ElevatedButton(
+                            onPressed: () {
+                              FileDownloader.downloadFile(
+                                url: resourceUrl,
+                                downloadDestination:
+                                    DownloadDestinations.publicDownloads,
+                                notificationType: NotificationType.all,
+                              );
+                            },
+                            child: const Icon(Icons.file_download))
                       ]),
                 ))));
   }

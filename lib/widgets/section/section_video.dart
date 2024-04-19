@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class SectionVideo extends StatefulWidget {
-  const SectionVideo({super.key});
+  final String videoUrl;
+  const SectionVideo({super.key, required this.videoUrl});
 
   @override
   State<SectionVideo> createState() => _SectionVideoState();
@@ -14,7 +15,8 @@ class _SectionVideoState extends State<SectionVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset('assets/landing.mp4')
+    String videoUrl = widget.videoUrl;
+    _controller = VideoPlayerController.networkUrl(Uri.parse(videoUrl))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
