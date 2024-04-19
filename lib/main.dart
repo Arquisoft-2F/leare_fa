@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:leare_fa/pages/create_course_page.dart';
+import 'package:leare_fa/pages/create_section.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
                 secondary: const Color.fromARGB(255, 98, 204, 252)),
             useMaterial3: true,
           ),
-          home: const LandingPage(),
+          home: CreateSectionPage(),
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
@@ -44,7 +46,7 @@ class MyApp extends StatelessWidget {
             '/chats': (context) => const ChatsPage(),
             // '/profile/me': (context) => UserProfilePage(profileUserId: userID),
             '/course': (context) => const CoursePage(),
-            '/editcourse': (context) => const EditCoursePage(),
+            // '/editcourse': (context) => const EditCoursePage(),
           },
         ));
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:leare_fa/models/course_model.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
 class CoursePageMock extends StatelessWidget {
@@ -282,8 +283,8 @@ class CoursePageMock extends StatelessWidget {
                           const SizedBox(
                             height: 10,
                           ),
-                          const ModuleAccordion(
-                            moduleList: modules,
+                        ModuleAccordion(
+                            moduleList: modules as List<ModuleModel>,
                           )
                         ],
                       ),
