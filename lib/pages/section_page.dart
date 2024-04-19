@@ -11,8 +11,9 @@ class SectionArguments {
   final String video_id;
   final List<String> files_array;
   final int pos_index;
+  final wholeSections;
   SectionArguments(this.section_id, this.section_name, this.section_content,
-      this.video_id, this.files_array, this.pos_index);
+      this.video_id, this.files_array, this.pos_index, this.wholeSections);
 }
 
 class SectionPage extends StatefulWidget {
@@ -22,15 +23,16 @@ class SectionPage extends StatefulWidget {
   final String video_id;
   final List<String> files_array;
   final int pos_index;
-  const SectionPage({
-    super.key,
-    this.section_id = '',
-    this.section_name = '',
-    this.section_content = '',
-    this.video_id = '',
-    required this.files_array,
-    this.pos_index = 0,
-  });
+  final wholeSections;
+  const SectionPage(
+      {super.key,
+      this.section_id = '',
+      this.section_name = '',
+      this.section_content = '',
+      this.video_id = '',
+      required this.files_array,
+      this.pos_index = 0,
+      this.wholeSections});
 
   @override
   State<SectionPage> createState() => _SectionPageState();
@@ -52,12 +54,14 @@ class _SectionPageState extends State<SectionPage> {
   Widget build(BuildContext context) {
     setState(() {
       args = (ModalRoute.of(context)?.settings.arguments ??
-          SectionArguments('', '', '', '', [], 0)) as SectionArguments;
+          SectionArguments('', '', '', '', [], 0, [])) as SectionArguments;
     });
 
     var contenido = args.section_content;
     var sectionName = args.section_name;
     var recursos = args.files_array;
+    var video_id = args.video_id;
+    var secciones = args.wholeSections;
 
     return Scaffold(
       body: SafeArea(
@@ -66,7 +70,7 @@ class _SectionPageState extends State<SectionPage> {
             children: [
               Stack(
                 children: [
-                  const SectionVideo(),
+                  SectionVideo(videoUrl: video_id),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(

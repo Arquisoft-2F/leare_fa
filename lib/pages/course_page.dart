@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 import 'package:leare_fa/models/course_model.dart';
 import 'package:leare_fa/utils/graphql_course.dart';
+import 'package:leare_fa/utils/graphql_user.dart';
+import 'package:leare_fa/models/user_model.dart';
 
 //Clase para recibir los argumentos
 class CourseArguments {
@@ -28,11 +30,13 @@ class _CoursePageState extends State<CoursePage> {
       creator_id: '',
       chat_id: '',
       is_public: false,
-      picture_id: '',
+      picture_id:
+          'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png',
       created_at: '',
       updated_at: '',
       categories: [],
       modules: []);
+  late UserModel user;
   final GraphQLCourse _graphQLCourse = GraphQLCourse();
   var args;
   static const String profilePic = "assets/profilepic.png";
@@ -85,6 +89,9 @@ class _CoursePageState extends State<CoursePage> {
     // fetchCourseData(courseId);
     var categories = course.categories;
     var description = course.course_description;
+    var pictureUrl = course.picture_id == "notFound"
+        ? 'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png'
+        : course.picture_id;
 
     return Scaffold(
       backgroundColor: const Color(0xfff8f9ff),
@@ -105,8 +112,8 @@ class _CoursePageState extends State<CoursePage> {
                           Colors.black.withOpacity(0.6),
                           BlendMode.darken,
                         ),
-                        child: Image.asset(
-                          'assets/imagen-curso.png',
+                        child: Image.network(
+                          pictureUrl,
                           width: double.infinity,
                           height: 300,
                           fit: BoxFit.cover,

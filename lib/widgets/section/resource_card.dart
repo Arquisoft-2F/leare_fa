@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 class ResourceCard extends StatelessWidget {
   final String resourceName;
@@ -28,7 +29,14 @@ class ResourceCard extends StatelessWidget {
                               fontSize: 20, fontWeight: FontWeight.normal),
                         ),
                         ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              FileDownloader.downloadFile(
+                                url: resourceUrl,
+                                downloadDestination:
+                                    DownloadDestinations.publicDownloads,
+                                notificationType: NotificationType.all,
+                              );
+                            },
                             child: const Icon(Icons.file_download))
                       ]),
                 ))));
