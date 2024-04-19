@@ -54,7 +54,8 @@ class ModuleAccordion extends StatelessWidget {
                               section.section_content,
                               section.video_id,
                               section.files_array,
-                              section.pos_index));
+                              section.pos_index,
+                              module.sections));
                     },
                     child: Text(
                       sectionName,
