@@ -45,6 +45,9 @@ class MyApp extends StatelessWidget {
             // '/profile/me': (context) => UserProfilePage(profileUserId: userID),
             '/course': (context) => const CoursePage(),
             '/editcourse': (context) => const EditCoursePage(),
+            '/section': (context) => const SectionPage(
+                  files_array: [],
+                ),
           },
         ));
   }

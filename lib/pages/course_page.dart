@@ -96,138 +96,133 @@ class _CoursePageState extends State<CoursePage> {
         child: ListView(
           children: [
             Center(
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    Stack(
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      ColorFiltered(
+                        colorFilter: ColorFilter.mode(
+                          Colors.black.withOpacity(0.6),
+                          BlendMode.darken,
+                        ),
+                        child: Image.asset(
+                          'assets/imagen-curso.png',
+                          width: double.infinity,
+                          height: 300,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(
+                                  Icons.arrow_back_ios_new_outlined,
+                                  color: Color.fromRGBO(255, 255, 255, 1.0),
+                                  size: 35,
+                                )),
+                            Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Color.fromRGBO(255, 255, 255, 1.0),
+                                      size: 35,
+                                    )),
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.more_vert,
+                                      color: Color.fromRGBO(255, 255, 255, 1.0),
+                                      size: 40,
+                                    )),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    child: Column(
                       children: [
-                        ColorFiltered(
-                          colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.6),
-                            BlendMode.darken,
-                          ),
-                          child: Image.asset(
-                            'assets/imagen-curso.png',
-                            width: double.infinity,
-                            height: 300,
-                            fit: BoxFit.cover,
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Wrap(
+                            spacing: 10,
+                            children: categories.map((category) {
+                              final String? categoryName =
+                                  category.category_name;
+                              return CategoryBadge(category_name: categoryName);
+                            }).toList(),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  icon: const Icon(
-                                    Icons.arrow_back_ios_new_outlined,
-                                    color: Color.fromRGBO(255, 255, 255, 1.0),
-                                    size: 35,
-                                  )),
-                              Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.share,
-                                        color:
-                                            Color.fromRGBO(255, 255, 255, 1.0),
-                                        size: 35,
-                                      )),
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.more_vert,
-                                        color:
-                                            Color.fromRGBO(255, 255, 255, 1.0),
-                                        size: 40,
-                                      )),
-                                ],
-                              )
-                            ],
-                          ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 21),
+                    child: Column(
+                      children: [
+                        Text(
+                          course.course_name,
+                          style: const TextStyle(
+                              height: 1.2,
+                              color: Colors.black,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          description,
+                          textAlign: TextAlign.justify,
+                          style: const TextStyle(
+                              height: 1.2,
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal),
+                        ),
+                        const LineSeparator(),
+                        const InstructorBadge(
+                          profilePic: profilePic,
+                          nombre: nombre,
+                          apellido: apellido,
+                          nickname: nickname,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        const LineSeparator(),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                              '${course.modules.length.toString()} modulos',
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black)),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ModuleAccordion(
+                          moduleList: course.modules,
                         )
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 20),
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.topLeft,
-                            child: Wrap(
-                              spacing: 10,
-                              children: categories.map((category) {
-                                final String? categoryName =
-                                    category.category_name;
-                                return CategoryBadge(
-                                    category_name: categoryName);
-                              }).toList(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 21),
-                      child: Column(
-                        children: [
-                          Text(
-                            course.course_name,
-                            style: const TextStyle(
-                                height: 1.2,
-                                color: Colors.black,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            description,
-                            textAlign: TextAlign.justify,
-                            style: const TextStyle(
-                                height: 1.2,
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          const LineSeparator(),
-                          const InstructorBadge(
-                            profilePic: profilePic,
-                            nombre: nombre,
-                            apellido: apellido,
-                            nickname: nickname,
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          const LineSeparator(),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Text(
-                                '${course.modules.length.toString()} modulos',
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black)),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          ModuleAccordion(
-                            moduleList: course.modules,
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             )
           ],

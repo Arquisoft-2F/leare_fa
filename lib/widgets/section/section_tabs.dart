@@ -13,6 +13,7 @@ class TabsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var resourceCount = 0;
     return Expanded(
       child: DefaultTabController(
         length: 2,
@@ -58,8 +59,10 @@ class TabsSection extends StatelessWidget {
                     ),
                     ListView(
                         children: resources.map<ResourceCard>((resource) {
+                      var resName = (resourceCount += 1).toString();
                       return ResourceCard(
-                        resourceName: resource,
+                        resourceName: 'Recurso $resName',
+                        resourceUrl: resource,
                       );
                     }).toList()),
                   ],

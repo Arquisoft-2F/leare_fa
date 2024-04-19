@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:leare_fa/models/course_model.dart';
+import 'package:leare_fa/pages/pages.dart';
 
 class ModuleAccordion extends StatelessWidget {
   final List<ModuleModel> moduleList;
@@ -44,11 +45,24 @@ class ModuleAccordion extends StatelessWidget {
                 var sectionName = section.section_name;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Text(
-                    sectionName,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 18, fontWeight: FontWeight.normal),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/section',
+                          arguments: SectionArguments(
+                              section.section_id,
+                              section.section_name,
+                              section.section_content,
+                              section.video_id,
+                              section.files_array,
+                              section.pos_index));
+                    },
+                    child: Text(
+                      sectionName,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 18,
+                          fontWeight: FontWeight.normal),
+                    ),
                   ),
                 );
               }).toList(),
