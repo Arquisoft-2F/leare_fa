@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/create_course_page.dart';
-import 'package:leare_fa/pages/create_section.dart';
+import 'package:leare_fa/pages/create_section_page.dart';
+import 'package:leare_fa/pages/create_section_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
@@ -37,15 +38,16 @@ class MyApp extends StatelessWidget {
                 secondary: const Color.fromARGB(255, 98, 204, 252)),
             useMaterial3: true,
           ),
-          home: CreateSectionPage(),
+          home: LandingPage(),
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
             '/home': (context) => const NavScreen(),
             '/search': (context) => const SearchPage(),
-            // '/chat': (context) => const ChatPage(),
+            '/chat': (context) => const ChatPage(),
             '/chats': (context) => const ChatsPage(),
             '/profile': (context) => const UserProfilePage(),
+            '/editProfile':(context) => const EditProfilePage(),
             '/category':(context) => const CategoryPage(),
             '/course': (context) => const CoursePage(),
             // '/editcourse': (context) => const EditCoursePage(),

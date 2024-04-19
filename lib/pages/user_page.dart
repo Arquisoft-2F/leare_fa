@@ -28,6 +28,7 @@ class UserProfilePageState extends State<UserProfilePage> {
   late UserModel user;
   late String userId;
   final GraphQLUser _graphQLUser = GraphQLUser();
+
   @override
   void initState() {
     super.initState();
@@ -176,7 +177,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                   Row(children: [
                     ElevatedButton(
                       onPressed: () async {
-                      var res = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(profileUserId: args.profileId,)));
+                      var res = await Navigator.pushNamed(context, '/editProfile', arguments: EditUserArguments(args.profileId)) as bool?;
                       if (res!=null && res){
                         setState(() {
                           fetchUserData();

@@ -18,14 +18,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/image_utils.dart';
 
+class EditUserArguments {
+  final String profileId;
+  EditUserArguments(this.profileId);
+}
+
 class EditProfilePage extends StatefulWidget {
-  final String? profileUserId;
-  const EditProfilePage({required this.profileUserId, super.key});
+  final String? profileId;
+  const EditProfilePage({super.key, this.profileId});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
 
 }
+
+
 
 class _EditProfilePageState extends State<EditProfilePage> {
 
@@ -51,6 +58,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late SharedPreferences prefs;
   late bool _isLoading = true;
   late UserModel user;
+  var args;
   final GraphQLUser _graphQLUser = GraphQLUser();
   final GraphQLEditUser _graphQLEditUser = GraphQLEditUser();
   final GraphQLEditPassword _graphQLEditPassword = GraphQLEditPassword();
@@ -59,9 +67,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    fetchUserData();
+    Future.delayed(Duration.zero, () {
+      setState(() {
+          args = (ModalRoute.of(context)?.settings.arguments ??
+              EditUserArguments('')) as EditUserArguments;
+        });
+      var profileId = args.profileId;
+      if ( profileId != null ){
+        fetchUserData();
+      }
+    });
   }
   
+  
+
   void selectImage() async {
     ImageModel image = await pickImage(source: ImageSource.gallery);
     if (image.base64 == null) {
@@ -77,10 +96,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       prefs = await SharedPreferences.getInstance();
       Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
-      String userId = jwtDecodedToken['UserID'];
-      user = await _graphQLUser.userbyId(id: widget.profileUserId as String);
+      String userID = jwtDecodedToken['UserID'];
+      user = await _graphQLUser.userbyId(id: args.profileId as String);
       setState(() {
-        userId = userId;
+        userId = userID;
         user = user;
         _isLoading = false;
 
@@ -99,7 +118,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (error) {
       print("Error fetching user data: $error");
       setState(() {
-        userId = userId;
         user = user;
         _isLoading = false;
       });
@@ -127,7 +145,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pop(context, false);
               },
               child: const Text("Cancelar"),
             ),
@@ -159,7 +177,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); 
+                Navigator.pop(context, false); 
               },
               child: const Text("Cancelar"),
             ),
@@ -234,7 +252,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [ElevatedButton(
                     onPressed: () async {
-                     var res = await uploadFile(file: File(img!.file), file_name: 'pp_${widget.profileUserId!}', data_type: 'imagen', user_id: widget.profileUserId!);
+                     var res = await uploadFile(file: File(img!.file), file_name: 'pp_${args.profileId}', data_type: 'imagen', user_id: args.profileId!, token: prefs.getString('token')!);
                      if (res != ''){
                         setState(() {
                           user.picture_id = res;
@@ -465,7 +483,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     String res = await _graphQLEditPassword.changePassword(
                       oldPassword: _oldpasswordController.text,
                       newPassword: _newPasswordController.text,
-                      id: widget.profileUserId as String);
+                      id: args.profileId as String);
                     if (res == 'true') {
                       ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

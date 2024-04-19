@@ -5,8 +5,8 @@ import 'dart:math' as math;
 import '../../models/chat/chat_response.dart';
 
 class ChatCard extends StatelessWidget {
-  final ChatModel chat;
 
+  final ChatModel chat;
   const ChatCard({super.key, required this.chat});
 
   @override
@@ -42,15 +42,7 @@ class ChatCard extends StatelessWidget {
           ),
           trailing: Text(getDate(chat)),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ChatPage(),
-                settings: RouteSettings(
-                  arguments: chat,
-                ),
-              ),
-            );
+            Navigator.pushNamed(context, '/chat', arguments: chat);
           },
         ),
       ),

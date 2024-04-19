@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-Future<String> uploadFile({required File file, required String file_name, required String data_type, required String user_id}) async {
+Future<String> uploadFile({required File file, required String file_name, required String data_type, required String user_id, required String token}) async {
     try {
       // Create a multipart request
       var request = http.MultipartRequest(
@@ -18,6 +18,7 @@ Future<String> uploadFile({required File file, required String file_name, requir
           filename: file_name);
       
       request.files.add(multipartFile);
+      request.headers['Authorization'] = 'Bearer $token';
 
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
