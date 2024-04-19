@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:leare_fa/pages/category_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
@@ -42,7 +43,8 @@ class MyApp extends StatelessWidget {
             '/search': (context) => const SearchPage(),
             // '/chat': (context) => const ChatPage(),
             '/chats': (context) => const ChatsPage(),
-            // '/profile/me': (context) => UserProfilePage(profileUserId: userID),
+            '/profile': (context) => const UserProfilePage(),
+            '/category':(context) => const CategoryPage(),
             '/course': (context) => const CoursePage(),
             '/editcourse': (context) => const EditCoursePage(),
             '/section': (context) => const SectionPage(

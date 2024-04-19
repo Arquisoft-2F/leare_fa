@@ -17,7 +17,7 @@ class UserResult extends StatelessWidget {
       title: Text(searchResult.post.nickname!),
       subtitle: Text('${fullname.substring(0, min(a, 20))} ${a > 20 ? '...' : ''}'),
       leading: CircleAvatar(
-        backgroundImage: NetworkImage(searchResult.post.picture!),
+        backgroundImage: NetworkImage(searchResult.post.picture! != 'notFound' ? searchResult.post.picture! : 'https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png'),
       ),
       onTap: onTap,
     );

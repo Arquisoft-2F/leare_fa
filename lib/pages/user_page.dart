@@ -8,9 +8,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'edit_user_page.dart';
 
+class UserArguments {
+  final String profileId;
+  UserArguments(this.profileId);
+}
+
 class UserProfilePage extends StatefulWidget {
-  final String? profileUserId;
-  const UserProfilePage({required this.profileUserId, super.key});
+  final String? profileId;
+  const UserProfilePage({super.key, this.profileId});
   
   @override
   UserProfilePageState createState() => UserProfilePageState();
@@ -19,13 +24,23 @@ class UserProfilePage extends StatefulWidget {
 class UserProfilePageState extends State<UserProfilePage> {
   late SharedPreferences prefs;
   late bool _isLoading = true;
+  var args;
   late UserModel user;
   late String userId;
   final GraphQLUser _graphQLUser = GraphQLUser();
   @override
   void initState() {
     super.initState();
-    fetchUserData();
+    Future.delayed(Duration.zero, () {
+      setState(() {
+          args = (ModalRoute.of(context)?.settings.arguments ??
+              UserArguments('')) as UserArguments;
+        });
+      var profileId = args.profileId;
+      if ( profileId != null ){
+        fetchUserData();
+      }
+    });
   }
 
   void fetchUserData() async {
@@ -33,7 +48,7 @@ class UserProfilePageState extends State<UserProfilePage> {
       prefs = await SharedPreferences.getInstance();
       Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
       String userID = jwtDecodedToken['UserID'];
-      user = await _graphQLUser.userbyId(id: widget.profileUserId as String);
+      user = await _graphQLUser.userbyId(id: args.profileId as String);
       setState(() {
         userId = userID;
         user = user;
@@ -157,11 +172,11 @@ class UserProfilePageState extends State<UserProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  widget.profileUserId == userId ? 
+                  args.profileId == userId ? 
                   Row(children: [
                     ElevatedButton(
                       onPressed: () async {
-                      var res = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(profileUserId: widget.profileUserId,)));
+                      var res = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(profileUserId: args.profileId,)));
                       if (res!=null && res){
                         setState(() {
                           fetchUserData();

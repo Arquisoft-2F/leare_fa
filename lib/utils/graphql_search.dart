@@ -46,7 +46,7 @@ class GraphQLSearch {
 
       List<SearchModel> res = (result.data?['getPosts'] as List).map((e) => SearchModel.fromMap(map: e)).toList();
 
-      print(res.isNotEmpty ? res[0].highlight.name : null);
+      print(res.isNotEmpty ? res[0].post.picture : null);
 
       return res;
 
