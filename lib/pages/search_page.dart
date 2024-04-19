@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:leare_fa/models/feed_model.dart';
 import 'package:leare_fa/models/search_model.dart';
+import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/course_page.dart';
+import 'package:leare_fa/pages/pages.dart';
 import 'package:leare_fa/utils/graphql_search.dart';
 import 'package:leare_fa/widgets/search_page/category_result.dart';
 import 'package:leare_fa/widgets/search_page/user_result.dart';
@@ -22,7 +25,9 @@ class _SearchPageState extends State<SearchPage> {
     if (_filters.isEmpty) {
       return _searchResults;
     }
-    return _searchResults.where((result) => _filters.contains(result.post.type)).toList();
+    return _searchResults
+        .where((result) => _filters.contains(result.post.type))
+        .toList();
   }
 
   @override
@@ -55,8 +60,8 @@ class _SearchPageState extends State<SearchPage> {
                         controller: controller,
                         autoFocus: true,
                         elevation: const MaterialStatePropertyAll(1.0),
-                        surfaceTintColor:
-                            MaterialStatePropertyAll(colorScheme.surfaceVariant),
+                        surfaceTintColor: MaterialStatePropertyAll(
+                            colorScheme.surfaceVariant),
                         shape: MaterialStatePropertyAll(RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         )),
@@ -71,73 +76,115 @@ class _SearchPageState extends State<SearchPage> {
                 },
                 suggestionsBuilder: (context, controller) {
                   return <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if (_filters.contains("Course")) {
-                                  _filters = List.from(_filters.where((element) => element != "Course").toList());
-                                } else {
-                                  _filters = List.from(_filters + ["Course"]);
-                                }
-                              });
-                            }, 
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: !_filters.contains('Course') ? colorScheme.surfaceVariant : colorScheme.primaryContainer,
-                              textStyle: TextStyle(color: !_filters.contains('Course') ? colorScheme.onSurfaceVariant : colorScheme.onPrimaryContainer),
-                            ),
-                            child: const Text('Courses'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (_filters.contains("Course")) {
+                                      _filters = List.from(_filters
+                                          .where(
+                                              (element) => element != "Course")
+                                          .toList());
+                                    } else {
+                                      _filters =
+                                          List.from(_filters + ["Course"]);
+                                    }
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: !_filters.contains('Course')
+                                      ? colorScheme.surfaceVariant
+                                      : colorScheme.primaryContainer,
+                                  textStyle: TextStyle(
+                                      color: !_filters.contains('Course')
+                                          ? colorScheme.onSurfaceVariant
+                                          : colorScheme.onPrimaryContainer),
+                                ),
+                                child: const Text('Courses'),
+                              ),
+                              const SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (_filters.contains("Category")) {
+                                      _filters = List.from(_filters
+                                          .where((element) =>
+                                              element != "Category")
+                                          .toList());
+                                    } else {
+                                      _filters =
+                                          List.from(_filters + ["Category"]);
+                                    }
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      !_filters.contains('Category')
+                                          ? colorScheme.surfaceVariant
+                                          : colorScheme.errorContainer,
+                                  textStyle: TextStyle(
+                                      color: !_filters.contains('Category')
+                                          ? colorScheme.onSurfaceVariant
+                                          : colorScheme.onErrorContainer),
+                                ),
+                                child: const Text('Categories'),
+                              ),
+                              const SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (_filters.contains("User")) {
+                                      _filters = List.from(_filters
+                                          .where((element) => element != "User")
+                                          .toList());
+                                    } else {
+                                      _filters = List.from(_filters + ["User"]);
+                                    }
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: !_filters.contains('User')
+                                      ? colorScheme.surfaceVariant
+                                      : colorScheme.tertiaryContainer,
+                                  textStyle: TextStyle(
+                                      color: !_filters.contains('User')
+                                          ? colorScheme.onSurfaceVariant
+                                          : colorScheme.onTertiaryContainer),
+                                ),
+                                child: const Text('Users'),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if (_filters.contains("Category")) {
-                                  _filters = List.from(_filters.where((element) => element != "Category").toList());
-                                } else {
-                                  _filters = List.from(_filters + ["Category"]);
-                                }
-                              });
-                            }, 
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: !_filters.contains('Category') ? colorScheme.surfaceVariant : colorScheme.errorContainer,
-                              textStyle: TextStyle(color:  !_filters.contains('Category') ? colorScheme.onSurfaceVariant : colorScheme.onErrorContainer),
-                            ),
-                            child: const Text('Categories'),
+                        ),
+                      ] +
+                      _searchResultsFiltered.map((result) {
+                        final Map<String, Widget> resultTiles = {
+                          "Course": CourseResult(
+                            searchResult: result,
+                            onTap: () => Navigator.pushNamed(context, '/course',
+                                arguments: CourseArguments(result.post.id)),
                           ),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if (_filters.contains("User")) {
-                                  _filters = List.from(_filters.where((element) => element != "User").toList());
-                                } else {
-                                  _filters = List.from(_filters + ["User"]);
-                                }
-                              });
-                            }, 
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: !_filters.contains('User') ? colorScheme.surfaceVariant : colorScheme.tertiaryContainer,
-                              textStyle: TextStyle(color:  !_filters.contains('User') ? colorScheme.onSurfaceVariant : colorScheme.onTertiaryContainer),
-                            ),
-                            child: const Text('Users'),
+                          "Category": CategoryResult(
+                            searchResult: result,
+                            onTap: () => Navigator.pushNamed(
+                                context, '/category',
+                                arguments: CategoryArguments(Category(
+                                    id: result.post.id,
+                                    name: result.post.name))),
                           ),
-                        ],
-                      ),
-                    ),
-                  ]+_searchResultsFiltered.map((result) {
-
-                    final Map<String, Widget> resultTiles = {
-                      "Course": CourseResult(searchResult: result, onTap: () => Navigator.pushNamed(context, '/course', arguments: CourseArguments(result.post.id)),),
-                      "Category": CategoryResult(searchResult: result, onTap: () => print('Category Tap'),),
-                      "User": UserResult(searchResult: result, onTap: () => print('user Tap'),),
-                    };
-                    return resultTiles[result.post.type]!;
-                  }).toList();
+                          "User": UserResult(
+                            searchResult: result,
+                            onTap: () => Navigator.pushNamed(
+                                context, '/profile',
+                                arguments: UserArguments(result.post.id)),
+                          ),
+                        };
+                        return resultTiles[result.post.type]!;
+                      }).toList();
                 },
               )
             ],
