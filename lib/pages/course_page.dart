@@ -36,13 +36,21 @@ class _CoursePageState extends State<CoursePage> {
       updated_at: '',
       categories: [],
       modules: []);
-  late UserModel user;
+  late UserModel user = UserModel(
+      id: '',
+      name: '',
+      lastname: '',
+      nickname: '',
+      email: '',
+      nationality: '',
+      picture_id:
+          'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png',
+      created_at: '',
+      updated_at: '');
+  final GraphQLUser _graphQLUser = GraphQLUser();
+  String user_id = '';
   final GraphQLCourse _graphQLCourse = GraphQLCourse();
   var args;
-  static const String profilePic = "assets/profilepic.png";
-  static const String nombre = "Santiago";
-  static const String apellido = "Guerrero";
-  static const String nickname = "sangue19";
 
   @override
   void initState() {
@@ -60,6 +68,9 @@ class _CoursePageState extends State<CoursePage> {
       if (courseId != '') {
         fetchCourseData(courseId);
       }
+      // print("Id usuario:");
+      // print(user_id);
+      // fetchUserData(user_id);
     });
   }
 
@@ -71,27 +82,37 @@ class _CoursePageState extends State<CoursePage> {
       setState(() {
         course = course;
       });
+      setState(() {
+        user_id = course.creator_id;
+      });
+      fetchUserData(user_id);
     } catch (error) {
       print("Error fetching course data: $error");
     }
   }
 
+  void fetchUserData(String user_id) async {
+    try {
+      user = await _graphQLUser.userbyId(id: user_id);
+      setState(() {
+        user = user;
+      });
+    } catch (error) {
+      // Handle error if fetching data fails
+      print("Error fetching user data: $error");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Recibir los argumentos del socio
-    // final args = (ModalRoute.of(context)?.settings.arguments ??
-    //     CourseArguments('')) as CourseArguments;
-    // var courseId = args.course_id;
-    // Recibir los argumentos del socio
-    // final args = (ModalRoute.of(context)?.settings.arguments ??
-    //     CourseArguments('')) as CourseArguments;
-    // var courseId = args.course_id;
-    // fetchCourseData(courseId);
     var categories = course.categories;
     var description = course.course_description;
     var pictureUrl = course.picture_id == "notFound"
         ? 'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png'
         : course.picture_id;
+    var profilePic = user.picture_id == "n/a"
+        ? 'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png'
+        : user.picture_id;
 
     return Scaffold(
       backgroundColor: const Color(0xfff8f9ff),
@@ -200,11 +221,11 @@ class _CoursePageState extends State<CoursePage> {
                               fontWeight: FontWeight.normal),
                         ),
                         const LineSeparator(),
-                        const InstructorBadge(
+                        InstructorBadge(
                           profilePic: profilePic,
-                          nombre: nombre,
-                          apellido: apellido,
-                          nickname: nickname,
+                          nombre: user.name,
+                          apellido: user.lastname,
+                          nickname: user.nickname,
                         ),
                         const SizedBox(
                           height: 5,
