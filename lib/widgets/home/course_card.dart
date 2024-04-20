@@ -45,7 +45,7 @@ class CourseCard extends StatelessWidget {
               ),
             ),
           ),
-          Container(
+          course.creator != null ? Container(
             color: Theme.of(context).colorScheme.surfaceVariant,
             child: Padding(
               padding: const EdgeInsets.all(5.0),
@@ -68,7 +68,30 @@ class CourseCard extends StatelessWidget {
                 ],
               )
             ),
-          ),
+          ) : Container(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const CircleAvatar(
+                    radius: 20.0,
+                    backgroundImage: NetworkImage('https://cdn.iconscout.com/icon/free/png-256/avatar-380-456332.png'),
+                  ),
+                  const SizedBox(width: 20.0),
+                  Text(
+                    course.creator != null ? '${course.creatorId!.substring(0, min(course.creatorId!.length, 27))} ${course.creatorId!.length > 27 ? '...' : ''}' : 'Sin Creador',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                ],
+              )
+            ),
+          ) ,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Column(

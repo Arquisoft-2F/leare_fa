@@ -5,9 +5,9 @@ import 'package:leare_fa/models/models.dart';
 class GraphQLCategory {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
 
-  Future<List<Course>> getCoursesByCategory({ required List<String> categories }) async {
+  Future<List<Course>> getCoursesByCategory({ required String category }) async {
     String x = r'''query getCoursesByCategory($categories: [String]!) {
-      coursesByCategory(q: $cateogories) {
+      coursesByCategory(categories: $categories) {
         course_id
         course_name
         course_description
@@ -23,7 +23,7 @@ class GraphQLCategory {
           fetchPolicy: FetchPolicy.noCache,
           document: gql(x),
           variables: {
-            'categories': categories,
+            'categories': [category],
           },
         )
       );

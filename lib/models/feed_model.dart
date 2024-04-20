@@ -18,6 +18,7 @@ class Course {
   final String name;
   final String description;
   final String picture;
+  final String? creatorId;
   final Creator? creator;
 
   Course({
@@ -25,6 +26,7 @@ class Course {
     required this.name,
     required this.description,
     required this.picture,
+    required this.creatorId,
     required this.creator,
   });
 
@@ -33,6 +35,7 @@ class Course {
     name: map['course_name'],
     description: map['course_description'],
     picture: map['picture_id'],
+    creatorId: map['creator_id'],
     creator: map['creator'] != null ? Creator.fromMap(map: map['creator']) : null,
   );
 }

@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:leare_fa/models/models.dart';
+import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/course_page.dart';
 import 'package:leare_fa/utils/graphql_feed.dart';
 import 'package:leare_fa/widgets/widgets.dart';
@@ -46,11 +47,14 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 20.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    cat.category.name,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontWeight: FontWeight.bold,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, '/category', arguments: CategoryArguments(cat.category)),
+                    child: Text(
+                      cat.category.name,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
