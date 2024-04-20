@@ -55,7 +55,7 @@ class _CategoryPageState extends State<CategoryPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20.0),
-        child: categoryCourses.length > 0 ? ListView.builder(
+        child: categoryCourses.isNotEmpty ? ListView.builder(
           itemCount: categoryCourses.length,
           itemBuilder: (context, index) {
             print('$index ${categoryCourses.length}');
