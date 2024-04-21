@@ -115,9 +115,11 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                   );
                 } else {
+                  print('Empizo');
                   LoginModel loginRequest = await _graphQLLogin.login(
                       email: usernameController.text,
                       password: passwordController.text);
+                  print('Empizo');
                   if (loginRequest.flag == "true") {
                     prefs.setString('token', loginRequest.token as String);
                     Navigator.pushNamed(context, '/home');

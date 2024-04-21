@@ -31,8 +31,7 @@ class GraphQLLogin {
       if (result.hasException) {
         throw Exception(result.exception);
       }
-      if (result.data == null ||
-          result.data?['login'] == null) {
+      if (result.data == null || result.data?['login'] == null) {
         throw Exception("Not login");
       }
       LoginModel res = LoginModel.fromMap(map: result.data?['login']);
@@ -43,7 +42,7 @@ class GraphQLLogin {
 
       return res;
     } catch (error) {
-      throw Exception(error);
+      throw Exception("Not login");
     }
   }
 }

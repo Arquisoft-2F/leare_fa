@@ -60,7 +60,7 @@ class ChatPageState extends State<ChatPage> {
       try {
         print('Connecting to WebSocket...2');
         _channel = IOWebSocketChannel.connect(
-          Uri.parse('ws://35.215.20.21:8001/ws/${chat!.id}'),
+          Uri.parse('ws://35.215.29.86:8001/ws/${chat!.id}'),
         );
         print('Connecting to WebSocket...3');
         _loadMessages();
@@ -72,6 +72,13 @@ class ChatPageState extends State<ChatPage> {
           },
           onError: (error) {
             print('WebSocket error: $error');
+            String disconnect = (jsonEncode({
+              "type": "user_connected",
+              "user_id": _user.id,
+              "user_nickname": _user.firstName,
+            }));
+            _channel!.sink.add(disconnect);
+            _channel?.sink.close();
             // Handle WebSocket errors
           },
           onDone: () {
@@ -94,13 +101,13 @@ class ChatPageState extends State<ChatPage> {
       String userID = jwtDecodedToken['UserID'];
       String nickname = jwtDecodedToken['Username'];
       _user = types.User(id: userID, firstName: nickname);
+      users[userID] = _user;
     } catch (error) {
       // Handle error if fetching data fails
       print("Error fetching user data: $error");
     }
     List<MessageModel> mess = [];
     if (chat != null) {
-      print("HA");
       mess = await _graphQLChat.getMessages(chat!.id);
     }
     List<types.User> newUsers = [];
@@ -160,19 +167,20 @@ class ChatPageState extends State<ChatPage> {
     print(data);
     var s = json.decode(data);
     if (s['type'] == "message_sent") {
-      if (users[s['sender_nickname']] != null) {
-        setState(() {
-          _messages.insert(
-              0,
-              types.TextMessage(
-                  id: s['id'],
-                  author: users[s['sender_nickname']]!,
-                  text: s['content'],
-                  createdAt:
-                      DateTime.parse(s['created_at']).millisecondsSinceEpoch));
-        });
+      if (users[s['sender_id']] != null) {
+        _messages.insert(
+            0,
+            types.TextMessage(
+                id: s['id'],
+                author: users[s['sender_id']]!,
+                text: s['content'],
+                createdAt:
+                    DateTime.parse(s['created_at']).millisecondsSinceEpoch));
+        print(_messages[0]);
+        setState(() {});
       }
     } else if (s['type'] == "message_edited") {
+      print('edito');
       for (int i = 0; i < _messages.length; i++) {
         types.TextMessage? m = _messages[i] as types.TextMessage?;
         if (m?.id == s['id']) {
@@ -188,6 +196,7 @@ class ChatPageState extends State<ChatPage> {
         }
       }
     } else if (s['type'] == "message_deleted") {
+      print('elimino');
       for (int i = 0; i < _messages.length; i++) {
         types.TextMessage? m = _messages[i] as types.TextMessage?;
         if (m?.id == s['id']) {
@@ -207,14 +216,38 @@ class ChatPageState extends State<ChatPage> {
       "content": content,
     }));
     _channel!.sink.add(edited);
-    configureWS();
+    if (data.author == _user) {
+      for (int i = 0; i < _messages.length; i++) {
+        types.TextMessage? m = _messages[i] as types.TextMessage?;
+        if (m?.id == data.id) {
+          setState(() {
+            _messages[i] = types.TextMessage(
+                id: m!.id,
+                author: m.author,
+                text: content,
+                createdAt: data.createdAt);
+          });
+          break;
+        }
+      }
+    }
   }
 
   void _deleteMessage(types.TextMessage data) {
     String deleted =
         (jsonEncode({"type": "message_deleted", "message_id": data.id}));
     _channel!.sink.add(deleted);
-    configureWS();
+    if (data.author == _user) {
+      for (int i = 0; i < _messages.length; i++) {
+        types.TextMessage? m = _messages[i] as types.TextMessage?;
+        if (m?.id == data.id) {
+          setState(() {
+            _messages.removeAt(i);
+          });
+          break;
+        }
+      }
+    }
   }
 
   void _addMessage(types.Message message) {
@@ -226,12 +259,10 @@ class ChatPageState extends State<ChatPage> {
       "created_at": DateTime.now().toString()
     }));
     _channel!.sink.add(sended);
-    configureWS();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(chat == null || _user.id == "" || _channel == null || isLoaing);
     if (chat == null || _user.id == "" || _channel == null || isLoaing) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -373,6 +404,12 @@ class ChatPageState extends State<ChatPage> {
 
   @override
   void dispose() {
+    String disconnect = (jsonEncode({
+      "type": "user_connected",
+      "user_id": _user.id,
+      "user_nickname": _user.firstName,
+    }));
+    _channel!.sink.add(disconnect);
     _channel?.sink.close();
     super.dispose();
   }
