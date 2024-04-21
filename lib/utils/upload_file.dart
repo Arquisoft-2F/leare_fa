@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:universal_io/io.dart';
 
 Future<String> uploadFile({required File file, required String file_name, required String data_type, required String user_id, required String token}) async {
     try {
       // Create a multipart request
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://35.215.20.21:8001/documents/upload'),
+        Uri.parse('http://35.215.29.86:8001/documents/upload'),
       );
       request.fields['file_name'] = file_name;
       request.fields['data_type'] = data_type;

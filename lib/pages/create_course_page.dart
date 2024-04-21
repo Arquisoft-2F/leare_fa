@@ -1,7 +1,15 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:leare_fa/models/course_model.dart';
+import 'package:leare_fa/models/create_course_model.dart';
+import 'package:leare_fa/models/image_model.dart';
+import 'package:leare_fa/utils/graphql_categories.dart';
+import 'package:leare_fa/utils/graphql_create_course.dart';
+import 'package:leare_fa/utils/image_utils.dart';
+import 'package:leare_fa/utils/upload_file.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateCoursePage extends StatefulWidget {
   @override
@@ -9,19 +17,45 @@ class CreateCoursePage extends StatefulWidget {
 }
 
 class _CreateCoursePageState extends State<CreateCoursePage> {
+  ImageModel? img;
+  String? userId;
+  late SharedPreferences prefs;
   final TextEditingController _courseNameController = TextEditingController();
   final TextEditingController _courseDescriptionController =
       TextEditingController();
-  List<String> _selectedCategories = []; // Changed to a list
+  List<CategoryModel> _categories = [];
+  List<CategoryModel> _selectedCategories = [];
 
-  XFile? _imageFile;
-  final ImagePicker _picker = ImagePicker();
+  void initState() {
+    super.initState();
+    fetchToken();
+    fetchCategories();
+  }
 
-  Future<void> _getImage() async {
-    final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+  void selectImage() async {
+    ImageModel image = await pickImage(source: ImageSource.gallery);
+    if (image.base64 == null) {
+      return;
+    }
     setState(() {
-      _imageFile = pickedFile;
+      img = image;
+    });
+  }
+
+  void fetchToken() async {
+    prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> jwtDecodedToken =
+        JwtDecoder.decode(prefs.getString('token') as String);
+    String userID = jwtDecodedToken['UserID'];
+    setState(() {
+      userId = userID;
+    });
+  }
+
+  void fetchCategories() async {
+    var cats = await GraphQLCategories().getCategories();
+    setState(() {
+      _categories = cats;
     });
   }
 
@@ -29,9 +63,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Course'),
+        title: const Text('Crear Curso'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -47,12 +81,12 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   GestureDetector(
-                    onTap: _getImage,
-                    child: _imageFile == null
+                    onTap: selectImage,
+                    child: img == null
                         ? Container(
                             height: 200,
                             color: Colors.grey[200],
-                            child: Center(
+                            child: const Center(
                               child: Icon(
                                 Icons.add_photo_alternate,
                                 size: 50,
@@ -60,62 +94,55 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                               ),
                             ),
                           )
-                        : Image.file(
-                            File(_imageFile!.path),
+                        : Image.memory(
+                            img!.base64!,
                             height: 200,
                             fit: BoxFit.cover,
                           ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
                     controller: _courseNameController,
-                    decoration: InputDecoration(
-                      labelText: 'Course Name',
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre del Curso',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
                     controller: _courseDescriptionController,
                     maxLines: null,
-                    decoration: InputDecoration(
-                      labelText: 'Course Description',
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción del Curso',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: null,
-                          hint: Text('Select Category'),
-                          onChanged: (newValue) {
-                            if (newValue != null &&
-                                !_selectedCategories.contains(newValue)) {
-                              setState(() {
-                                _selectedCategories.add(newValue);
-                              });
-                            }
-                          },
-                          items: _categories.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                    ],
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<CategoryModel>(
+                    value: null,
+                    hint: const Text('Elige las categorías del curso'),
+                    onChanged: (newValue) {
+                      if (newValue != null &&
+                          !_selectedCategories.contains(newValue)) {
+                        setState(() {
+                          _selectedCategories.add(newValue);
+                        });
+                      }
+                    },
+                    items: _categories.map((CategoryModel value) {
+                      return DropdownMenuItem<CategoryModel>(
+                        value: value,
+                        child: Text(value.category_name),
+                      );
+                    }).toList(),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Wrap(
                     children: _selectedCategories.map((category) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Chip(
-                          label: Text(category),
+                          label: Text(category.category_name),
                           onDeleted: () {
                             setState(() {
                               _selectedCategories.remove(category);
@@ -130,21 +157,52 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              // Add your logic to save the course
+            onPressed: () async {
+              if (_courseNameController.text.isEmpty ||
+                  _courseDescriptionController.text.isEmpty ||
+                  _selectedCategories.isEmpty ||
+                  img == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Por favor, completa todos los campos'),
+                  ),
+                );
+                return; // No continúes si algún campo está vacío
+              }
+
+              var res = await uploadFile(
+                  file: File(img!.file),
+                  file_name: 'pp_$userId',
+                  data_type: 'imagen',
+                  user_id: userId!,
+                  token: prefs.getString('token')!);
+              CreateCourseModel course = CreateCourseModel(
+                course_name: _courseNameController.text,
+                course_description: _courseDescriptionController.text,
+                categories: _selectedCategories.map((e) => e.category_id).toList(),
+                picture_id: res,
+              );
+              var res2 = await GraphQLCreateCourse().createCourse(createCourseModel: course);
+              if (res2 == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Error al crear el curso'),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Curso $res2 creado correctamente'),
+                  ),
+                );
+                // Navigator.pop(context, course);
+              }
             },
-            child: Text('Create Course'),
+            child: const Text('Crear Curso'),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
         ],
       ),
     );
   }
-
-  static const List<String> _categories = [
-    'Category 1',
-    'Category 2',
-    'Category 3',
-    'Category 4'
-  ];
 }

@@ -1,4 +1,4 @@
-import 'dart:io';
+
 import 'dart:typed_data';
 
 import 'package:country_picker/country_picker.dart';
@@ -15,8 +15,9 @@ import 'package:leare_fa/utils/graphql_delete_user.dart';
 import 'package:leare_fa/utils/graphql_edit_password.dart';
 import 'package:leare_fa/utils/graphql_edit_user.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
-import 'package:leare_fa/utils/image_upload.dart';
+import 'package:leare_fa/utils/upload_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:universal_io/io.dart';
 
 import '../utils/image_utils.dart';
 
