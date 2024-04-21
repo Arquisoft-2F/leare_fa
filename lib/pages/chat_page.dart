@@ -347,44 +347,51 @@ class ChatPageState extends State<ChatPage> {
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              PopupMenuButton(
-                itemBuilder: (BuildContext contect) {
-                  return [
-                    const PopupMenuItem(
-                        value: "edit",
-                        child: Row(
-                          children: [Icon(Icons.edit), Text("Editar")],
-                        )),
-                    const PopupMenuItem(
-                        value: "delete",
-                        child: Row(
-                          children: [Icon(Icons.delete), Text("Eliminar")],
-                        )),
-                  ];
-                },
-                elevation: 50,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25)),
-                onSelected: (value) {
-                  switch (value) {
-                    case "edit":
-                      _dialogBuilder(context, message as types.TextMessage);
-                      break;
-                    case "delete":
-                      _deleteMessage(message as types.TextMessage);
-                      break;
-                    default:
-                      {
-                        print("Invalid choice");
-                      }
-                      break;
-                  }
-                },
-              )
-            ],
+            children: (message as types.TextMessage).author == _user
+                ? [
+                    PopupMenuButton(
+                      itemBuilder: (BuildContext contect) {
+                        return [
+                          const PopupMenuItem(
+                              value: "edit",
+                              child: Row(
+                                children: [Icon(Icons.edit), Text("Editar")],
+                              )),
+                          const PopupMenuItem(
+                              value: "delete",
+                              child: Row(
+                                children: [
+                                  Icon(Icons.delete),
+                                  Text("Eliminar")
+                                ],
+                              )),
+                        ];
+                      },
+                      elevation: 50,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)),
+                      onSelected: (value) {
+                        switch (value) {
+                          case "edit":
+                            _dialogBuilder(
+                                context, message as types.TextMessage);
+                            break;
+                          case "delete":
+                            _deleteMessage(message as types.TextMessage);
+                            break;
+                          default:
+                            {
+                              print("Invalid choice");
+                            }
+                            break;
+                        }
+                      },
+                    )
+                  ]
+                : [],
           ),
-          Bubble(
+          Expanded(
+              child: Bubble(
             color: _user.id != message.author.id ||
                     message.type == types.MessageType.image
                 ? const Color(0xfff5f5f7)
@@ -398,7 +405,7 @@ class ChatPageState extends State<ChatPage> {
                     ? BubbleNip.leftBottom
                     : BubbleNip.rightBottom,
             child: child,
-          )
+          ))
         ],
       );
 
