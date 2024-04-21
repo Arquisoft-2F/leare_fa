@@ -39,9 +39,11 @@ class MyApp extends StatelessWidget {
                 secondary: const Color.fromARGB(255, 98, 204, 252)),
             useMaterial3: true,
           ),
-          home: (JwtDecoder.isExpired(token as String) || token == null)
+          home: (token == null)
               ? const LandingPage()
-              : const NavScreen(),
+              : (JwtDecoder.isExpired(token!))
+                  ? const LandingPage()
+                  : const NavScreen(),
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),

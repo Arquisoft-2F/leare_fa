@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/user_model.dart';
+import 'package:leare_fa/pages/landing_page.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,6 +46,37 @@ class UserProfilePageState extends State<UserProfilePage> {
     });
   }
 
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Cerrar sesión"),
+          content: const Text("¿Desear cerrar sesión?"),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                  await prefs.clear();
+                  Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LandingPage()),
+                  (route) => false,
+                );
+              },
+              child: const Text("Confirmar"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text("Cancelar"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
   void fetchUserData() async {
     try {
       prefs = await SharedPreferences.getInstance();
@@ -85,6 +117,13 @@ class UserProfilePageState extends State<UserProfilePage> {
             Navigator.pop(context);
           },
         ),
+        actions: [ 
+          if (args.profileId == userId)
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _showLogoutConfirmationDialog,
+            )
+          ],
       ),
       body: SingleChildScrollView(
         child: Center(

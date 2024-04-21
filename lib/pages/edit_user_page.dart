@@ -126,36 +126,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-    void _showLogoutConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Cerrar sesión"),
-          content: const Text("¿Desear cerrar sesión?"),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                  await prefs.clear();
-                  Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LandingPage()),
-                  (route) => false,
-                );
-              },
-              child: const Text("Confirmar"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-              child: const Text("Cancelar"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+    
 
   void _showDeleteAccountConfirmationDialog() {
     showDialog(
@@ -207,13 +178,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Navigator.pop(context, true);
           },
         ),
-        actions: [ 
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _showLogoutConfirmationDialog,
-            )
-          ],
-        
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
