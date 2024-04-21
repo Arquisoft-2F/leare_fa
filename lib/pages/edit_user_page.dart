@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -40,7 +42,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _nationalityController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
   final TextEditingController _linkedinController = TextEditingController();
   final TextEditingController _twitterController = TextEditingController();
   final TextEditingController _facebookController = TextEditingController();
@@ -107,7 +109,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
        _lastNameController.text = user.lastname;
        _nicknameController.text = user.nickname;
        _emailController.text = user.email;
-       _nationalityController.text = user.nationality;
+       _countryController.text = user.nationality;
        _linkedinController.text = user.linkedin_link as String;
        _twitterController.text = user.twitter_link as String;
        _facebookController.text = user.facebook_link as String;
@@ -318,39 +320,58 @@ class _EditProfilePageState extends State<EditProfilePage> {
               children: [
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: "Nombre"),
+                  decoration: const InputDecoration(labelText: "Nombre", border: OutlineInputBorder()),
+                  
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: _lastNameController,
-                  decoration: const InputDecoration(labelText: "Apellido"),
+                  decoration: const InputDecoration(labelText: "Apellido", border: OutlineInputBorder()),
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: _nicknameController,
-                  decoration: const InputDecoration(labelText: "Username"),
+                  decoration: const InputDecoration(labelText: "Username", border: OutlineInputBorder()),
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: "Username"),
+                  decoration: const InputDecoration(labelText: "Username", border: OutlineInputBorder()),
                 ),
-                TextFormField(
-                  controller: _nationalityController,
-                  decoration: const InputDecoration(labelText: "Nacionalidad"),
+                const SizedBox(height: 15),
+                TextField(
+                  readOnly: true,
+                  controller: _countryController,
+                  decoration: const InputDecoration(labelText: "Nacionalidad", border: OutlineInputBorder(), suffixIcon: Icon(Icons.arrow_drop_down)),
+                  onTap: () { showCountryPicker(
+                    context: context,
+                    showPhoneCode: false,
+                    onSelect: (Country country) {
+                      setState(() {
+                        _countryController.text = country.name;
+                      });
+                    });
+                  },
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: _linkedinController,
-                  decoration: const InputDecoration(labelText: "LinkedIn"),
+                  decoration: const InputDecoration(labelText: "LinkedIn", border: OutlineInputBorder()),
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: _twitterController,
-                  decoration: const InputDecoration(labelText: "Twitter"),
+                  decoration: const InputDecoration(labelText: "Twitter", border: OutlineInputBorder()),
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: _facebookController,
-                  decoration: const InputDecoration(labelText: "Facebook"),
+                  decoration: const InputDecoration(labelText: "Facebook", border: OutlineInputBorder()),
                 ),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: _webpageController,
-                  decoration: const InputDecoration(labelText: "Pagina Web"),
+                  decoration: const InputDecoration(labelText: "Pagina Web", border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
@@ -361,7 +382,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       user.lastname = _lastNameController.text;
                       user.nickname = _nicknameController.text;
                       user.email = _emailController.text;
-                      user.nationality = _nationalityController.text;
+                      user.nationality = _countryController.text;
                       user.linkedin_link = _linkedinController.text;
                       user.twitter_link = _twitterController.text;
                       user.facebook_link = _facebookController.text;

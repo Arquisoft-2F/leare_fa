@@ -55,7 +55,7 @@ class NavScreen extends StatelessWidget {
             label: 'Perfil',
           ),
         ],
-        currentIndex: routes.indexOf(ModalRoute.of(context)!.settings.name!),
+        currentIndex: routes.contains(ModalRoute.of(context)!.settings.name!) ? routes.indexOf(ModalRoute.of(context)!.settings.name!) : 0,
         onTap: (index) async { 
             if (index == 3) {
               SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -70,7 +70,7 @@ class NavScreen extends StatelessWidget {
 
           },
       ),
-      body: pages[ModalRoute.of(context)!.settings.name!],
+      body: pages[ModalRoute.of(context)!.settings.name!] ?? const HomePage(),
     );
   }
 }

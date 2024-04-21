@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/create_course_page.dart';
 import 'package:leare_fa/pages/create_section_page.dart';
@@ -38,7 +39,9 @@ class MyApp extends StatelessWidget {
                 secondary: const Color.fromARGB(255, 98, 204, 252)),
             useMaterial3: true,
           ),
-          home: LandingPage(),
+          home: (JwtDecoder.isExpired(token as String) || token == null)
+              ? const LandingPage()
+              : const NavScreen(),
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),

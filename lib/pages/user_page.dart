@@ -27,6 +27,7 @@ class UserProfilePageState extends State<UserProfilePage> {
   var args;
   late UserModel user;
   late String userId;
+  late String role;
   final GraphQLUser _graphQLUser = GraphQLUser();
 
   @override
@@ -49,9 +50,11 @@ class UserProfilePageState extends State<UserProfilePage> {
       prefs = await SharedPreferences.getInstance();
       Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
       String userID = jwtDecodedToken['UserID'];
+      String rol = jwtDecodedToken['Role'];
       user = await _graphQLUser.userbyId(id: args.profileId as String);
       setState(() {
         userId = userID;
+        role = rol;
         user = user;
         _isLoading = false; // Data is fetched, no longer loading
       });
@@ -173,7 +176,7 @@ class UserProfilePageState extends State<UserProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  args.profileId == userId ? 
+                  (args.profileId == userId) || (role == 'admin') ? 
                   Row(children: [
                     ElevatedButton(
                       onPressed: () async {
