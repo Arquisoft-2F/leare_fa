@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                       TextButton(
                         onPressed: () => Navigator.pushNamed(context, '/category', arguments: CategoryArguments(cat.category)),
                         child: Text(
-                          'Ver más',
+                          'Ver más >',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
