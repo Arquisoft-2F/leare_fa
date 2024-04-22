@@ -43,10 +43,8 @@ class GraphQLCreateCourse {
       }
       if (result.data == null || result.data?['createCourse'] == null) {
         throw Exception("No Courses");
-      }
-
-      Future<String> res = (result.data?['createCourse']);
-
+      } 
+      String res = result.data?['createCourse']['course_id'];
       return res;
 
     } catch (error) {

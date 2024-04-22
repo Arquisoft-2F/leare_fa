@@ -14,7 +14,7 @@ class CourseResult extends StatelessWidget {
     final a = searchResult.post.description!.length;
     return ListTile(
       title: Text(searchResult.post.name),
-      subtitle: Text('${searchResult.post.description!.substring(0, max(a, 20))} ${a > 20 ? '...' : ''}'),
+      subtitle: Text('${searchResult.post.description!.substring(0, min(a, 20))} ${a > 20 ? '...' : ''}'),
       leading: Container(
         width: 50.0,
         height: 50.0,
