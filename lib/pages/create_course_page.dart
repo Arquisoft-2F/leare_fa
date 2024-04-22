@@ -171,7 +171,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               }
 
               var res = await uploadFile(
-                  file: File(img!.file),
+                  file: img!.base64!,
                   file_name: 'pp_$userId',
                   data_type: 'imagen',
                   user_id: userId!,
@@ -179,10 +179,12 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               CreateCourseModel course = CreateCourseModel(
                 course_name: _courseNameController.text,
                 course_description: _courseDescriptionController.text,
-                categories: _selectedCategories.map((e) => e.category_id).toList(),
+                categories:
+                    _selectedCategories.map((e) => e.category_id).toList(),
                 picture_id: res,
               );
-              var res2 = await GraphQLCreateCourse().createCourse(createCourseModel: course);
+              var res2 = await GraphQLCreateCourse()
+                  .createCourse(createCourseModel: course);
               if (res2 == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
