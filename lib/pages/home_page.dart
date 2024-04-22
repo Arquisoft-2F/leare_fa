@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/models/models.dart';
 import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/course_page.dart';
@@ -47,15 +48,26 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 20.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/category', arguments: CategoryArguments(cat.category)),
-                    child: Text(
-                      cat.category.name,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontWeight: FontWeight.bold,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        cat.category.name,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
+                      TextButton(
+                        onPressed: () => Navigator.pushNamed(context, '/category', arguments: CategoryArguments(cat.category)),
+                        child: Text(
+                          'Ver más >',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 10.0),
@@ -72,12 +84,15 @@ class _HomePageState extends State<HomePage> {
                     );
                   }).toList(),
                   options: CarouselOptions(
-                    aspectRatio: 16/9,
                     initialPage: 0,
+                    height: 230,
                     scrollDirection: Axis.horizontal,
                     enableInfiniteScroll: false,
-                    enlargeCenterPage: true,
+                    viewportFraction: Responsive.isDesktop(context) ? 0.3 : Responsive.isTablet(context) ? 0.4 : 0.8,
+                    enlargeCenterPage: false,
+                    disableCenter: true,
                     animateToClosest: true,
+                    padEnds: false
                   ),
                 ),
               ],

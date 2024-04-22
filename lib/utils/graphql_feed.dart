@@ -41,6 +41,8 @@ class GraphQLFeed {
         throw Exception("Not feed");
       }
 
+      print(result.data?['listCoursesbyCategories']);
+
       List<FeedModel> res = (result.data?['listCoursesbyCategories'] as List).map((e) => FeedModel.fromMap(map: e)).toList();
 
       print(res.isNotEmpty ? res[0].category.name : null);
@@ -52,3 +54,4 @@ class GraphQLFeed {
     }
   }
 }
+

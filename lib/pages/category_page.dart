@@ -19,7 +19,8 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage> {
   List<Course> categoryCourses = [];
   final GraphQLCategory _graphQLCategory = GraphQLCategory();
-  var args;
+  bool isLoading = false;
+  dynamic args;
 
   @override
   void initState() {
@@ -28,8 +29,13 @@ class _CategoryPageState extends State<CategoryPage> {
       setState(() {
         args = (ModalRoute.of(context)?.settings.arguments ?? CategoryArguments(null)) as CategoryArguments;
       });
-      print(args.category.name);
+      setState(() {
+        isLoading = true;
+      });
       fetchCategoryCourses();
+      setState(() {
+        isLoading = false;
+      });
     });
   }
 
@@ -40,7 +46,7 @@ class _CategoryPageState extends State<CategoryPage> {
         setState(() {
           categoryCourses = categoryCourses;
         });
-        print(categoryCourses.toString());
+        print(categoryCourses);
       }
     } catch (error) {
       print("Error fetching Data");
@@ -49,6 +55,11 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(args != null ? args.category?.name : 'Categorías'),
@@ -58,7 +69,6 @@ class _CategoryPageState extends State<CategoryPage> {
         child: categoryCourses.isNotEmpty ? ListView.builder(
           itemCount: categoryCourses.length,
           itemBuilder: (context, index) {
-            print('$index ${categoryCourses.length}');
             return index%2 != 0 ? Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

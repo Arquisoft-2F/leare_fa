@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:leare_fa/models/models.dart';
+import 'package:leare_fa/widgets/widgets.dart';
 
 class CourseCard extends StatelessWidget {
   final Course course;
@@ -17,7 +18,7 @@ class CourseCard extends StatelessWidget {
     //   "owner_id": "d72aa1f5-d20e-48a2-9e52-935da05ebd1b",
     // };
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: MediaQuery.of(context).size.width * ( Responsive.isDesktop(context) ? 0.3 : Responsive.isTablet(context) ? 0.4 : 0.9),
       margin: const EdgeInsets.symmetric(horizontal: 3.0),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -40,7 +41,7 @@ class CourseCard extends StatelessWidget {
                 topRight: Radius.circular(28.0),
               ),
               image: DecorationImage(
-                image: NetworkImage(course.picture != 'notFound' && course.picture.isNotEmpty ? course.picture : "https://www.explore.com/img/gallery/the-50-most-incredible-landscapes-in-the-whole-entire-world/intro-1672072042.jpg" ),
+                image: NetworkImage(course.picture != 'notFound' && course.picture.isNotEmpty ? course.picture : "assets/landscape.jpg" ),
                 fit: BoxFit.cover,
               ),
             ),
