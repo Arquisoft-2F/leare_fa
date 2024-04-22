@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -10,7 +10,6 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:leare_fa/models/chat/chat_message.dart';
 import 'package:leare_fa/models/chat/chat_response.dart';
 import 'package:leare_fa/utils/chat/graphql_chat.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../widgets/chat/chat_header.dart';
 
@@ -59,7 +58,7 @@ class ChatPageState extends State<ChatPage> {
       print('Connecting to WebSocket...1');
       try {
         print('Connecting to WebSocket...2');
-        _channel = IOWebSocketChannel.connect(
+        _channel = WebSocketChannel.connect(
           Uri.parse('ws://35.215.29.86:8001/ws/${chat!.id}'),
         );
         print('Connecting to WebSocket...3');
