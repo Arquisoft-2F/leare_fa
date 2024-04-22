@@ -37,7 +37,7 @@ class _SectionVideoState extends State<SectionVideo> {
         setState(() {
           final chewieController = ChewieController(
             videoPlayerController: _controller,
-            autoPlay: true,
+            autoInitialize: true,
             looping: true,
           );
 

@@ -57,8 +57,6 @@ class _SectionPageState extends State<SectionPage> {
         sectionIndexMap[args.wholeSections[i].section_id] = i;
       }
 
-      print("SectionId es:");
-      print(sectionId);
       if (sectionId != '') {
         fetchSectionData(sectionId);
       }
@@ -67,10 +65,6 @@ class _SectionPageState extends State<SectionPage> {
       prevSection = findPreviousSectionIndex(currentSection);
       nextSection = findNextSectionIndex(currentSection);
     });
-    
-    setState(() {
-      isLoading = false;
-    });
   }
 
   void fetchSectionData(String sectionId) async {
@@ -78,11 +72,11 @@ class _SectionPageState extends State<SectionPage> {
       print("Entre a fetch section");
       print(sectionId);
       section = await _graphQLSection.sectionById(id: sectionId);
+      print(section.video_id);
       setState(() {
         section = section;
-      });
-      setState(() {
         video_id = section.video_id;
+        isLoading = false;
       });
     } catch (error) {
       print("Error fetching section data: $error");
