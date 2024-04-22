@@ -6,7 +6,7 @@ class PruebasCurso extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var courseId = "34d207bc-cb98-4b25-86a1-55b5db19a354";
+    var courseId = "83951a24-07fc-489d-8342-d14128d6813b";
     return Scaffold(
       body: Container(
         child: ElevatedButton(
