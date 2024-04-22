@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:leare_fa/models/models.dart';
+import 'package:leare_fa/widgets/widgets.dart';
 
 class CourseCard extends StatelessWidget {
   final Course course;
@@ -17,7 +18,7 @@ class CourseCard extends StatelessWidget {
     //   "owner_id": "d72aa1f5-d20e-48a2-9e52-935da05ebd1b",
     // };
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: MediaQuery.of(context).size.width * ( Responsive.isDesktop(context) ? 0.3 : Responsive.isTablet(context) ? 0.4 : 0.9),
       margin: const EdgeInsets.symmetric(horizontal: 3.0),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,

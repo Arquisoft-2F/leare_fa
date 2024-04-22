@@ -54,7 +54,7 @@ class Creator {
   static Creator fromMap({required Map map}) => Creator(
     id: map['id'],
     nickname: map['nickname'],
-    picture: map['picture_id'],
+    picture: map['picture_id'] != null ? map['picture_id'] : '',
   );
 }
 
