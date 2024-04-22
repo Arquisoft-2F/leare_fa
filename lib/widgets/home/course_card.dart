@@ -41,7 +41,7 @@ class CourseCard extends StatelessWidget {
                 topRight: Radius.circular(28.0),
               ),
               image: DecorationImage(
-                image: NetworkImage(course.picture != 'notFound' && course.picture.isNotEmpty ? course.picture : "https://www.explore.com/img/gallery/the-50-most-incredible-landscapes-in-the-whole-entire-world/intro-1672072042.jpg" ),
+                image: NetworkImage(course.picture != 'notFound' && course.picture.isNotEmpty ? course.picture : "assets/landscape.jpg" ),
                 fit: BoxFit.cover,
               ),
             ),
