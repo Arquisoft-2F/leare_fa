@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 class SectionVideo extends StatefulWidget {
   final String videoUrl;
@@ -11,6 +12,15 @@ class SectionVideo extends StatefulWidget {
 
 class _SectionVideoState extends State<SectionVideo> {
   late VideoPlayerController _controller;
+  late Chewie playerWidget;
+  late ChewieController chewieController;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    chewieController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -23,7 +33,19 @@ class _SectionVideoState extends State<SectionVideo> {
         : VideoPlayerController.networkUrl(Uri.parse(videoUrl))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
+        setState(() {
+          final chewieController = ChewieController(
+            videoPlayerController: _controller,
+            autoPlay: true,
+            looping: true,
+          );
+
+          setState(() {
+            playerWidget = Chewie(
+              controller: chewieController,
+            );
+          });
+        });
       });
   }
 
@@ -38,39 +60,14 @@ class _SectionVideoState extends State<SectionVideo> {
                 _controller.value.isInitialized
                     ? AspectRatio(
                         aspectRatio: _controller.value.aspectRatio,
-                        child: VideoPlayer(_controller),
+                        child: playerWidget,
                       )
                     : Container(),
-                // Add a Positioned widget to place the button at the center
-                Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _controller.value.isPlaying
-                                ? _controller.pause()
-                                : _controller.play();
-                          });
-                        },
-                        child: Icon(
-                          _controller.value.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                        )),
-                  ),
-                ),
               ],
             ),
           ),
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

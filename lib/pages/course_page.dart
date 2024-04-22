@@ -152,7 +152,7 @@ class _CoursePageState extends State<CoursePage> {
                                 icon: const Icon(
                                   Icons.arrow_back_ios_new_outlined,
                                   color: Color.fromRGBO(255, 255, 255, 1.0),
-                                  size: 35,
+                                  size: 24,
                                 )),
                             Row(
                               children: [
@@ -161,14 +161,14 @@ class _CoursePageState extends State<CoursePage> {
                                     icon: const Icon(
                                       Icons.share,
                                       color: Color.fromRGBO(255, 255, 255, 1.0),
-                                      size: 35,
+                                      size: 24,
                                     )),
                                 IconButton(
                                     onPressed: () {},
                                     icon: const Icon(
                                       Icons.more_vert,
                                       color: Color.fromRGBO(255, 255, 255, 1.0),
-                                      size: 40,
+                                      size: 29,
                                     )),
                               ],
                             )
@@ -245,8 +245,8 @@ class _CoursePageState extends State<CoursePage> {
                           height: 10,
                         ),
                         ModuleAccordion(
-                          moduleList: course.modules,
-                        )
+                            moduleList: course.modules,
+                            course_id: course.course_id)
                       ],
                     ),
                   )

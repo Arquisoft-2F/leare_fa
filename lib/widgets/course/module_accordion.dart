@@ -6,8 +6,10 @@ import 'package:leare_fa/pages/pages.dart';
 
 class ModuleAccordion extends StatelessWidget {
   final List<ModuleModel> moduleList;
-  static const listaPrueba = ['1', '2', '3'];
-  const ModuleAccordion({super.key, required this.moduleList});
+  final String course_id;
+
+  const ModuleAccordion(
+      {super.key, required this.moduleList, required this.course_id});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,8 @@ class ModuleAccordion extends StatelessWidget {
       children: moduleList.map<AccordionSection>((module) {
         var moduleName = module.module_name;
         var sections = module.sections;
+        sections.sort((a, b) => a.pos_index.compareTo(b.pos_index));
+        print(sections);
         return AccordionSection(
             isOpen: false,
             header: Text(moduleName,
@@ -49,7 +53,7 @@ class ModuleAccordion extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushNamed(context, '/section',
                           arguments: SectionArguments(
-                              section.section_id, module.sections));
+                              section.section_id, module.sections, course_id));
                     },
                     child: Text(
                       sectionName,
