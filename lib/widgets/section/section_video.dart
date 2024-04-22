@@ -62,8 +62,6 @@ class _SectionVideoState extends State<SectionVideo> {
                 debugPrint("${info.visibleFraction} of my widget is visible");
                 if (info.visibleFraction == 0) {
                   _controller.pause();
-                } else {
-                  _controller.play();
                 }
               },
               child: Stack(
