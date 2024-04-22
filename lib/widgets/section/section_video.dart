@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class SectionVideo extends StatefulWidget {
   final String videoUrl;
@@ -55,15 +56,26 @@ class _SectionVideoState extends State<SectionVideo> {
       child: Stack(
         children: [
           Center(
-            child: Stack(
-              children: [
-                _controller.value.isInitialized
-                    ? AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: playerWidget,
-                      )
-                    : Container(),
-              ],
+            child: VisibilityDetector(
+              key: Key("videosection"),
+              onVisibilityChanged: (VisibilityInfo info) {
+                debugPrint("${info.visibleFraction} of my widget is visible");
+                if (info.visibleFraction == 0) {
+                  _controller.pause();
+                } else {
+                  _controller.play();
+                }
+              },
+              child: Stack(
+                children: [
+                  _controller.value.isInitialized
+                      ? AspectRatio(
+                          aspectRatio: _controller.value.aspectRatio,
+                          child: playerWidget,
+                        )
+                      : Container(),
+                ],
+              ),
             ),
           ),
         ],
