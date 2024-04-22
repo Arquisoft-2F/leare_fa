@@ -156,20 +156,14 @@ class _CoursePageState extends State<CoursePage> {
                                 )),
                             Row(
                               children: [
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.share,
-                                      color: Color.fromRGBO(255, 255, 255, 1.0),
-                                      size: 24,
-                                    )),
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.more_vert,
-                                      color: Color.fromRGBO(255, 255, 255, 1.0),
-                                      size: 29,
-                                    )),
+                                // IconButton(
+                                //     onPressed: () {},
+                                //     icon: const Icon(
+                                //       Icons.share,
+                                //       color: Color.fromRGBO(255, 255, 255, 1.0),
+                                //       size: 24,
+                                //     )),
+                                BotonDrowdown()
                               ],
                             )
                           ],

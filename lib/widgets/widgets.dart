@@ -13,3 +13,4 @@ export 'section/resource_card.dart';
 export 'edit_course/edit_course_form.dart';
 export 'home/home.dart';
 export 'responsive.dart';
+export 'course/boton_dropdown.dart';
