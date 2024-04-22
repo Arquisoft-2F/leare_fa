@@ -1,34 +1,78 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:chewie/chewie.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:leare_fa/models/models.dart';
+import 'package:leare_fa/utils/graphq_create_section.dart';
+import 'package:leare_fa/utils/upload_file.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
+class CreateSectionArguments {
+  final String module_id;
+  final int pos_index;
+  CreateSectionArguments(this.module_id, this.pos_index);
+}
+
 class CreateSectionPage extends StatefulWidget {
+  final String module_id;
+  final int pos_index;
+
+  const CreateSectionPage({super.key, this.module_id = '', this.pos_index = 0});
+  
   @override
   _CreateSectionPageState createState() => _CreateSectionPageState();
 }
 
 class _CreateSectionPageState extends State<CreateSectionPage> {
+  late SharedPreferences prefs;
+  SectionModel section = SectionModel(
+    section_id: '',
+    section_name: '',
+    section_content: '',
+    video_id: '',
+    files_array: [],
+    pos_index: 0,
+  );
+  String? userId;
   late VideoPlayerController _videoController;
+  late ChewieController _chewieController;
   File? _videoFile;
   List<File> _documents = [];
   TextEditingController _sectionNameController = TextEditingController();
   TextEditingController _sectionContentController = TextEditingController();
+  var args;
+  GraphQLCreateSection _graphQLCreateSection = GraphQLCreateSection();
 
   @override
   void initState() {
     super.initState();
-    _videoController = VideoPlayerController.network(
-            'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')
-        ..initialize().then((_) {
-          setState(() {});
+    fetchToken();
+        Future.delayed(Duration.zero, () {
+      setState(() {
+        args = (ModalRoute.of(context)?.settings.arguments ??
+            CreateSectionArguments('',0)) as CreateSectionArguments;
+      });
+    });
+    _videoController = VideoPlayerController.networkUrl(
+        Uri.parse('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
+      ..initialize().then((_) {
+        setState(() {
+          _chewieController = ChewieController(
+            videoPlayerController: _videoController,
+            looping: false,
+          );
         });
+      });
   }
 
   @override
   void dispose() {
     _videoController.dispose();
+    _chewieController.dispose();
     super.dispose();
   }
 
@@ -42,16 +86,31 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
         _videoFile = file;
         _videoController = VideoPlayerController.file(_videoFile!);
         _videoController.initialize().then((_) {
-          setState(() {});
+          setState(() {
+            _chewieController = ChewieController(
+              videoPlayerController: _videoController,
+              looping: false,
+            );
+          });
         });
       });
     }
+  }
+  void fetchToken() async {
+    prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> jwtDecodedToken =
+    JwtDecoder.decode(prefs.getString('token') as String);
+    String userID = jwtDecodedToken['UserID'];
+    setState(() {
+      userId = userID;
+    });
   }
 
   void _removeVideo() {
     setState(() {
       _videoFile = null;
       _videoController.dispose();
+      _chewieController.dispose();
     });
   }
 
@@ -73,13 +132,71 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
     });
   }
 
+  void _saveSection() async {
+    var res1 = await uploadFile(
+      file: _videoFile!.readAsBytesSync(),
+      file_name: 'video_${DateTime.now().millisecondsSinceEpoch}',
+      data_type: _videoFile!.path.split('.').last,
+      user_id: userId!,
+      token: prefs.getString('token') as String,
+    );
+    
+    List<Uint8List> files = _documents.map((document) => document.readAsBytesSync()).toList();
+    List<String> file_names = _documents.map((document) => document.path.split('/').last).toList();
+    List<String> res2 = [];
+    try {
+    for (int i = 0; i < files.length; i++) {
+      var fileId = await uploadFile(
+        file: files[i],
+        file_name: file_names[i],
+        data_type: _documents[i].path.split('.').last,
+        user_id: userId!,
+        token: prefs.getString('token') as String,
+      );
+      res2.add(fileId);
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+    if(res1 != null && res2 != null) {
+      print('Upload Success!');
+      setState(() {
+        section = SectionModel(
+          section_id: '',
+          section_name: _sectionNameController.text,
+          section_content: _sectionContentController.text,
+          video_id: res1,
+          files_array: res2,
+          pos_index: args.pos_index,
+        );
+      });
+    } else {
+      print('Error saving section');
+    }
+    var res3 = await _graphQLCreateSection.createSection(sectionModel: section, module_id: args.module_id);
+    if(res3 != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sección creada exitosamente'),
+        ),
+      );
+      Navigator.pop(context, true);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error al crear la sección'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Section'),
+        title: const Text('Create Section'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -92,30 +209,30 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
           children: [
             TextField(
               controller: _sectionNameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Section Name',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _sectionContentController,
               maxLines: null,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Section Content',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildVideoSection(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildDocumentSection(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Add logic to save section details
+                _saveSection();
               },
-              child: Text('Save Section'),
+              child: const Text('Guardar Sección'),
             ),
           ],
         ),
@@ -127,56 +244,32 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Video Upload',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         _videoFile != null
             ? Column(
                 children: [
                   AspectRatio(
                     aspectRatio: _videoController.value.aspectRatio,
-                    child: VideoPlayer(_videoController),
+                    child: Chewie(
+                      controller: _chewieController,
+                    ),
                   ),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (_videoController.value.isPlaying) {
-                              _videoController.pause();
-                            } else {
-                              _videoController.play();
-                            }
-                          });
-                        },
-                        icon: Icon(_videoController.value.isPlaying ? Icons.pause : Icons.play_arrow),
-                      ),
-                      SizedBox(width: 8),
-                      IconButton(
-                        onPressed: () {
-                          final newValue = _videoController.value.position.inSeconds + 10;
-                          _videoController.seekTo(Duration(seconds: newValue));
-                        },
-                        icon: Icon(Icons.forward_10),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   ElevatedButton.icon(
                     onPressed: _removeVideo,
-                    icon: Icon(Icons.remove_circle),
-                    label: Text('Remove Video'),
+                    icon: const Icon(Icons.remove_circle),
+                    label: const Text('Remove Video'),
                   ),
                 ],
               )
             : ElevatedButton.icon(
                 onPressed: _pickVideo,
-                icon: Icon(Icons.video_library),
-                label: Text('Upload Video'),
+                icon: const Icon(Icons.video_library),
+                label: const Text('Upload Video'),
               ),
       ],
     );
@@ -186,11 +279,11 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Documents',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: _documents
@@ -202,7 +295,7 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
                       Expanded(child: Text(document.path.split('/').last)),
                       IconButton(
                         onPressed: () => _removeDocument(document),
-                        icon: Icon(Icons.remove_circle),
+                        icon: const Icon(Icons.remove_circle),
                       ),
                     ],
                   ),
@@ -210,11 +303,11 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
               )
               .toList(),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         ElevatedButton.icon(
           onPressed: _pickDocument,
-          icon: Icon(Icons.attach_file),
-          label: Text('Upload Document'),
+          icon: const Icon(Icons.attach_file),
+          label: const Text('Upload Document'),
         ),
       ],
     );

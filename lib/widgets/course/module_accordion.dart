@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:leare_fa/models/course_model.dart';
+import 'package:leare_fa/pages/create_section_page.dart';
 import 'package:leare_fa/pages/pages.dart';
 
 class ModuleAccordion extends StatelessWidget {
@@ -9,7 +10,8 @@ class ModuleAccordion extends StatelessWidget {
   final String course_id;
 
   const ModuleAccordion(
-      {super.key, required this.moduleList, required this.course_id});
+      {Key? key, required this.moduleList, required this.course_id})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +21,10 @@ class ModuleAccordion extends StatelessWidget {
       headerBorderColorOpened: Theme.of(context).colorScheme.inversePrimary,
       // headerBorderWidth: 1,
       headerBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      headerBackgroundColorOpened: Theme.of(context).colorScheme.inversePrimary,
-      contentBackgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      headerBackgroundColorOpened:
+          Theme.of(context).colorScheme.inversePrimary,
+      contentBackgroundColor:
+          Theme.of(context).colorScheme.surfaceVariant,
       contentBorderColor: Theme.of(context).colorScheme.surfaceVariant,
       contentBorderWidth: 3,
       contentHorizontalPadding: 10,
@@ -45,26 +49,50 @@ class ModuleAccordion extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.bold)),
             content: Column(
-              children: sections.map<Padding>((section) {
-                var sectionName = section.section_name;
-                return Padding(
+              children: [
+                ...sections.map<Padding>((section) {
+                  var sectionName = section.section_name;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/section',
+                            arguments: SectionArguments(
+                                section.section_id!,
+                                module.sections,
+                                course_id));
+                      },
+                      child: Text(
+                        sectionName,
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/section',
-                          arguments: SectionArguments(
-                              section.section_id, module.sections, course_id));
+                      Navigator.pushNamed(context, '/createSection', arguments: CreateSectionArguments(module.module_id, module.sections.length));
                     },
-                    child: Text(
-                      sectionName,
+                    icon: Icon(Icons.add),
+                    label: Text(
+                      'Create New Section',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant,
                           fontSize: 18,
                           fontWeight: FontWeight.normal),
                     ),
                   ),
-                );
-              }).toList(),
+                ),
+              ],
             ));
       }).toList(),
     );

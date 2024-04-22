@@ -24,6 +24,7 @@ class SectionPage extends StatefulWidget {
 }
 
 class _SectionPageState extends State<SectionPage> {
+  bool isLoading = true;
   late SectionModel section = SectionModel(
       section_id: '',
       section_name: '',
@@ -66,6 +67,10 @@ class _SectionPageState extends State<SectionPage> {
       prevSection = findPreviousSectionIndex(currentSection);
       nextSection = findNextSectionIndex(currentSection);
     });
+    
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void fetchSectionData(String sectionId) async {
@@ -104,6 +109,14 @@ class _SectionPageState extends State<SectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    else{
     setState(() {
       args = (ModalRoute.of(context)?.settings.arguments ??
           SectionArguments('', [], '')) as SectionArguments;
@@ -190,7 +203,7 @@ class _SectionPageState extends State<SectionPage> {
                               Navigator.pushNamed(context, '/course',
                                   arguments: CourseArguments(args.course_id));
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.home,
                               size: 30,
                               color: Colors.blueAccent,
@@ -220,4 +233,5 @@ class _SectionPageState extends State<SectionPage> {
       ),
     );
   }
+}
 }

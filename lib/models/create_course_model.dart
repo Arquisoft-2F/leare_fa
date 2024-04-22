@@ -1,16 +1,20 @@
 import 'package:leare_fa/models/course_model.dart';
 
 class CreateCourseModel {
+  String course_id;
   String course_name;
   String course_description;
   String picture_id;
   List<String> categories;
+  bool is_public;
 
   CreateCourseModel({
+    this.course_id = '',
     required this.course_name,
     required this.course_description,
     required this.picture_id,
     required this.categories,
+    this.is_public = false,
   });
 
   static CreateCourseModel fromMap({required Map map}) {

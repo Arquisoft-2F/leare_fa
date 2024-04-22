@@ -56,7 +56,9 @@ class MyApp extends StatelessWidget {
             '/category': (context) => const CategoryPage(),
             '/course': (context) => const CoursePage(),
             '/createCourse': (context) => CreateCoursePage(),
+            '/editCourse': (context) => const EditCoursePage(),
             '/section': (context) => const SectionPage(),
+            '/createSection': (context) => const CreateSectionPage(),
           },
         ));
   }

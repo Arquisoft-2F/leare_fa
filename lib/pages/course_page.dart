@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:leare_fa/utils/graphql_create_module.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 import 'package:leare_fa/models/course_model.dart';
 import 'package:leare_fa/utils/graphql_course.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
 import 'package:leare_fa/models/user_model.dart';
 
-//Clase para recibir los argumentos
 class CourseArguments {
   final String course_id;
   CourseArguments(this.course_id);
 }
-//Clase para recibir los argumentos
 
 class CoursePage extends StatefulWidget {
   final String course_id;
@@ -21,63 +20,34 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
-  // static String moduleAmount = modules.length.toString();
   bool isLoading = true;
-  late CourseModel course = CourseModel(
-      course_id: '',
-      course_name: '',
-      course_description: '',
-      creator_id: '',
-      chat_id: '',
-      is_public: false,
-      picture_id:
-          'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png',
-      created_at: '',
-      updated_at: '',
-      categories: [],
-      modules: []);
-  late UserModel user = UserModel(
-      id: '',
-      name: '',
-      lastname: '',
-      nickname: '',
-      email: '',
-      nationality: '',
-      picture_id:
-          'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png',
-      created_at: '',
-      updated_at: '');
+  late CourseModel course;
+  late UserModel user;
   final GraphQLUser _graphQLUser = GraphQLUser();
-  String user_id = '';
   final GraphQLCourse _graphQLCourse = GraphQLCourse();
+  final GraphQLCreateModule _graphQLCreateModule = GraphQLCreateModule();
+  String user_id = '';
   var args;
+
+  TextEditingController _moduleNameController = TextEditingController(); // Controlador de texto para el nombre del módulo
 
   @override
   void initState() {
     super.initState();
-    print("Pase al init");
     Future.delayed(Duration.zero, () {
       setState(() {
         args = (ModalRoute.of(context)?.settings.arguments ??
             CourseArguments('')) as CourseArguments;
       });
-      print(args);
       var courseId = args.course_id;
-      print("CourseId es:");
-      print(courseId);
       if (courseId != '') {
         fetchCourseData(courseId);
       }
-      // print("Id usuario:");
-      // print(user_id);
-      // fetchUserData(user_id);
     });
   }
 
   void fetchCourseData(String courseId) async {
     try {
-      print("Entre a fetch course");
-      print(courseId);
       course = await _graphQLCourse.courseById(id: courseId);
       setState(() {
         course = course;
@@ -96,16 +66,76 @@ class _CoursePageState extends State<CoursePage> {
       user = await _graphQLUser.userbyId(id: user_id);
       setState(() {
         user = user;
+        isLoading = false;
       });
     } catch (error) {
-      // Handle error if fetching data fails
       print("Error fetching user data: $error");
     }
   }
 
+  // Función para abrir el modal
+  void _openModuleModal() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Ingresa nombre del modulo'),
+          content: TextField(
+            controller: _moduleNameController,
+            decoration: const InputDecoration(hintText: 'Nombre del módulo'),
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+              onPressed: () async {
+                // Código para crear o editar el módulo aquí
+                String moduleName = _moduleNameController.text;
+                var res1 = await _graphQLCreateModule.createModule(module_name: moduleName, course_id: course.course_id, pos_index: course.modules.length);
+                if(res1 != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Módulo creado exitosamente'),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Error al crear el módulo'),
+                    ),
+                  );
+                }
+                Navigator.of(context).pop(); // Cierra el modal
+              },
+              child: const Text('Guardar'),
+            ),
+            const SizedBox(width: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el modal sin guardar
+              },
+              child: const Text('Cancelar', style: TextStyle(color: Colors.red),),
+            ),
+              ],)
+            
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    var categories = course.categories;
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    else {
+      var categories = course.categories;
     var description = course.course_description;
     var pictureUrl = course.picture_id == "notFound"
         ? 'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png'
@@ -146,29 +176,57 @@ class _CoursePageState extends State<CoursePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(
-                                  Icons.arrow_back_ios_new_outlined,
-                                  color: Color.fromRGBO(255, 255, 255, 1.0),
-                                  size: 24,
-                                )),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: const Icon(
+                                Icons.arrow_back_ios_new_outlined,
+                                color: Color.fromRGBO(255, 255, 255, 1.0),
+                                size: 24,
+                              ),
+                            ),
                             Row(
                               children: [
-                                // IconButton(
-                                //     onPressed: () {},
-                                //     icon: const Icon(
-                                //       Icons.share,
-                                //       color: Color.fromRGBO(255, 255, 255, 1.0),
-                                //       size: 24,
-                                //     )),
-                                BotonDrowdown()
+                                PopupMenuButton(
+                                  color: Colors.white,
+                                  icon: const Icon(
+                                    Icons.more_vert,
+                                    color: Color.fromRGBO(255, 255, 255, 1.0),
+                                    size: 29,
+                                  ),
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry>[
+                                    user_id == user.id
+                                        ? PopupMenuItem(
+                                            child: const Text('Editar curso'),
+                                            onTap: () {
+                                              Navigator.pushNamed(
+                                                  context,
+                                                  '/editCourse',
+                                                  arguments:
+                                                      CourseArguments(
+                                                          args.course_id));
+                                            },
+                                          )
+                                        : const PopupMenuItem(
+                                            enabled: false,
+                                            child: Text('Editar curso'),
+                                          ),
+                                    PopupMenuItem(
+                                      child: const Text('Zonas'),
+                                      onTap: () {},
+                                    ),
+                                    PopupMenuItem(
+                                      child: const Text('Si'),
+                                      onTap: () {},
+                                    ),
+                                  ],
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                   Padding(
@@ -183,7 +241,8 @@ class _CoursePageState extends State<CoursePage> {
                             children: categories.map((category) {
                               final String? categoryName =
                                   category.category_name;
-                              return CategoryBadge(category_name: categoryName);
+                              return CategoryBadge(
+                                  category_name: categoryName);
                             }).toList(),
                           ),
                         ),
@@ -235,12 +294,17 @@ class _CoursePageState extends State<CoursePage> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black)),
                         ),
+                        ModuleAccordion(
+                            moduleList: course.modules,
+                            course_id: course.course_id),
+                        TextButton.icon(
+                          onPressed: _openModuleModal, // Abre el modal
+                          icon: const Icon(Icons.add),
+                          label: const Text('Añadir módulo'),
+                        ),
                         const SizedBox(
                           height: 10,
                         ),
-                        ModuleAccordion(
-                            moduleList: course.modules,
-                            course_id: course.course_id)
                       ],
                     ),
                   )
@@ -253,3 +317,5 @@ class _CoursePageState extends State<CoursePage> {
     );
   }
 }
+    }
+    

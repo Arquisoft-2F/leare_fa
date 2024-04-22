@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -173,7 +172,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               var res = await uploadFile(
                   file: img!.base64!,
                   file_name: 'pp_$userId',
-                  data_type: 'imagen',
+                  data_type: img!.file.split('.').last,
                   user_id: userId!,
                   token: prefs.getString('token')!);
               CreateCourseModel course = CreateCourseModel(
