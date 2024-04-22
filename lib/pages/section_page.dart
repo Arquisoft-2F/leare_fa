@@ -1,66 +1,90 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:leare_fa/models/course_model.dart';
 import 'package:leare_fa/widgets/widgets.dart';
+import 'package:leare_fa/utils/graphql_section.dart';
 // import 'package:leare_fa/widgets/section/section_tabs.dart';
 
 class SectionArguments {
   final String section_id;
-  final String section_name;
-  final String section_content;
-  final String video_id;
-  final List<String> files_array;
-  final int pos_index;
   final wholeSections;
-  SectionArguments(this.section_id, this.section_name, this.section_content,
-      this.video_id, this.files_array, this.pos_index, this.wholeSections);
+  SectionArguments(this.section_id, this.wholeSections);
 }
 
 class SectionPage extends StatefulWidget {
   final String section_id;
-  final String section_name;
-  final String section_content;
-  final String video_id;
-  final List<String> files_array;
-  final int pos_index;
   final wholeSections;
-  const SectionPage(
-      {super.key,
-      this.section_id = '',
-      this.section_name = '',
-      this.section_content = '',
-      this.video_id = '',
-      required this.files_array,
-      this.pos_index = 0,
-      this.wholeSections});
+  const SectionPage({super.key, this.section_id = '', this.wholeSections});
 
   @override
   State<SectionPage> createState() => _SectionPageState();
 }
 
 class _SectionPageState extends State<SectionPage> {
-  // String sectionName = '¿Qué es Java?';
-  // String contenido =
-  //     'Java es un poderoso lenguaje de programación de propósito general que se destaca por su portabilidad, seguridad y facilidad de uso. Con una sintaxis similar a C++, Java es conocido por su capacidad para desarrollar aplicaciones de escritorio, móviles y web, así como para la creación de aplicaciones empresariales y sistemas embebidos. Su enfoque en la programación orientada a objetos y su amplia variedad de bibliotecas lo convierten en una opción popular para desarrolladores de todo el mundo. Java es un poderoso lenguaje de programación de propósito general que se destaca por su portabilidad, seguridad y facilidad de uso. Con una sintaxis similar a C++, Java es conocido por su capacidad para desarrollar aplicaciones de escritorio, móviles y web, así como para la creación de aplicaciones empresariales y sistemas embebidos. Su enfoque en la programación orientada a objetos y su amplia variedad de bibliotecas lo convierten en una opción popular para desarrolladores de todo el mundo.';
+  late SectionModel section = SectionModel(
+      section_id: '',
+      section_name: '',
+      section_content: '',
+      video_id: '',
+      files_array: [],
+      pos_index: 0);
+
   var args;
-  // List<String> recursos = [
-  //   'recurso1.pdf',
-  //   'recurso2.pdf',
-  //   'recurso3.java',
-  //   'recurso4.py'
-  // ];
+  String video_id = '';
+
+  final GraphQLSection _graphQLSection = GraphQLSection();
+
+  void initState() {
+    super.initState();
+    print("Pase al init");
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        args = (ModalRoute.of(context)?.settings.arguments ??
+            SectionArguments('', [])) as SectionArguments;
+      });
+      print(args);
+      var sectionId = args.section_id;
+      print("SectionId es:");
+      print(sectionId);
+      if (sectionId != '') {
+        fetchSectionData(sectionId);
+      }
+      // print("Id usuario:");
+      // print(user_id);
+      // fetchUserData(user_id);
+    });
+  }
+
+  void fetchSectionData(String sectionId) async {
+    try {
+      print("Entre a fetch section");
+      print(sectionId);
+      section = await _graphQLSection.sectionById(id: sectionId);
+      setState(() {
+        section = section;
+      });
+      setState(() {
+        video_id = section.video_id;
+      });
+    } catch (error) {
+      print("Error fetching section data: $error");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     setState(() {
       args = (ModalRoute.of(context)?.settings.arguments ??
-          SectionArguments('', '', '', '', [], 0, [])) as SectionArguments;
+          SectionArguments('', [])) as SectionArguments;
     });
 
-    var contenido = args.section_content;
-    var sectionName = args.section_name;
-    var recursos = args.files_array;
-    var video_id = args.video_id;
+    var contenido = section.section_content;
+    var sectionName = section.section_name;
+    var recursos = section.files_array;
+    print("video id es:");
+    print(video_id);
+
     var secciones = args.wholeSections;
 
     return Scaffold(

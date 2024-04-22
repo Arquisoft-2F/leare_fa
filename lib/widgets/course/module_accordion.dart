@@ -49,13 +49,7 @@ class ModuleAccordion extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushNamed(context, '/section',
                           arguments: SectionArguments(
-                              section.section_id,
-                              section.section_name,
-                              section.section_content,
-                              section.video_id,
-                              section.files_array,
-                              section.pos_index,
-                              module.sections));
+                              section.section_id, module.sections));
                     },
                     child: Text(
                       sectionName,

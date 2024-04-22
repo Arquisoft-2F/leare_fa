@@ -8,9 +8,11 @@ class FeedModel {
   });
 
   static FeedModel fromMap({required Map map}) => FeedModel(
-    category: Category.fromMap(map: map['category'] ?? {}),
-    courses: (map['courses'] as List).map((e) => Course.fromMap(map: e)).toList(),
-  );
+        category: Category.fromMap(map: map['category'] ?? {}),
+        courses: (map['courses'] as List)
+            .map((e) => Course.fromMap(map: e))
+            .toList(),
+      );
 }
 
 class Course {
@@ -31,13 +33,15 @@ class Course {
   });
 
   static Course fromMap({required Map map}) => Course(
-    id: map['course_id'],
-    name: map['course_name'],
-    description: map['course_description'],
-    picture: map['picture_id'],
-    creatorId: map['creator_id'],
-    creator: map['creator'] != null ? Creator.fromMap(map: map['creator']) : null,
-  );
+        id: map['course_id'],
+        name: map['course_name'],
+        description: map['course_description'],
+        picture: map['picture_id'],
+        creatorId: map['creator_id'],
+        creator: map['creator'] != null
+            ? Creator.fromMap(map: map['creator'])
+            : null,
+      );
 }
 
 class Creator {
@@ -52,10 +56,10 @@ class Creator {
   });
 
   static Creator fromMap({required Map map}) => Creator(
-    id: map['id'],
-    nickname: map['nickname'],
-    picture: map['picture_id'] != null ? map['picture_id'] : '',
-  );
+        id: map['id'],
+        nickname: map['nickname'],
+        picture: map['picture_id'] != null ? map['picture_id'] : "notFound",
+      );
 }
 
 class Category {
@@ -68,7 +72,7 @@ class Category {
   });
 
   static Category fromMap({required Map map}) => Category(
-    id: map['category_id'],
-    name: map['category_name'],
-  );
+        id: map['category_id'],
+        name: map['category_name'],
+      );
 }

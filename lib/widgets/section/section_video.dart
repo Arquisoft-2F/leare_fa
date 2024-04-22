@@ -15,8 +15,12 @@ class _SectionVideoState extends State<SectionVideo> {
   @override
   void initState() {
     super.initState();
+    print("Entre a init state de section video");
     String videoUrl = widget.videoUrl;
-    _controller = VideoPlayerController.networkUrl(Uri.parse(videoUrl))
+    print(videoUrl);
+    _controller = videoUrl == "Not found" || videoUrl == ''
+        ? VideoPlayerController.asset('assets/test.mp4')
+        : VideoPlayerController.networkUrl(Uri.parse(videoUrl))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
