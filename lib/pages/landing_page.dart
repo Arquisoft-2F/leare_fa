@@ -10,13 +10,14 @@ class LandingPage extends StatefulWidget {
 
 class LandingPageState extends State<LandingPage> {
   late VideoPlayerController _controller;
-  
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _controller = VideoPlayerController.asset('assets/landing.mp4')
       ..initialize().then((_) {
         setState(() {
+          _controller.setVolume(0);
           _controller.play();
           _controller.setLooping(true);
         });
@@ -27,14 +28,13 @@ class LandingPageState extends State<LandingPage> {
     // if (userIsLoggedIn) {
     //   Navigator.pushNamed(context, '/home');
     //}
-}
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class LandingPageState extends State<LandingPage> {
           Container(
             color: Colors.black.withOpacity(0.5),
           ),
-          
+
           const Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -87,26 +87,39 @@ class LandingPageState extends State<LandingPage> {
               const Spacer(),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
                 },
-                child: Text('Iniciar Sesión', style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),),
+                child: Text(
+                  'Iniciar Sesión',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer),
+                ),
               ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Aún no tienes cuenta?", style: TextStyle(color: Colors.white),),
+                  const Text(
+                    "Aún no tienes cuenta?",
+                    style: TextStyle(color: Colors.white),
+                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, '/register');
                     },
-                    child: Text('Regístrate', style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                  ),
-              )],
+                    child: Text(
+                      'Regístrate',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
+                  )
+                ],
               ),
               const SizedBox(height: 20),
             ],
