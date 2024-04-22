@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7777:7777"
+    networks:
+      - leare-network
+
+networks:
+  leare-network:
+    driver: bridge
