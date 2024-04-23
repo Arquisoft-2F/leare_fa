@@ -7,7 +7,7 @@ class GraphQLFeed {
 
   Future<List<FeedModel>> getFeed() async {
     String x = r'''query GetFeed {
-      listCoursesbyCategories {
+      listCoursesbyCategories(amount:50) {
         category {
           category_id
           category_name
@@ -28,30 +28,29 @@ class GraphQLFeed {
     ''';
     try {
       GraphQLClient client = await graphQlConfig.clientToQuery();
-      QueryResult result = await client.query(
-        QueryOptions(
-          fetchPolicy: FetchPolicy.noCache,
-          document: gql(x),
-        )
-      );
+      QueryResult result = await client.query(QueryOptions(
+        fetchPolicy: FetchPolicy.noCache,
+        document: gql(x),
+      ));
       if (result.hasException) {
         throw Exception(result.exception);
       }
-      if (result.data == null || result.data?['listCoursesbyCategories'] == null) {
+      if (result.data == null ||
+          result.data?['listCoursesbyCategories'] == null) {
         throw Exception("Not feed");
       }
 
       print(result.data?['listCoursesbyCategories']);
 
-      List<FeedModel> res = (result.data?['listCoursesbyCategories'] as List).map((e) => FeedModel.fromMap(map: e)).toList();
+      List<FeedModel> res = (result.data?['listCoursesbyCategories'] as List)
+          .map((e) => FeedModel.fromMap(map: e))
+          .toList();
 
       print(res.isNotEmpty ? res[0].category.name : null);
 
       return res;
-
     } catch (error) {
       throw Exception(error);
     }
   }
 }
-

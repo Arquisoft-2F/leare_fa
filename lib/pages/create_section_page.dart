@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/models.dart';
+import 'package:leare_fa/pages/course_page.dart';
 import 'package:leare_fa/utils/graphq_create_section.dart';
 import 'package:leare_fa/utils/upload_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,15 +15,21 @@ import 'package:video_player/video_player.dart';
 class CreateSectionArguments {
   final String module_id;
   final int pos_index;
-  CreateSectionArguments(this.module_id, this.pos_index);
+  final String course_id;
+  CreateSectionArguments(this.module_id, this.pos_index, this.course_id);
 }
 
 class CreateSectionPage extends StatefulWidget {
   final String module_id;
   final int pos_index;
+  final String course_id;
 
-  const CreateSectionPage({super.key, this.module_id = '', this.pos_index = 0});
-  
+  const CreateSectionPage(
+      {super.key,
+      this.module_id = '',
+      this.pos_index = 0,
+      this.course_id = ""});
+
   @override
   _CreateSectionPageState createState() => _CreateSectionPageState();
 }
@@ -51,14 +58,14 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
   void initState() {
     super.initState();
     fetchToken();
-        Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () {
       setState(() {
         args = (ModalRoute.of(context)?.settings.arguments ??
-            CreateSectionArguments('',0)) as CreateSectionArguments;
+            CreateSectionArguments('', 0, "")) as CreateSectionArguments;
       });
     });
-    _videoController = VideoPlayerController.networkUrl(
-        Uri.parse('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
+    _videoController = VideoPlayerController.networkUrl(Uri.parse(
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
       ..initialize().then((_) {
         setState(() {
           _chewieController = ChewieController(
@@ -96,10 +103,11 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
       });
     }
   }
+
   void fetchToken() async {
     prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> jwtDecodedToken =
-    JwtDecoder.decode(prefs.getString('token') as String);
+        JwtDecoder.decode(prefs.getString('token') as String);
     String userID = jwtDecodedToken['UserID'];
     setState(() {
       userId = userID;
@@ -140,25 +148,27 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
       user_id: userId!,
       token: prefs.getString('token') as String,
     );
-    
-    List<Uint8List> files = _documents.map((document) => document.readAsBytesSync()).toList();
-    List<String> file_names = _documents.map((document) => document.path.split('/').last).toList();
+
+    List<Uint8List> files =
+        _documents.map((document) => document.readAsBytesSync()).toList();
+    List<String> file_names =
+        _documents.map((document) => document.path.split('/').last).toList();
     List<String> res2 = [];
     try {
-    for (int i = 0; i < files.length; i++) {
-      var fileId = await uploadFile(
-        file: files[i],
-        file_name: file_names[i],
-        data_type: _documents[i].path.split('.').last,
-        user_id: userId!,
-        token: prefs.getString('token') as String,
-      );
-      res2.add(fileId);
+      for (int i = 0; i < files.length; i++) {
+        var fileId = await uploadFile(
+          file: files[i],
+          file_name: file_names[i],
+          data_type: _documents[i].path.split('.').last,
+          user_id: userId!,
+          token: prefs.getString('token') as String,
+        );
+        res2.add(fileId);
+      }
+    } catch (e) {
+      print('Error: $e');
     }
-  } catch (e) {
-    print('Error: $e');
-  }
-    if(res1 != null && res2 != null) {
+    if (res1 != null && res2 != null) {
       print('Upload Success!');
       setState(() {
         section = SectionModel(
@@ -173,14 +183,17 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
     } else {
       print('Error saving section');
     }
-    var res3 = await _graphQLCreateSection.createSection(sectionModel: section, module_id: args.module_id);
-    if(res3 != null) {
+    var res3 = await _graphQLCreateSection.createSection(
+        sectionModel: section, module_id: args.module_id);
+    if (res3 != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Sección creada exitosamente'),
         ),
       );
-      Navigator.pop(context, true);
+
+      Navigator.pushReplacementNamed(context, '/course',
+          arguments: CourseArguments(args.course_id));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
