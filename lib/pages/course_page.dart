@@ -258,16 +258,18 @@ class _CoursePageState extends State<CoursePage> {
                   children: [
                     Stack(
                       children: [
-                        ColorFiltered(
-                          colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.6),
-                            BlendMode.darken,
-                          ),
-                          child: Image.network(
-                            pictureUrl,
-                            width: double.infinity,
-                            height: 300,
-                            fit: BoxFit.cover,
+                        ClipRect(
+                          child: ColorFiltered(
+                            colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.6),
+                              BlendMode.darken,
+                            ),
+                            child: Image.network(
+                              pictureUrl,
+                              width: double.infinity,
+                              height: 300,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Padding(
