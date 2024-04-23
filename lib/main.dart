@@ -5,6 +5,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/create_course_page.dart';
 import 'package:leare_fa/pages/create_section_page.dart';
+import 'package:leare_fa/pages/edit_section_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
             '/editCourse': (context) => const EditCoursePage(),
             '/section': (context) => const SectionPage(),
             '/createSection': (context) => const CreateSectionPage(),
+            '/editSection': (context) => const EditSectionPage(),
           },
         ));
   }

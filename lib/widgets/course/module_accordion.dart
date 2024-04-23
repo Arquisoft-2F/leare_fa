@@ -3,6 +3,7 @@ import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:leare_fa/models/course_model.dart';
 import 'package:leare_fa/pages/create_section_page.dart';
+import 'package:leare_fa/pages/edit_section_page.dart';
 import 'package:leare_fa/pages/pages.dart';
 
 class ModuleAccordion extends StatelessWidget {
@@ -43,34 +44,57 @@ class ModuleAccordion extends StatelessWidget {
         print(sections);
         return AccordionSection(
             isOpen: false,
-            header: Text(moduleName,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold)),
+            header: Row(
+              children: [
+                Text(moduleName,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold)),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    // Acción de edición del módulo
+                  },
+                ),
+              ],
+            ),
             content: Column(
               children: [
                 ...sections.map<Padding>((section) {
                   var sectionName = section.section_name;
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/section',
-                            arguments: SectionArguments(
-                                section.section_id!,
-                                module.sections,
-                                course_id));
-                      },
-                      child: Text(
-                        sectionName,
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant,
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/section',
+                                arguments: SectionArguments(
+                                    section.section_id!,
+                                    module.sections,
+                                    course_id));
+                          },
+                          child: Text(
+                            sectionName,
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/editSection',
+                                arguments: EditSectionArguments(
+                                    section.section_id!, module.module_id, section.pos_index));
+                          },
+                        ),
+                      ],
                     ),
                   );
                 }).toList(),
