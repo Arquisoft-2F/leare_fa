@@ -1,10 +1,15 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:leare_fa/models/user/user_model.dart';
 import 'package:leare_fa/models/user_model.dart';
+import 'package:leare_fa/pages/course_page.dart';
 import 'package:leare_fa/pages/landing_page.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
+import 'package:leare_fa/widgets/home/course_card.dart';
+import 'package:leare_fa/widgets/responsive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'edit_user_page.dart';
@@ -17,7 +22,7 @@ class UserArguments {
 class UserProfilePage extends StatefulWidget {
   final String? profileId;
   const UserProfilePage({Key? key, this.profileId}) : super(key: key);
-  
+
   @override
   UserProfilePageState createState() => UserProfilePageState();
 }
@@ -29,6 +34,7 @@ class UserProfilePageState extends State<UserProfilePage> {
   late UserModel user;
   late String userId;
   late String role;
+  late List<EnrollModel> courses;
   final GraphQLUser _graphQLUser = GraphQLUser();
 
   @override
@@ -36,11 +42,11 @@ class UserProfilePageState extends State<UserProfilePage> {
     super.initState();
     Future.delayed(Duration.zero, () {
       setState(() {
-        args = (ModalRoute.of(context)?.settings.arguments ??
-            UserArguments('')) as UserArguments;
+        args = (ModalRoute.of(context)?.settings.arguments ?? UserArguments(''))
+            as UserArguments;
       });
       var profileId = args.profileId;
-      if ( profileId != null ){
+      if (profileId != null) {
         fetchUserData();
       }
     });
@@ -76,14 +82,17 @@ class UserProfilePageState extends State<UserProfilePage> {
       },
     );
   }
-  
+
   void fetchUserData() async {
     try {
       prefs = await SharedPreferences.getInstance();
-      Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
+      Map<String, dynamic> jwtDecodedToken =
+          JwtDecoder.decode(prefs.getString('token') as String);
       String userID = jwtDecodedToken['UserID'];
       String rol = jwtDecodedToken['Role'];
       user = await _graphQLUser.userbyId(id: args.profileId as String);
+      courses = await _graphQLUser.myCourses(user_id: args.profileId as String);
+      print(courses);
       setState(() {
         userId = userID;
         role = rol;
@@ -95,7 +104,8 @@ class UserProfilePageState extends State<UserProfilePage> {
       print("Error fetching user data: $error");
       setState(() {
         user = user;
-        _isLoading = false; // Loading indicator should be turned off even in case of error
+        _isLoading =
+            false; // Loading indicator should be turned off even in case of error
       });
     }
   }
@@ -106,8 +116,7 @@ class UserProfilePageState extends State<UserProfilePage> {
       return const Center(
         child: CircularProgressIndicator(),
       );
-    }
-    else {
+    } else {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Perfil'),
@@ -132,16 +141,17 @@ class UserProfilePageState extends State<UserProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 10),
-                user.picture_id != 'n/a' && user.picture_id != 'NotFound' ?
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage(user.picture_id as String), 
-                ) 
-                :
-                const CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage('https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'), 
-                ),
+                user.picture_id != 'n/a' && user.picture_id != 'NotFound'
+                    ? CircleAvatar(
+                        radius: 50,
+                        backgroundImage:
+                            NetworkImage(user.picture_id as String),
+                      )
+                    : const CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(
+                            'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'),
+                      ),
                 const SizedBox(height: 10),
                 Text(
                   '${user.name} ${user.lastname}',
@@ -168,10 +178,12 @@ class UserProfilePageState extends State<UserProfilePage> {
                     IconButton(
                       icon: const FaIcon(FontAwesomeIcons.linkedin),
                       onPressed: () async {
-                        await Clipboard.setData(ClipboardData(text: user.linkedin_link!));
+                        await Clipboard.setData(
+                            ClipboardData(text: user.linkedin_link!));
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Enlace de LinkedIn copiado al portapapeles'),
+                            content: Text(
+                                'Enlace de LinkedIn copiado al portapapeles'),
                           ),
                         );
                       },
@@ -179,10 +191,12 @@ class UserProfilePageState extends State<UserProfilePage> {
                     IconButton(
                       icon: const FaIcon(FontAwesomeIcons.facebook),
                       onPressed: () async {
-                        await Clipboard.setData(ClipboardData(text: user.facebook_link!));
+                        await Clipboard.setData(
+                            ClipboardData(text: user.facebook_link!));
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Enlace de Facebook copiado al portapapeles'),
+                            content: Text(
+                                'Enlace de Facebook copiado al portapapeles'),
                           ),
                         );
                       },
@@ -190,10 +204,12 @@ class UserProfilePageState extends State<UserProfilePage> {
                     IconButton(
                       icon: const FaIcon(FontAwesomeIcons.twitter),
                       onPressed: () async {
-                        await Clipboard.setData(ClipboardData(text: user.twitter_link!));
+                        await Clipboard.setData(
+                            ClipboardData(text: user.twitter_link!));
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Enlace de Twitter copiado al portapapeles'),
+                            content: Text(
+                                'Enlace de Twitter copiado al portapapeles'),
                           ),
                         );
                       },
@@ -201,10 +217,12 @@ class UserProfilePageState extends State<UserProfilePage> {
                     IconButton(
                       icon: const Icon(Icons.language),
                       onPressed: () async {
-                        await Clipboard.setData(ClipboardData(text: user.web_site!));
+                        await Clipboard.setData(
+                            ClipboardData(text: user.web_site!));
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Enlace de Sitio Web copiado al portapapeles'),
+                            content: Text(
+                                'Enlace de Sitio Web copiado al portapapeles'),
                           ),
                         );
                       },
@@ -215,22 +233,27 @@ class UserProfilePageState extends State<UserProfilePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    (args.profileId == userId) || (role == 'admin') ? 
-                    Row(children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          var res = await Navigator.pushNamed(context, '/editProfile', arguments: EditUserArguments(args.profileId)) as bool?;
-                          if (res != null && res){
-                            setState(() {
-                              fetchUserData();
-                            });
-                          }
-                        },
-                        child: const Text('Editar'),
-                      ),
-                    ],
-                    ):
-                    const SizedBox.shrink(),
+                    (args.profileId == userId) || (role == 'admin')
+                        ? Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var res = await Navigator.pushNamed(
+                                          context, '/editProfile',
+                                          arguments:
+                                              EditUserArguments(args.profileId))
+                                      as bool?;
+                                  if (res != null && res) {
+                                    setState(() {
+                                      fetchUserData();
+                                    });
+                                  }
+                                },
+                                child: const Text('Editar'),
+                              ),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -248,7 +271,9 @@ class UserProfilePageState extends State<UserProfilePage> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  user.biography != null ? user.biography as String : 'Sin biografía',
+                  user.biography != null
+                      ? user.biography as String
+                      : 'Sin biografía',
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
@@ -277,6 +302,24 @@ class UserProfilePageState extends State<UserProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 10),
+                SafeArea(
+                  child: ListView.builder(
+                      itemCount: courses.length,
+                      physics: ClampingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        print(index);
+                        return Card(
+                          child: GestureDetector(
+                              //You need to make my child interactive
+                              onTap: () => Navigator.pushNamed(
+                                  context, '/course',
+                                  arguments: CourseArguments(
+                                      courses[index].course.id)),
+                              child: CourseCard(course: courses[index].course)),
+                        );
+                      }),
+                )
               ],
             ),
           ),

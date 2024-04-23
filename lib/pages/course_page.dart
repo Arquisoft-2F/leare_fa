@@ -296,7 +296,7 @@ class _CoursePageState extends State<CoursePage> {
                                     ),
                                     itemBuilder: (BuildContext context) =>
                                         <PopupMenuEntry>[
-                                      user_id == user.id
+                                      creatorCourse.id == user.id
                                           ? PopupMenuItem(
                                               child: const Text('Editar curso'),
                                               onTap: () {
