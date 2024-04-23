@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:leare_fa/pages/user_page.dart';
 
 class InstructorBadge extends StatelessWidget {
   final String? profilePic;
   final String nombre;
   final String apellido;
   final String nickname;
+  final String id;
   const InstructorBadge(
       {super.key,
       required this.profilePic,
       required this.nombre,
       required this.apellido,
-      required this.nickname});
+      required this.nickname,
+      required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +78,10 @@ class InstructorBadge extends StatelessWidget {
                   ),
                   const SizedBox(width: 9.0),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/profile",
+                            arguments: UserArguments(id));
+                      },
                       icon: const Icon(
                         Icons.open_in_new,
                         color: Colors.black,

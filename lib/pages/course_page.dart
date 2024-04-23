@@ -502,6 +502,7 @@ class _CoursePageState extends State<CoursePage> {
                             nombre: user.name,
                             apellido: user.lastname,
                             nickname: user.nickname,
+                            id: user.id,
                           ),
                           const SizedBox(
                             height: 5,
