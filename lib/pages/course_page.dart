@@ -47,7 +47,7 @@ class _CoursePageState extends State<CoursePage> {
   String user_id = '';
   var args;
 
-  TextEditingController _moduleNameController =
+  final TextEditingController _moduleNameController =
       TextEditingController(); // Controlador de texto para el nombre del módulo
 
   @override
