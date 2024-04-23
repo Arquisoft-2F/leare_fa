@@ -4,6 +4,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/models/models.dart';
 import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/course_page.dart';
+import 'package:leare_fa/pages/pages.dart';
 import 'package:leare_fa/utils/graphql_feed.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 
@@ -36,70 +37,80 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 40.0),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: ListView(
-          children: feed.where((data) => data.courses.isNotEmpty ).map((cat) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        cat.category.name,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pushNamed(context, '/category', arguments: CategoryArguments(cat.category)),
-                        child: Text(
-                          'Ver más >',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                    ],
+    return Scaffold(
+      body: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Column(
+                children: [
+                      const SearchPage(),
+                      const SizedBox(height: 20.0),
+                  Expanded(
+                    child: ListView(
+                      children: feed.where((data) => data.courses.isNotEmpty ).map((cat) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 20.0),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    cat.category.name,
+                                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pushNamed(context, '/category', arguments: CategoryArguments(cat.category)),
+                                    child: Text(
+                                      'Ver más >',
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Theme.of(context).colorScheme.onSurface,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10.0),
+                            CarouselSlider(
+                              items: cat.courses.map<Widget>((course) {
+                                return GestureDetector(
+                                  child: CourseCard(
+                                    course: course,
+                                  ),
+                                  onTap: () => {
+                                    Navigator.pushNamed(context, '/course', arguments: CourseArguments(course.id)),
+                                  
+                                  },
+                                );
+                              }).toList(),
+                              options: CarouselOptions(
+                                initialPage: 0,
+                                height: 230,
+                                scrollDirection: Axis.horizontal,
+                                enableInfiniteScroll: false,
+                                viewportFraction: Responsive.isDesktop(context) ? 0.3 : Responsive.isTablet(context) ? 0.4 : 0.8,
+                                enlargeCenterPage: false,
+                                disableCenter: true,
+                                animateToClosest: true,
+                                padEnds: false
+                              ),
+                            ),
+                          ],
+                        );
+                        }).toList(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10.0),
-                CarouselSlider(
-                  items: cat.courses.map<Widget>((course) {
-                    return GestureDetector(
-                      child: CourseCard(
-                        course: course,
-                      ),
-                      onTap: () => {
-                        Navigator.pushNamed(context, '/course', arguments: CourseArguments(course.id)),
-                      
-                      },
-                    );
-                  }).toList(),
-                  options: CarouselOptions(
-                    initialPage: 0,
-                    height: 230,
-                    scrollDirection: Axis.horizontal,
-                    enableInfiniteScroll: false,
-                    viewportFraction: Responsive.isDesktop(context) ? 0.3 : Responsive.isTablet(context) ? 0.4 : 0.8,
-                    enlargeCenterPage: false,
-                    disableCenter: true,
-                    animateToClosest: true,
-                    padEnds: false
-                  ),
-                ),
-              ],
-            );
-            }).toList(),
-        ),
-      ),
+                ],
+              ),
+            ),
+          ),
     );
   }
 }

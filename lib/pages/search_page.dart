@@ -36,159 +36,153 @@ class _SearchPageState extends State<SearchPage> {
 
     return Container(
       color: colorScheme.surface,
-      child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 0.0),
-          child: Column(
+      child: SearchAnchor(
+        isFullScreen: true,
+        viewBackgroundColor: colorScheme.surface,
+        viewSurfaceTintColor: colorScheme.surface,
+        viewOnChanged: (value) async {
+          if (value.isNotEmpty) {
+            await _graphQLSearch.search(q: value).then((results) {
+              setState(() {
+                _searchResults = results;
+              });
+            });
+          }
+        },
+        builder: (context, controller) {
+          return Column(
             children: [
-              SearchAnchor(
-                isFullScreen: true,
-                viewBackgroundColor: colorScheme.surface,
-                viewSurfaceTintColor: colorScheme.surface,
-                viewOnChanged: (value) async {
-                  if (value.isNotEmpty) {
-                    await _graphQLSearch.search(q: value).then((results) {
-                      setState(() {
-                        _searchResults = results;
-                      });
-                    });
-                  }
-                },
-                builder: (context, controller) {
-                  return Column(
+              SearchBar(
+                controller: controller,
+                autoFocus: true,
+                elevation: const MaterialStatePropertyAll(1.0),
+                surfaceTintColor: MaterialStatePropertyAll(
+                    colorScheme.surfaceVariant),
+                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                )),
+                hintText: 'Buscar',
+                side: const MaterialStatePropertyAll(BorderSide.none),
+                onTap: () => controller.openView(),
+                onChanged: (_) => controller.openView(),
+                leading: const Icon(Icons.search),
+              ),
+            ],
+          );
+        },
+        suggestionsBuilder: (context, controller) {
+          return <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SearchBar(
-                        controller: controller,
-                        autoFocus: true,
-                        elevation: const MaterialStatePropertyAll(1.0),
-                        surfaceTintColor: MaterialStatePropertyAll(
-                            colorScheme.surfaceVariant),
-                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        )),
-                        hintText: 'Buscar',
-                        side: const MaterialStatePropertyAll(BorderSide.none),
-                        onTap: () => controller.openView(),
-                        onChanged: (_) => controller.openView(),
-                        leading: const Icon(Icons.search),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (_filters.contains("Course")) {
+                              _filters = List.from(_filters
+                                  .where(
+                                      (element) => element != "Course")
+                                  .toList());
+                            } else {
+                              _filters =
+                                  List.from(_filters + ["Course"]);
+                            }
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: !_filters.contains('Course')
+                              ? colorScheme.surfaceVariant
+                              : colorScheme.primaryContainer,
+                          textStyle: TextStyle(
+                              color: !_filters.contains('Course')
+                                  ? colorScheme.onSurfaceVariant
+                                  : colorScheme.onPrimaryContainer),
+                        ),
+                        child: const Text('Courses'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (_filters.contains("Category")) {
+                              _filters = List.from(_filters
+                                  .where((element) =>
+                                      element != "Category")
+                                  .toList());
+                            } else {
+                              _filters =
+                                  List.from(_filters + ["Category"]);
+                            }
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              !_filters.contains('Category')
+                                  ? colorScheme.surfaceVariant
+                                  : colorScheme.errorContainer,
+                          textStyle: TextStyle(
+                              color: !_filters.contains('Category')
+                                  ? colorScheme.onSurfaceVariant
+                                  : colorScheme.onErrorContainer),
+                        ),
+                        child: const Text('Categories'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (_filters.contains("User")) {
+                              _filters = List.from(_filters
+                                  .where((element) => element != "User")
+                                  .toList());
+                            } else {
+                              _filters = List.from(_filters + ["User"]);
+                            }
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: !_filters.contains('User')
+                              ? colorScheme.surfaceVariant
+                              : colorScheme.tertiaryContainer,
+                          textStyle: TextStyle(
+                              color: !_filters.contains('User')
+                                  ? colorScheme.onSurfaceVariant
+                                  : colorScheme.onTertiaryContainer),
+                        ),
+                        child: const Text('Users'),
                       ),
                     ],
-                  );
-                },
-                suggestionsBuilder: (context, controller) {
-                  return <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_filters.contains("Course")) {
-                                      _filters = List.from(_filters
-                                          .where(
-                                              (element) => element != "Course")
-                                          .toList());
-                                    } else {
-                                      _filters =
-                                          List.from(_filters + ["Course"]);
-                                    }
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: !_filters.contains('Course')
-                                      ? colorScheme.surfaceVariant
-                                      : colorScheme.primaryContainer,
-                                  textStyle: TextStyle(
-                                      color: !_filters.contains('Course')
-                                          ? colorScheme.onSurfaceVariant
-                                          : colorScheme.onPrimaryContainer),
-                                ),
-                                child: const Text('Courses'),
-                              ),
-                              const SizedBox(width: 10),
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_filters.contains("Category")) {
-                                      _filters = List.from(_filters
-                                          .where((element) =>
-                                              element != "Category")
-                                          .toList());
-                                    } else {
-                                      _filters =
-                                          List.from(_filters + ["Category"]);
-                                    }
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      !_filters.contains('Category')
-                                          ? colorScheme.surfaceVariant
-                                          : colorScheme.errorContainer,
-                                  textStyle: TextStyle(
-                                      color: !_filters.contains('Category')
-                                          ? colorScheme.onSurfaceVariant
-                                          : colorScheme.onErrorContainer),
-                                ),
-                                child: const Text('Categories'),
-                              ),
-                              const SizedBox(width: 10),
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_filters.contains("User")) {
-                                      _filters = List.from(_filters
-                                          .where((element) => element != "User")
-                                          .toList());
-                                    } else {
-                                      _filters = List.from(_filters + ["User"]);
-                                    }
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: !_filters.contains('User')
-                                      ? colorScheme.surfaceVariant
-                                      : colorScheme.tertiaryContainer,
-                                  textStyle: TextStyle(
-                                      color: !_filters.contains('User')
-                                          ? colorScheme.onSurfaceVariant
-                                          : colorScheme.onTertiaryContainer),
-                                ),
-                                child: const Text('Users'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ] +
-                      _searchResultsFiltered.map((result) {
-                        final Map<String, Widget> resultTiles = {
-                          "Course": CourseResult(
-                            searchResult: result,
-                            onTap: () => Navigator.pushNamed(context, '/course',
-                                arguments: CourseArguments(result.post.id)),
-                          ),
-                          "Category": CategoryResult(
-                            searchResult: result,
-                            onTap: () => Navigator.pushNamed(
-                                context, '/category',
-                                arguments: CategoryArguments(Category(
-                                    id: result.post.id,
-                                    name: result.post.name))),
-                          ),
-                          "User": UserResult(
-                            searchResult: result,
-                            onTap: () => Navigator.pushNamed(
-                                context, '/profile',
-                                arguments: UserArguments(result.post.id)),
-                          ),
-                        };
-                        return resultTiles[result.post.type]!;
-                      }).toList();
-                },
-              )
-            ],
-          )),
+                  ),
+                ),
+              ] +
+              _searchResultsFiltered.map((result) {
+                final Map<String, Widget> resultTiles = {
+                  "Course": CourseResult(
+                    searchResult: result,
+                    onTap: () => Navigator.pushNamed(context, '/course',
+                        arguments: CourseArguments(result.post.id)),
+                  ),
+                  "Category": CategoryResult(
+                    searchResult: result,
+                    onTap: () => Navigator.pushNamed(
+                        context, '/category',
+                        arguments: CategoryArguments(Category(
+                            id: result.post.id,
+                            name: result.post.name))),
+                  ),
+                  "User": UserResult(
+                    searchResult: result,
+                    onTap: () => Navigator.pushNamed(
+                        context, '/profile',
+                        arguments: UserArguments(result.post.id)),
+                  ),
+                };
+                return resultTiles[result.post.type]!;
+              }).toList();
+        },
+      ),
     );
   }
 }

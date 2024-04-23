@@ -5,6 +5,7 @@ import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/create_course_page.dart';
 import 'package:leare_fa/pages/create_section_page.dart';
 import 'package:leare_fa/pages/create_section_page.dart';
+import 'package:leare_fa/pages/edit_section_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
@@ -48,15 +49,18 @@ class MyApp extends StatelessWidget {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
             '/home': (context) => const NavScreen(),
-            '/search': (context) => const SearchPage(),
+            '/search': (context) => const NavScreen(),
             '/chat': (context) => const ChatPage(),
-            '/chats': (context) => const ChatsPage(),
-            '/profile': (context) => const UserProfilePage(),
+            '/chats': (context) => const NavScreen(),
+            '/profile': (context) => const NavScreen(),
             '/editProfile': (context) => const EditProfilePage(),
             '/category': (context) => const CategoryPage(),
             '/course': (context) => const CoursePage(),
             '/createCourse': (context) => CreateCoursePage(),
+            '/editCourse': (context) => const EditCoursePage(),
             '/section': (context) => const SectionPage(),
+            '/createSection': (context) => const CreateSectionPage(),
+            '/editSection': (context) => const EditSectionPage(),
           },
         ));
   }

@@ -11,15 +11,15 @@ class NavScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> routes = [
-      '/home',
-      '/search',
       '/chats',
+      '/home',
+      '/profile'
     ];
 
     final Map<String, Widget?> pages = {
-      '/home': const HomePage(),
-      '/search': const SearchPage(),
       '/chats': const ChatsPage(),
+      '/home': const HomePage(),
+      '/profile': const UserProfilePage(),
     };
 
     return Scaffold(
@@ -27,25 +27,18 @@ class NavScreen extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-            icon: Image(
-              width: 30,
-              image: AssetImage('assets/leare.png'),
-            ),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.search,
-              size: 30.0,
-            ),
-            label: 'Buscar',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(
               Icons.chat,
               size: 30.0,
             ),
             label: 'Chats',
+          ),
+          BottomNavigationBarItem(
+            icon: Image(
+              width: 30,
+              image: AssetImage('assets/leare.png'),
+            ),
+            label: 'Inicio',
           ),
           BottomNavigationBarItem(
             icon: Icon(
@@ -57,7 +50,7 @@ class NavScreen extends StatelessWidget {
         ],
         currentIndex: routes.contains(ModalRoute.of(context)!.settings.name!) ? routes.indexOf(ModalRoute.of(context)!.settings.name!) : 0,
         onTap: (index) async { 
-            if (index == 3) {
+            if (index == 2) {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(prefs.getString('token') as String);
               String userID = jwtDecodedToken['UserID'];

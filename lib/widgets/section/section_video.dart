@@ -16,12 +16,12 @@ class _SectionVideoState extends State<SectionVideo> {
   late Chewie playerWidget;
   late ChewieController chewieController;
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    chewieController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   chewieController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _SectionVideoState extends State<SectionVideo> {
         setState(() {
           final chewieController = ChewieController(
             videoPlayerController: _controller,
-            autoPlay: true,
+            autoInitialize: true,
             looping: true,
           );
 
