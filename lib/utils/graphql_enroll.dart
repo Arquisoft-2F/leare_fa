@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/graphql_config.dart';
