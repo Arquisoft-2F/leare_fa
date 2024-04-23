@@ -47,6 +47,40 @@ class GraphQLChat {
     }
   }
 
+  Future<String> joinChat({required String chatId}) async {
+    String x = r'''mutation joinChat($chatId: ID!) {
+      joinChat(chat_id: $chatId){
+        chat_id
+      }
+    }
+  ''';
+    try {
+      GraphQLClient client = await graphQlConfig.clientToQuery();
+      QueryResult result = await client.mutate(
+        MutationOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql(x),
+          variables: {
+            'chatId': chatId,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception(result.exception);
+      }
+      if (result.data == null || result.data?['joinChat'] == null) {
+        throw Exception("Could not join chat");
+      }
+
+      String res = result.data?['joinChat']['chat_id'];
+      print(res);
+      return res;
+    } catch (error) {
+      throw Exception(error);
+    }
+  }
+
   Future<List<MessageModel>> getMessages(String chatId) async {
     String x = r'''
       query Messages($chat_id: ID!){
