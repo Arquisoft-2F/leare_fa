@@ -264,21 +264,30 @@ class _ModuleAccordionState extends State<ModuleAccordion> {
                 }).toList(),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/createSection',
-                          arguments: CreateSectionArguments(module.module_id,
-                              module.sections.length, widget.course_id));
-                    },
-                    icon: Icon(Icons.add),
-                    label: Text(
-                      'Create New Section',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 18,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ),
+                  child: widget.author
+                      ? ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(
+                                context, '/createSection',
+                                arguments: CreateSectionArguments(
+                                    module.module_id,
+                                    module.sections.length,
+                                    widget.course_id));
+                          },
+                          icon: Icon(Icons.add),
+                          label: Text(
+                            'Crear Nueva Seccion',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        )
+                      : const SizedBox(
+                          height: 5,
+                        ),
                 ),
               ],
             ));

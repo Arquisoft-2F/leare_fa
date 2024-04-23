@@ -27,10 +27,10 @@ class GraphQLEnroll {
       );
 
       if (result.hasException) {
-        throw Exception(result.exception);
+        return "";
       }
       if (result.data == null || result.data?['createEnrollment'] == null) {
-        throw Exception("Could not enroll to course");
+        return "";
       }
 
       String res = result.data?['createEnrollment']['course_id'];
@@ -38,7 +38,7 @@ class GraphQLEnroll {
 
       return res;
     } catch (error) {
-      throw Exception(error);
+      return "";
     }
   }
 
@@ -65,10 +65,10 @@ class GraphQLEnroll {
       );
 
       if (result.hasException) {
-        throw Exception(result.exception);
+        return "";
       }
       if (result.data == null || result.data?['deleteEnrollment'] == null) {
-        throw Exception("Could not delete enroll to course");
+        return "";
       }
 
       String res = result.data?['deleteEnrollment']['course_id'];
@@ -76,7 +76,7 @@ class GraphQLEnroll {
 
       return res;
     } catch (error) {
-      throw Exception(error);
+      return "";
     }
   }
 

@@ -5,7 +5,6 @@ import 'dart:math' as math;
 import '../../models/chat/chat_response.dart';
 
 class ChatCard extends StatelessWidget {
-
   final ChatModel chat;
   const ChatCard({super.key, required this.chat});
 
@@ -26,10 +25,16 @@ class ChatCard extends StatelessWidget {
                 ),
           title: Row(
             children: [
-              Text(chat.name,
+              Expanded(
+                child: Text(
+                  chat.name,
+                  overflow: TextOverflow.fade,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                  ))
+                  ),
+                  softWrap: false,
+                ),
+              )
             ],
           ),
           subtitle: Row(
