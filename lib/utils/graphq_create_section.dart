@@ -18,11 +18,16 @@ class GraphQLCreateSection {
       return url; // returns the original url if no match found
     }
   }
+    static String _escapeString(String input) {
+    // Replace newline characters with escaped characters
+    return input.replaceAll('\n', ' ');
+  }
+
     createSectiontoMap({required SectionModel sectionModel, required String module_id}) {
     Map<String, dynamic> map = {
       'module_id': '"${module_id}"',
       'section_name': '"${sectionModel.section_name}"',
-      'section_content': '"${sectionModel.section_content}"',
+      'section_content': '"${_escapeString(sectionModel.section_content)}"',
       'video_id': '"${getLastPartOfUrl(sectionModel.video_id)}"',
       'files_array': '[${sectionModel.files_array.map((str) => '"${getLastPartOfUrl(str)}"').join(',')}]',
       'pos_index': sectionModel.pos_index,
