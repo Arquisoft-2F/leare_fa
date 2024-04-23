@@ -53,30 +53,37 @@ class _SectionVideoState extends State<SectionVideo> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Stack(
-        children: [
-          Center(
-            child: VisibilityDetector(
-              key: Key("videosection"),
-              onVisibilityChanged: (VisibilityInfo info) {
-                debugPrint("${info.visibleFraction} of my widget is visible");
-                if (info.visibleFraction == 0) {
-                  _controller.pause();
-                }
-              },
-              child: Stack(
-                children: [
-                  _controller.value.isInitialized
-                      ? AspectRatio(
-                          aspectRatio: _controller.value.aspectRatio,
-                          child: playerWidget,
-                        )
-                      : Container(),
-                ],
+      decoration: BoxDecoration(color: Colors.black),
+      child: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: 500),
+          child: Stack(
+            children: [
+              Center(
+                child: VisibilityDetector(
+                  key: Key("videosection"),
+                  onVisibilityChanged: (VisibilityInfo info) {
+                    debugPrint(
+                        "${info.visibleFraction} of my widget is visible");
+                    if (info.visibleFraction == 0) {
+                      _controller.pause();
+                    }
+                  },
+                  child: Stack(
+                    children: [
+                      _controller.value.isInitialized
+                          ? AspectRatio(
+                              aspectRatio: _controller.value.aspectRatio,
+                              child: playerWidget,
+                            )
+                          : Container(),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

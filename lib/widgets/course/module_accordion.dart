@@ -212,27 +212,29 @@ class _ModuleAccordionState extends State<ModuleAccordion> {
                                           section.pos_index));
                                 },
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () async {
-                                  if (section.section_id != null) {
-                                    print(section.section_id);
-                                    bool res = await _graphQLDelete
-                                        .deleteSection(section.section_id!);
-                                    if (res) {
-                                      sections.remove(section);
-                                      widget.update(widget.course_id);
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                              'Eliminación de sección no exitosa'),
-                                        ),
-                                      );
+                              Flexible(
+                                child: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () async {
+                                    if (section.section_id != null) {
+                                      print(section.section_id);
+                                      bool res = await _graphQLDelete
+                                          .deleteSection(section.section_id!);
+                                      if (res) {
+                                        sections.remove(section);
+                                        widget.update(widget.course_id);
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                'Eliminación de sección no exitosa'),
+                                          ),
+                                        );
+                                      }
                                     }
-                                  }
-                                },
+                                  },
+                                ),
                               ),
                             ]
                           : [

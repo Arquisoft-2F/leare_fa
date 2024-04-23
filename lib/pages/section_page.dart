@@ -109,123 +109,122 @@ class _SectionPageState extends State<SectionPage> {
           child: CircularProgressIndicator(),
         ),
       );
-    }
-    else{
-    setState(() {
-      args = (ModalRoute.of(context)?.settings.arguments ??
-          SectionArguments('', [], '')) as SectionArguments;
-    });
+    } else {
+      setState(() {
+        args = (ModalRoute.of(context)?.settings.arguments ??
+            SectionArguments('', [], '')) as SectionArguments;
+      });
 
-    var contenido = section.section_content;
-    var sectionName = section.section_name;
-    var recursos = section.files_array;
-    print("video id es:");
-    print(video_id);
+      var contenido = section.section_content;
+      var sectionName = section.section_name;
+      var recursos = section.files_array;
+      print("video id es:");
+      print(video_id);
 
-    Color iconColorNext = nextSection == -1 ? Colors.black12 : Colors.blue;
-    Color iconColorPrev = prevSection == -1 ? Colors.black12 : Colors.blue;
+      Color iconColorNext = nextSection == -1 ? Colors.black12 : Colors.blue;
+      Color iconColorPrev = prevSection == -1 ? Colors.black12 : Colors.blue;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          child: Column(
-            children: [
-              Stack(
-                children: [
-                  SectionVideo(videoUrl: video_id),
-                  Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ImageFiltered(
-                          imageFilter: ImageFilter.blur(),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50)),
-                            child: IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(
-                                  Icons.arrow_back_ios_new_outlined,
-                                  color: Color.fromRGBO(255, 255, 255, 1.0),
-                                  size: 20,
-                                )),
+      return Scaffold(
+        body: SafeArea(
+          child: Container(
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    SectionVideo(videoUrl: video_id),
+                    Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ImageFiltered(
+                            imageFilter: ImageFilter.blur(),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50)),
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(
+                                    Icons.arrow_back_ios_new_outlined,
+                                    color: Color.fromRGBO(255, 255, 255, 1.0),
+                                    size: 20,
+                                  )),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              TabsSection(
-                content: contenido,
-                resources: recursos,
-                sectionName: sectionName,
-              ),
-              Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              var currentSection =
-                                  findIndexBySectionId(args.section_id);
-                              var prevSection =
-                                  findPreviousSectionIndex(currentSection!);
-                              if (prevSection != -1) {
-                                Navigator.pushNamed(context, '/section',
-                                    arguments: SectionArguments(
-                                        args.wholeSections[prevSection]
-                                            .section_id,
-                                        args.wholeSections,
-                                        args.course_id));
-                              } else {
-                                print('No hay anterior');
-                              }
-                            },
-                            icon: Icon(
-                              Icons.arrow_back_ios,
-                              size: 30,
-                              color: iconColorPrev,
-                            )),
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/course',
-                                  arguments: CourseArguments(args.course_id));
-                            },
-                            icon: const Icon(
-                              Icons.home,
-                              size: 30,
-                              color: Colors.blueAccent,
-                            )),
-                        IconButton(
-                            onPressed: () {
-                              if (nextSection != -1) {
-                                Navigator.pushNamed(context, '/section',
-                                    arguments: SectionArguments(
-                                        args.wholeSections[nextSection]
-                                            .section_id,
-                                        args.wholeSections,
-                                        args.course_id));
-                              } else {
-                                print('No hay siguiente');
-                              }
-                            },
-                            icon: Icon(
-                              Icons.arrow_forward_ios,
-                              size: 30,
-                              color: iconColorNext,
-                            ))
-                      ]))
-            ],
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                TabsSection(
+                  content: contenido,
+                  resources: recursos,
+                  sectionName: sectionName,
+                ),
+                Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                var currentSection =
+                                    findIndexBySectionId(args.section_id);
+                                var prevSection =
+                                    findPreviousSectionIndex(currentSection!);
+                                if (prevSection != -1) {
+                                  Navigator.pushNamed(context, '/section',
+                                      arguments: SectionArguments(
+                                          args.wholeSections[prevSection]
+                                              .section_id,
+                                          args.wholeSections,
+                                          args.course_id));
+                                } else {
+                                  print('No hay anterior');
+                                }
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios,
+                                size: 30,
+                                color: iconColorPrev,
+                              )),
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/course',
+                                    arguments: CourseArguments(args.course_id));
+                              },
+                              icon: const Icon(
+                                Icons.home,
+                                size: 30,
+                                color: Colors.blueAccent,
+                              )),
+                          IconButton(
+                              onPressed: () {
+                                if (nextSection != -1) {
+                                  Navigator.pushNamed(context, '/section',
+                                      arguments: SectionArguments(
+                                          args.wholeSections[nextSection]
+                                              .section_id,
+                                          args.wholeSections,
+                                          args.course_id));
+                                } else {
+                                  print('No hay siguiente');
+                                }
+                              },
+                              icon: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 30,
+                                color: iconColorNext,
+                              ))
+                        ]))
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
-}
 }
