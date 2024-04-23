@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:file_picker/file_picker.dart';
@@ -9,6 +7,7 @@ import 'package:leare_fa/models/models.dart';
 import 'package:leare_fa/utils/graphq_create_section.dart';
 import 'package:leare_fa/utils/upload_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:universal_io/io.dart';
 import 'package:video_player/video_player.dart';
 
 class CreateSectionArguments {
@@ -40,6 +39,7 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
   String? userId;
   late VideoPlayerController _videoController;
   late ChewieController _chewieController;
+  bool isLoadingVideo = true;
   File? _videoFile;
   List<File> _documents = [];
   TextEditingController _sectionNameController = TextEditingController();
@@ -91,6 +91,7 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
               videoPlayerController: _videoController,
               looping: false,
             );
+            isLoadingVideo = false;
           });
         });
       });
@@ -110,7 +111,7 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
     setState(() {
       _videoFile = null;
       _videoController.dispose();
-      _chewieController.dispose();
+      isLoadingVideo = true;
     });
   }
 
@@ -140,7 +141,7 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
       user_id: userId!,
       token: prefs.getString('token') as String,
     );
-    
+
     List<Uint8List> files = _documents.map((document) => document.readAsBytesSync()).toList();
     List<String> file_names = _documents.map((document) => document.path.split('/').last).toList();
     List<String> res2 = [];
@@ -254,7 +255,10 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
                 children: [
                   AspectRatio(
                     aspectRatio: _videoController.value.aspectRatio,
-                    child: Chewie(
+                    child: isLoadingVideo
+                        ? const Center(child: CircularProgressIndicator())
+                        :
+                    Chewie(
                       controller: _chewieController,
                     ),
                   ),

@@ -89,6 +89,8 @@ class ModuleAccordion extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.edit),
                           onPressed: () {
+                            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                            print(section.section_id!);
                             Navigator.pushNamed(context, '/editSection',
                                 arguments: EditSectionArguments(
                                     section.section_id!, module.module_id, section.pos_index));
