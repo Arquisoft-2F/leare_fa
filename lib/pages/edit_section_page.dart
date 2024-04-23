@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:http/http.dart';
 
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
@@ -13,6 +13,7 @@ import 'package:leare_fa/utils/graphq_edit_section.dart';
 import 'package:leare_fa/utils/graphql_section.dart';
 import 'package:leare_fa/utils/upload_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:universal_io/io.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_player/video_player.dart';
 
@@ -52,7 +53,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
   File? _videoFile;
   Uint8List? videoBytes;
   List<File>? _documents = [];
-  List<Uint8List>? _documentsBytes;
+  List<Uint8List>? _documentsBytes = [];
   TextEditingController _sectionNameController = TextEditingController();
   TextEditingController _sectionContentController = TextEditingController();
   var args;
@@ -69,9 +70,9 @@ class _EditSectionPageState extends State<EditSectionPage> {
             EditSectionArguments('','',0)) as EditSectionArguments;
         var sectionId = args.section_id;
         if(Platform.isAndroid){
-          if (sectionId != '') {
-          fetchSectionData(sectionId);
-        }
+            if (sectionId != '') {
+            fetchSectionData(sectionId);
+          }
         }
         else{
           if (sectionId != '') {
@@ -92,7 +93,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
 
   void fetchSectionData(String sectionId) async {
     var res = await _graphQLSection.sectionById(id: sectionId);
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAmovil");
     print(res.video_id);
     if (res != null) {
       setState(() {
@@ -100,7 +101,13 @@ class _EditSectionPageState extends State<EditSectionPage> {
         _sectionNameController.text = section.section_name;
         _sectionContentController.text = section.section_content;
         _documents = section.files_array.map((file) => File(file)).toList();
+        if(section.video_id != '' || section.video_id != 'NotFound'){
         _videoFile = File(section.video_id);
+        }
+        else{
+        _videoFile = null;
+        }
+
         _videoController = VideoPlayerController.networkUrl(Uri.parse(_videoFile!.path));
         _videoController.initialize().then((_) {
           setState(() {
@@ -117,15 +124,14 @@ class _EditSectionPageState extends State<EditSectionPage> {
   }
   void fetchSectionDataW(String sectionId) async {
     var res = await _graphQLSection.sectionById(id: sectionId);
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    print(res.video_id);
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAweb");
+    print(res.section_name);
+    getWebFiles();
     if (res != null) {
       setState(() {
         section = res;
         _sectionNameController.text = section.section_name;
         _sectionContentController.text = section.section_content;
-        _documentsBytes = section.files_array.map((file) => File(file).readAsBytesSync()).toList();
-        videoBytes = File(section.video_id).readAsBytesSync();
         _videoController = VideoPlayerController.networkUrl(Uri.parse(
         'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
       ..initialize().then((_) {
@@ -139,6 +145,24 @@ class _EditSectionPageState extends State<EditSectionPage> {
       });
       });
     }
+  }
+  void getWebFiles() async {
+        var documentsBytes = section.files_array.map((file) async => await readBytes(Uri.parse(file))).toList();
+        var docbytes = await Future.wait(documentsBytes);
+        setState(() {
+          _documentsBytes = docbytes;
+        });
+        if(section.video_id != '' || section.video_id != 'NotFound'){
+        var _videoBytes = await readBytes(Uri.parse(section.video_id));
+        setState(() {
+          videoBytes = _videoBytes;
+        });
+        }
+        else{
+          setState(() {
+            videoBytes = null;
+          });
+        }
   }
 
   Future<void> _pickVideoM() async {
