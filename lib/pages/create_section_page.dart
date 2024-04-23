@@ -479,13 +479,14 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
             ? Column(
                 children: [
                   const AspectRatio(
-                    aspectRatio: 16 / 9,
+                    aspectRatio: 4/3,
                     child: Icon(
                       Icons.videocam,
                       size: 100,
                       color: Colors.grey,
                     )
                   ),
+                  Text('Video ${videoBytes!.length} bytes'),
                   const SizedBox(height: 10),
                   ElevatedButton.icon(
                     onPressed: _removeVideoW,
