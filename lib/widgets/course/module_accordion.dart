@@ -9,9 +9,13 @@ import 'package:leare_fa/pages/pages.dart';
 class ModuleAccordion extends StatelessWidget {
   final List<ModuleModel> moduleList;
   final String course_id;
+  final bool enrollmentState;
 
   const ModuleAccordion(
-      {Key? key, required this.moduleList, required this.course_id})
+      {Key? key,
+      required this.moduleList,
+      required this.course_id,
+      required this.enrollmentState})
       : super(key: key);
 
   @override
@@ -22,10 +26,8 @@ class ModuleAccordion extends StatelessWidget {
       headerBorderColorOpened: Theme.of(context).colorScheme.inversePrimary,
       // headerBorderWidth: 1,
       headerBackgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      headerBackgroundColorOpened:
-          Theme.of(context).colorScheme.inversePrimary,
-      contentBackgroundColor:
-          Theme.of(context).colorScheme.surfaceVariant,
+      headerBackgroundColorOpened: Theme.of(context).colorScheme.inversePrimary,
+      contentBackgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       contentBorderColor: Theme.of(context).colorScheme.surfaceVariant,
       contentBorderWidth: 3,
       contentHorizontalPadding: 10,
@@ -69,13 +71,15 @@ class ModuleAccordion extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/section',
-                                arguments: SectionArguments(
-                                    section.section_id!,
-                                    module.sections,
-                                    course_id));
-                          },
+                          onPressed: enrollmentState
+                              ? () {
+                                  Navigator.pushNamed(context, '/section',
+                                      arguments: SectionArguments(
+                                          section.section_id!,
+                                          module.sections,
+                                          course_id));
+                                }
+                              : () {},
                           child: Text(
                             sectionName,
                             style: TextStyle(
@@ -93,7 +97,9 @@ class ModuleAccordion extends StatelessWidget {
                             print(section.section_id!);
                             Navigator.pushNamed(context, '/editSection',
                                 arguments: EditSectionArguments(
-                                    section.section_id!, module.module_id, section.pos_index));
+                                    section.section_id!,
+                                    module.module_id,
+                                    section.pos_index));
                           },
                         ),
                       ],
@@ -104,15 +110,15 @@ class ModuleAccordion extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/createSection', arguments: CreateSectionArguments(module.module_id, module.sections.length));
+                      Navigator.pushNamed(context, '/createSection',
+                          arguments: CreateSectionArguments(
+                              module.module_id, module.sections.length));
                     },
                     icon: Icon(Icons.add),
                     label: Text(
                       'Create New Section',
                       style: TextStyle(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 18,
                           fontWeight: FontWeight.normal),
                     ),

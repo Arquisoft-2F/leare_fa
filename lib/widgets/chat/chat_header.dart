@@ -23,7 +23,7 @@ class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
           Navigator.pushNamed(context, '/home');
         },
       ),
-      title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      title: (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: chat != null && chat?.picture != "n/a"
@@ -36,8 +36,16 @@ class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
                   child: Text(getImageLetters(chat!)),
                 ),
         ),
-        Text(overflow: TextOverflow.fade, softWrap: false, chat!.name)
-      ]),
+        Expanded(
+          child: Center(
+            child: Text(
+              chat!.name,
+              overflow: TextOverflow.fade,
+              softWrap: false,
+            ),
+          ),
+        )
+      ])),
       actions: [
         IconButton(
           icon: const Icon(Icons.exit_to_app_rounded),
