@@ -81,6 +81,40 @@ class GraphQLChat {
     }
   }
 
+  Future<String> leaveChat({required String chatId}) async {
+    String x = r'''mutation leaveChat($chatId: ID!) {
+      leaveChat(chat_id: $chatId){
+        message
+      }
+    }
+  ''';
+    try {
+      GraphQLClient client = await graphQlConfig.clientToQuery();
+      QueryResult result = await client.mutate(
+        MutationOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql(x),
+          variables: {
+            'chatId': chatId,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception(result.exception);
+      }
+      if (result.data == null || result.data?['leaveChat'] == null) {
+        throw Exception("Could not leave chat");
+      }
+
+      String res = result.data?['leaveChat']['message'];
+      print(res);
+      return res;
+    } catch (error) {
+      throw Exception(error);
+    }
+  }
+
   Future<List<MessageModel>> getMessages(String chatId) async {
     String x = r'''
       query Messages($chat_id: ID!){

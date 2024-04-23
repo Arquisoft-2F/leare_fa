@@ -32,6 +32,7 @@ class _CoursePageState extends State<CoursePage> {
   bool joinedChat = false;
   late SharedPreferences prefs;
   late String ownUserId;
+  late bool enrolledToCourse;
 
   final GraphQLEnroll _graphQLEnroll = GraphQLEnroll();
   final GraphQLChat _graphQLChat = GraphQLChat();
@@ -50,15 +51,23 @@ class _CoursePageState extends State<CoursePage> {
     super.initState();
     Future.delayed(Duration.zero, () {
       getOwnUserId();
+
       setState(() {
         args = (ModalRoute.of(context)?.settings.arguments ??
             CourseArguments('')) as CourseArguments;
       });
+
       var courseId = args.course_id;
       if (courseId != '') {
         fetchCourseData(courseId);
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(CoursePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    fetchIsEnrolled(course.course_id, ownUserId);
   }
 
   void fetchCourseData(String courseId) async {
@@ -75,8 +84,23 @@ class _CoursePageState extends State<CoursePage> {
             id: course.chat_id, name: course.course_name, picture: "n/a");
       });
       fetchUserData(user_id);
+      fetchIsEnrolled(course.course_id, ownUserId);
     } catch (error) {
       print("Error fetching course data: $error");
+    }
+  }
+
+  void fetchIsEnrolled(String course_id, String user_id) async {
+    try {
+      enrolledToCourse =
+          await _graphQLEnroll.isEnrolled(idCourse: course_id, idUser: user_id);
+      setState(() {
+        enrolledToCourse = enrolledToCourse;
+      });
+      print("Enrolado:");
+      print(enrolledToCourse);
+    } catch (error) {
+      print("Error fetching enrollment state: $error");
     }
   }
 
@@ -180,12 +204,14 @@ class _CoursePageState extends State<CoursePage> {
 
       return Scaffold(
         backgroundColor: const Color(0xfff8f9ff),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.chat),
-          onPressed: () {
-            Navigator.pushNamed(context, '/chat', arguments: chat);
-          },
-        ),
+        floatingActionButton: enrolledToCourse
+            ? FloatingActionButton(
+                child: const Icon(Icons.chat),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/chat', arguments: chat);
+                },
+              )
+            : Container(),
         body: SafeArea(
           child: ListView(
             children: [
@@ -246,50 +272,61 @@ class _CoursePageState extends State<CoursePage> {
                                               enabled: false,
                                               child: Text('Editar curso'),
                                             ),
-                                      PopupMenuItem(
-                                          child: Text('Unirse al curso'),
-                                          onTap: () async {
-                                            String enrollCourseId =
-                                                await _graphQLEnroll
-                                                    .createEnrollment(
-                                                        idCourse:
-                                                            course.course_id,
-                                                        idUser: ownUserId);
-                                            try {
-                                              String fetchChatId =
-                                                  await _graphQLChat.joinChat(
-                                                      chatId: course.chat_id);
-                                              joinedChat =
-                                                  false; //me dejo unirlo al chat, significa que no estaba
-                                            } catch (error) {
-                                              print(
-                                                  "Error joining chat: $error");
-                                              joinedChat =
-                                                  true; //no me dejo unirlo al chat, significa que ya estaba
-                                            }
-                                          }),
-                                      PopupMenuItem(
-                                          child: Text('Salir del curso'),
-                                          onTap: () async {
-                                            String exitCourseId =
-                                                await _graphQLEnroll
-                                                    .deleteEnrollment(
-                                                        idCourse:
-                                                            course.course_id,
-                                                        idUser: ownUserId);
-                                            // try {
-                                            //   String fetchChatId =
-                                            //       await _graphQLChat.joinChat(
-                                            //           chatId: course.chat_id);
-                                            //   joinedChat =
-                                            //       false; //me dejo unirlo al chat, significa que no estaba
-                                            // } catch (error) {
-                                            //   print(
-                                            //       "Error joining chat: $error");
-                                            //   joinedChat =
-                                            //       true; //no me dejo unirlo al chat, significa que ya estaba
-                                            // }
-                                          }),
+                                      enrolledToCourse == false
+                                          ? PopupMenuItem(
+                                              child: Text('Unirse al curso'),
+                                              onTap: () async {
+                                                String enrollCourseId =
+                                                    await _graphQLEnroll
+                                                        .createEnrollment(
+                                                            idCourse: course
+                                                                .course_id,
+                                                            idUser: ownUserId);
+                                                setState(() {
+                                                  enrolledToCourse = true;
+                                                });
+                                                try {
+                                                  String fetchChatId =
+                                                      await _graphQLChat
+                                                          .joinChat(
+                                                              chatId: course
+                                                                  .chat_id);
+                                                  joinedChat =
+                                                      false; //me dejo unirlo al chat, significa que no estaba
+                                                } catch (error) {
+                                                  print(
+                                                      "Error joining chat: $error");
+                                                  joinedChat =
+                                                      true; //no me dejo unirlo al chat, significa que ya estaba
+                                                }
+                                              })
+                                          : PopupMenuItem(
+                                              child: Text('Salir del curso'),
+                                              onTap: () async {
+                                                String exitCourseId =
+                                                    await _graphQLEnroll
+                                                        .deleteEnrollment(
+                                                            idCourse: course
+                                                                .course_id,
+                                                            idUser: ownUserId);
+                                                setState(() {
+                                                  enrolledToCourse = false;
+                                                });
+                                                try {
+                                                  String fetchChatId =
+                                                      await _graphQLChat
+                                                          .leaveChat(
+                                                              chatId: course
+                                                                  .chat_id);
+                                                  joinedChat =
+                                                      false; //me dejo unirlo al chat, significa que no estaba
+                                                } catch (error) {
+                                                  print(
+                                                      "Error leaving chat: $error");
+                                                  // joinedChat =
+                                                  //     true; //no me dejo unirlo al chat, significa que ya estaba
+                                                }
+                                              }),
                                     ],
                                   ),
                                 ],
@@ -366,7 +403,8 @@ class _CoursePageState extends State<CoursePage> {
                           ),
                           ModuleAccordion(
                               moduleList: course.modules,
-                              course_id: course.course_id),
+                              course_id: course.course_id,
+                              enrollmentState: enrolledToCourse),
                           TextButton.icon(
                             onPressed: _openModuleModal, // Abre el modal
                             icon: const Icon(Icons.add),
