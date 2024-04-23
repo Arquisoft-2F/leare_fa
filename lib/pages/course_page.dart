@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:leare_fa/utils/delete/graphql_deleteCourses.dart';
 import 'package:leare_fa/utils/graphql_create_module.dart';
 import 'package:leare_fa/widgets/widgets.dart';
 import 'package:leare_fa/models/course_model.dart';
@@ -9,6 +11,7 @@ import 'package:leare_fa/models/chat/chat_response.dart';
 import 'package:leare_fa/utils/chat/graphql_chat.dart';
 import 'package:leare_fa/utils/graphql_enroll.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseArguments {
@@ -39,7 +42,8 @@ class _CoursePageState extends State<CoursePage> {
   final GraphQLUser _graphQLUser = GraphQLUser();
   final GraphQLCourse _graphQLCourse = GraphQLCourse();
   final GraphQLCreateModule _graphQLCreateModule = GraphQLCreateModule();
-
+  final GraphQLDeletes _graphQLDelete = GraphQLDeletes();
+  late UserModel creatorCourse;
   String user_id = '';
   var args;
 
@@ -58,6 +62,7 @@ class _CoursePageState extends State<CoursePage> {
       });
 
       var courseId = args.course_id;
+      fetchMyToken();
       if (courseId != '') {
         fetchCourseData(courseId);
       }
@@ -116,6 +121,26 @@ class _CoursePageState extends State<CoursePage> {
     }
   }
 
+  void fetchMyToken() async {
+    try {
+      prefs = await SharedPreferences.getInstance();
+      Map<String, dynamic> jwtDecodedToken =
+          JwtDecoder.decode(prefs.getString('token') as String);
+      String userID = jwtDecodedToken['UserID'];
+      setState(() {
+        creatorCourse = UserModel(
+            id: jwtDecodedToken['UserID'],
+            name: "",
+            lastname: "",
+            nickname: jwtDecodedToken['Username'],
+            email: "",
+            nationality: "");
+      });
+    } catch (error) {
+      print("Error fetching user data: $error");
+    }
+  }
+
   void fetchUserData(String user_id) async {
     try {
       user = await _graphQLUser.userbyId(id: user_id);
@@ -167,6 +192,7 @@ class _CoursePageState extends State<CoursePage> {
                           content: Text('Módulo creado exitosamente'),
                         ),
                       );
+                      fetchCourseData(course.course_id);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -286,6 +312,28 @@ class _CoursePageState extends State<CoursePage> {
                                               enabled: false,
                                               child: Text('Editar curso'),
                                             ),
+                                      PopupMenuItem(
+                                        enabled: creatorCourse.id == user.id
+                                            ? true
+                                            : false,
+                                        child: const Text('Eliminar curso'),
+                                        onTap: () async {
+                                          bool res = await _graphQLDelete
+                                              .deleteCourse(course.course_id);
+                                          if (res) {
+                                            Navigator.pushNamed(
+                                                context, '/home');
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    'Eliminación de curso no exitosa'),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
                                       enrolledToCourse == false
                                           ? PopupMenuItem(
                                               child: Text('Unirse al curso'),
@@ -418,7 +466,9 @@ class _CoursePageState extends State<CoursePage> {
                           ModuleAccordion(
                               moduleList: course.modules,
                               course_id: course.course_id,
-                              enrollmentState: enrolledToCourse),
+                              enrollmentState: enrolledToCourse,
+                              update: fetchCourseData,
+                              author: creatorCourse.id == course.creator_id),
                           TextButton.icon(
                             onPressed: _openModuleModal, // Abre el modal
                             icon: const Icon(Icons.add),

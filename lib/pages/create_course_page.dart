@@ -4,6 +4,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/course_model.dart';
 import 'package:leare_fa/models/create_course_model.dart';
 import 'package:leare_fa/models/image_model.dart';
+import 'package:leare_fa/pages/course_page.dart';
 import 'package:leare_fa/utils/graphql_categories.dart';
 import 'package:leare_fa/utils/graphql_create_course.dart';
 import 'package:leare_fa/utils/image_utils.dart';
@@ -203,6 +204,8 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                         content: Text('Curso $res2 creado correctamente'),
                       ),
                     );
+                    Navigator.pushReplacementNamed(context, '/course',
+                        arguments: CourseArguments(res2));
                     // Navigator.pop(context, course);
                   }
                 },

@@ -21,7 +21,7 @@ class GraphQLEditSection {
     createSectiontoMap({required SectionModel sectionModel, required String module_id}) {
     Map<String, dynamic> map = {
       'section_id': '"${sectionModel.section_id}"',
-      'module_id': '"${module_id}"',
+      'module_id': '"$module_id"',
       'section_name': '"${sectionModel.section_name}"',
       'section_content': '"${sectionModel.section_content}"',
       'video_id': '"${getLastPartOfUrl(sectionModel.video_id)}"',
@@ -31,12 +31,12 @@ class GraphQLEditSection {
     return map;
     }
   
-  Future<String> createSection({required SectionModel sectionModel, required String module_id}) async {
+  Future<String> editSection({required SectionModel sectionModel, required String module_id}) async {
 
     var map = createSectiontoMap(sectionModel: sectionModel, module_id: module_id);
     
-    String x = '''mutation createSection {
-    createSection(input: $map) {
+    String x = '''mutation editSection {
+    editSection(input: $map) {
         section_id
     }
 }
@@ -55,10 +55,10 @@ class GraphQLEditSection {
       if (result.hasException) {
         throw Exception(result.exception);
       }
-      if (result.data == null || result.data?['createSection'] == null) {
+      if (result.data == null || result.data?['editSection'] == null) {
         throw Exception("No Sections");
       } 
-      String res = result.data?['createSection']['section_id'];
+      String res = result.data?['editSection']['section_id'];
       return res;
 
     } catch (error) {
