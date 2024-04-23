@@ -47,7 +47,7 @@ class _CoursePageState extends State<CoursePage> {
   String user_id = '';
   var args;
 
-  TextEditingController _moduleNameController =
+  final TextEditingController _moduleNameController =
       TextEditingController(); // Controlador de texto para el nombre del módulo
 
   @override
@@ -258,16 +258,18 @@ class _CoursePageState extends State<CoursePage> {
                   children: [
                     Stack(
                       children: [
-                        ColorFiltered(
-                          colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.6),
-                            BlendMode.darken,
-                          ),
-                          child: Image.network(
-                            pictureUrl,
-                            width: double.infinity,
-                            height: 300,
-                            fit: BoxFit.cover,
+                        ClipRect(
+                          child: ColorFiltered(
+                            colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.6),
+                              BlendMode.darken,
+                            ),
+                            child: Image.network(
+                              pictureUrl,
+                              width: double.infinity,
+                              height: 300,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Padding(
