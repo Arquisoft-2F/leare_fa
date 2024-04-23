@@ -31,8 +31,7 @@ class ModuleAccordion extends StatefulWidget {
 
 class _ModuleAccordionState extends State<ModuleAccordion> {
   final GraphQLEditModule _graphQLEditModule = GraphQLEditModule();
-  TextEditingController _moduleNameController =
-      TextEditingController(); 
+  TextEditingController _moduleNameController = TextEditingController();
 
   void _openModuleModal(ModuleModel module) {
     showDialog(
@@ -127,13 +126,15 @@ class _ModuleAccordionState extends State<ModuleAccordion> {
             header: Row(
               children: widget.author
                   ? [
-                      Text(moduleName,
-                          style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold)),
+                      Flexible(
+                        child: Text(moduleName,
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold)),
+                      ),
                       IconButton(
                         icon: Icon(Icons.edit),
                         onPressed: () {
