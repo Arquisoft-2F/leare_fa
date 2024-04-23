@@ -42,11 +42,14 @@ class _CategoryPageState extends State<CategoryPage> {
   void fetchCategoryCourses() async {
     try {
       if (args.category != null) {
-        categoryCourses = await _graphQLCategory.getCoursesByCategory(category: args.category.id);
+        var newCategoryCourses = await _graphQLCategory.getCoursesByCategory(category: args.category.id);
+        print(newCategoryCourses.length);
         setState(() {
-          categoryCourses = categoryCourses;
+          categoryCourses = newCategoryCourses;
         });
-        print(categoryCourses);
+        print(args.category.id);
+        print(categoryCourses[3].name);
+        print(categoryCourses[3].creator?.id);
       }
     } catch (error) {
       print("Error fetching Data");
@@ -69,7 +72,8 @@ class _CategoryPageState extends State<CategoryPage> {
         child: categoryCourses.isNotEmpty ? ListView.builder(
           itemCount: categoryCourses.length,
           itemBuilder: (context, index) {
-            return index%2 != 0 ? Padding(
+            print('$index ${index+1}');
+            return index%2 == 0 ? Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [

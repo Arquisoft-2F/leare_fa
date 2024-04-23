@@ -54,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
             children: [
               SearchBar(
                 controller: controller,
-                autoFocus: true,
+                autoFocus: false,
                 elevation: const MaterialStatePropertyAll(1.0),
                 surfaceTintColor: MaterialStatePropertyAll(
                     colorScheme.surfaceVariant),

@@ -44,8 +44,8 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Column(
                 children: [
-                      const SearchPage(),
-                      const SizedBox(height: 20.0),
+                  const SearchPage(),
+                  const SizedBox(height: 20.0),
                   Expanded(
                     child: ListView(
                       children: feed.where((data) => data.courses.isNotEmpty ).map((cat) {

@@ -41,7 +41,7 @@ class CourseCard extends StatelessWidget {
                 topRight: Radius.circular(28.0),
               ),
               image: DecorationImage(
-                image: NetworkImage(course.picture != 'notFound' && course.picture.isNotEmpty ? course.picture : "assets/landscape.jpg" ),
+                image: (course.picture != 'notFound' && course.picture.isNotEmpty) ? NetworkImage(course.picture) as ImageProvider<Object> : const AssetImage("assets/landscape.jpg"),
                 fit: BoxFit.cover,
               ),
             ),

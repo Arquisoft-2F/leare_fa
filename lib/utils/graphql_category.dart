@@ -13,10 +13,16 @@ class GraphQLCategory {
         course_description
         picture_id
         creator_id
+        creator {
+          id
+          nickname
+          picture_id
+        }
       }
     }
     ''';
     try {
+      print('>>> $category');
       GraphQLClient client = await graphQlConfig.clientToQuery();
       QueryResult result = await client.query(
         QueryOptions(
