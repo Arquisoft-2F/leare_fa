@@ -32,7 +32,7 @@ class _CoursePageState extends State<CoursePage> {
   bool joinedChat = false;
   late SharedPreferences prefs;
   late String ownUserId;
-  late bool enrolledToCourse;
+  late bool enrolledToCourse = false;
 
   final GraphQLEnroll _graphQLEnroll = GraphQLEnroll();
   final GraphQLChat _graphQLChat = GraphQLChat();
@@ -67,7 +67,19 @@ class _CoursePageState extends State<CoursePage> {
   @override
   void didUpdateWidget(CoursePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    fetchIsEnrolled(course.course_id, ownUserId);
+    Future.delayed(Duration.zero, () {
+      getOwnUserId();
+
+      setState(() {
+        args = (ModalRoute.of(context)?.settings.arguments ??
+            CourseArguments('')) as CourseArguments;
+      });
+
+      var courseId = args.course_id;
+      if (courseId != '') {
+        fetchCourseData(courseId);
+      }
+    });
   }
 
   void fetchCourseData(String courseId) async {

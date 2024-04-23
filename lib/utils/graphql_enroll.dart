@@ -1,8 +1,5 @@
-import 'dart:ffi';
-
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:leare_fa/graphql_config.dart';
-import 'package:leare_fa/models/course_model.dart';
 
 class GraphQLEnroll {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
