@@ -54,7 +54,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
   File? _videoFile;
   Uint8List? videoBytes;
   List<File> _documents = [];
-  List<Uint8List> _documentsBytes = [];
+  List<Uint8List>? _documentsBytes = [];
   TextEditingController _sectionNameController = TextEditingController();
   TextEditingController _sectionContentController = TextEditingController();
   var args;
@@ -148,26 +148,22 @@ class _EditSectionPageState extends State<EditSectionPage> {
     }
   }
   void getWebFiles() async {
-    // Lee bytes para documentos y video
-    var documentBytesFutures = section.files_array.map((file) async {
-      return await readBytes(Uri.parse(file));
-    }).toList();
-
-    var documentBytes = await Future.wait(documentBytesFutures);
-
-    setState(() {
-      _documentsBytes = documentBytes;
-    });
-    if (section.video_id != '' && section.video_id != 'NotFound') {
-      var videoBytes = await readBytes(Uri.parse(section.video_id));
-      setState(() {
-        videoBytes = videoBytes;
-      });
-    } else {
-      setState(() {
-        videoBytes = null;
-      });
-    }
+        var documentsBytes = section.files_array.map((file) async => await readBytes(Uri.parse(file))).toList();
+        var docbytes = await Future.wait(documentsBytes);
+        setState(() {
+          _documentsBytes = docbytes;
+        });
+        if(section.video_id != '' || section.video_id != 'NotFound'){
+        var _videoBytes = await readBytes(Uri.parse(section.video_id));
+        setState(() {
+          videoBytes = _videoBytes;
+        });
+        }
+        else{
+          setState(() {
+            videoBytes = null;
+          });
+        }
   }
   Future<void> _pickVideoM() async {
     FilePickerResult? result =
@@ -232,7 +228,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
     if (result != null) {
       File file = File(result.files.single.path!);
       setState(() {
-        _documents.add(file);
+        _documents!.add(file);
       });
     }
   }
@@ -243,19 +239,19 @@ class _EditSectionPageState extends State<EditSectionPage> {
     if (result != null) {
       var file = result.files.single.bytes;
       setState(() {
-        _documentsBytes.add(file!);
+        _documentsBytes!.add(file!);
       });
     }
   }
 
   void _removeDocument(File document) {
     setState(() {
-      _documents.remove(document);
+      _documents!.remove(document);
     });
   }
     void _removeDocumentW(Uint8List document) {
     setState(() {
-      _documentsBytes.remove(document);
+      _documentsBytes!.remove(document);
     });
   }
 
@@ -269,7 +265,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
       token: prefs.getString('token') as String,
     );
     
-    List<Future<Uint8List>> filesF = _documents.map((document) async {
+    List<Future<Uint8List>> filesF = _documents!.map((document) async {
     try {
       return await document.readAsBytes();
     } catch (e) {
@@ -278,14 +274,14 @@ class _EditSectionPageState extends State<EditSectionPage> {
     }).toList();
 
     List<Uint8List> files = await Future.wait(filesF);
-    List<String> file_names = _documents.map((document) => document.path.split('/').last).toList();
+    List<String> file_names = _documents!.map((document) => document.path.split('/').last).toList();
     List<String> res2 = [];
     try {
     for (int i = 0; i < files.length; i++) {
       var fileId = await uploadFile(
         file: files[i],
         file_name: file_names[i],
-        data_type: _documents[i].path.split('.').last,
+        data_type: _documents![i].path.split('.').last,
         user_id: userId!,
         token: prefs.getString('token') as String,
       );
