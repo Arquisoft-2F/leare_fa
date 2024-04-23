@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:file_picker/file_picker.dart';
@@ -5,29 +7,32 @@ import 'package:flutter/services.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/models.dart';
 import 'package:leare_fa/utils/graphq_create_section.dart';
+import 'package:leare_fa/utils/graphql_section.dart';
 import 'package:leare_fa/utils/upload_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:universal_io/io.dart';
 import 'package:video_player/video_player.dart';
 
-class CreateSectionArguments {
+class EditSectionArguments {
+  final String section_id;
   final String module_id;
   final int pos_index;
-  CreateSectionArguments(this.module_id, this.pos_index);
+  EditSectionArguments(this.section_id, this.module_id, this.pos_index);
 }
 
-class CreateSectionPage extends StatefulWidget {
+class EditSectionPage extends StatefulWidget {
+  final String section_id;
   final String module_id;
   final int pos_index;
 
-  const CreateSectionPage({super.key, this.module_id = '', this.pos_index = 0});
+  const EditSectionPage({super.key, this.section_id ='' ,this.module_id = '', this.pos_index = 0});
   
   @override
-  _CreateSectionPageState createState() => _CreateSectionPageState();
+  _EditSectionPageState createState() => _EditSectionPageState();
 }
 
-class _CreateSectionPageState extends State<CreateSectionPage> {
+class _EditSectionPageState extends State<EditSectionPage> {
   late SharedPreferences prefs;
+  bool isLoading = true;
   SectionModel section = SectionModel(
     section_id: '',
     section_name: '',
@@ -37,36 +42,31 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
     pos_index: 0,
   );
   String? userId;
+  bool isLoadingVideo = true;
   late VideoPlayerController _videoController;
   late ChewieController _chewieController;
-  bool isLoadingVideo = true;
   File? _videoFile;
   List<File> _documents = [];
   TextEditingController _sectionNameController = TextEditingController();
   TextEditingController _sectionContentController = TextEditingController();
   var args;
   GraphQLCreateSection _graphQLCreateSection = GraphQLCreateSection();
+  GraphQLSection _graphQLSection = GraphQLSection();
 
   @override
   void initState() {
     super.initState();
     fetchToken();
-        Future.delayed(Duration.zero, () {
+      Future.delayed(Duration.zero, () {
       setState(() {
         args = (ModalRoute.of(context)?.settings.arguments ??
-            CreateSectionArguments('',0)) as CreateSectionArguments;
+            EditSectionArguments('','',0)) as EditSectionArguments;
+        var sectionId = args.section_id;
+        if (sectionId != '') {
+          fetchSectionData(sectionId);
+        }
       });
     });
-    _videoController = VideoPlayerController.networkUrl(
-        Uri.parse('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
-      ..initialize().then((_) {
-        setState(() {
-          _chewieController = ChewieController(
-            videoPlayerController: _videoController,
-            looping: false,
-          );
-        });
-      });
   }
 
   @override
@@ -74,6 +74,32 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
     _videoController.dispose();
     _chewieController.dispose();
     super.dispose();
+  }
+
+  void fetchSectionData(String sectionId) async {
+    var res = await _graphQLSection.sectionById(id: sectionId);
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    print(res.video_id);
+    if (res != null) {
+      setState(() {
+        section = res;
+        _sectionNameController.text = section.section_name;
+        _sectionContentController.text = section.section_content;
+        _documents = section.files_array.map((file) => File(file)).toList();
+        _videoFile = File(section.video_id);
+        _videoController = VideoPlayerController.networkUrl(Uri.parse(_videoFile!.path));
+        _videoController.initialize().then((_) {
+          setState(() {
+            _chewieController = ChewieController(
+              videoPlayerController: _videoController,
+              looping: false,
+            );
+            isLoadingVideo = false;
+            isLoading = false;
+          });
+          });
+      });
+    }
   }
 
   Future<void> _pickVideo() async {
@@ -141,7 +167,7 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
       user_id: userId!,
       token: prefs.getString('token') as String,
     );
-
+    
     List<Uint8List> files = _documents.map((document) => document.readAsBytesSync()).toList();
     List<String> file_names = _documents.map((document) => document.path.split('/').last).toList();
     List<String> res2 = [];
@@ -193,9 +219,17 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    else{
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Section'),
+        title: const Text('Editar Sección'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -240,7 +274,7 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
       ),
     );
   }
-
+}
   Widget _buildVideoSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

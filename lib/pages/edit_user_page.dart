@@ -1,10 +1,8 @@
 import 'dart:typed_data';
-
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/models/image_model.dart';
@@ -16,7 +14,7 @@ import 'package:leare_fa/utils/graphql_edit_user.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
 import 'package:leare_fa/utils/upload_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:universal_io/io.dart';
+
 
 import '../utils/image_utils.dart';
 
@@ -99,7 +97,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         userId = userID;
         user = user;
         _isLoading = false;
-
         _nameController.text = user.name;
         _lastNameController.text = user.lastname;
         _nicknameController.text = user.nickname;
@@ -217,7 +214,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   var res = await uploadFile(
                                       file: img!.base64!,
                                       file_name: 'pp_${args.profileId}',
-                                      data_type: 'imagen',
+                                      data_type: img!.file.split('.').last,
                                       user_id: args.profileId!,
                                       token: prefs.getString('token')!);
                                   if (res != '') {

@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:leare_fa/models/course_model.dart';
+import 'package:leare_fa/pages/create_section_page.dart';
+import 'package:leare_fa/pages/edit_section_page.dart';
 import 'package:leare_fa/pages/pages.dart';
 
 class ModuleAccordion extends StatelessWidget {
   final List<ModuleModel> moduleList;
   final String course_id;
+  final bool enrollmentState;
 
   const ModuleAccordion(
-      {super.key, required this.moduleList, required this.course_id});
+      {Key? key,
+      required this.moduleList,
+      required this.course_id,
+      required this.enrollmentState})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,32 +46,85 @@ class ModuleAccordion extends StatelessWidget {
         print(sections);
         return AccordionSection(
             isOpen: false,
-            header: Text(moduleName,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold)),
+            header: Row(
+              children: [
+                Text(moduleName,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold)),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    // Acción de edición del módulo
+                  },
+                ),
+              ],
+            ),
             content: Column(
-              children: sections.map<Padding>((section) {
-                var sectionName = section.section_name;
-                return Padding(
+              children: [
+                ...sections.map<Padding>((section) {
+                  var sectionName = section.section_name;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: enrollmentState
+                              ? () {
+                                  Navigator.pushNamed(context, '/section',
+                                      arguments: SectionArguments(
+                                          section.section_id!,
+                                          module.sections,
+                                          course_id));
+                                }
+                              : () {},
+                          child: Text(
+                            sectionName,
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () {
+                            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                            print(section.section_id!);
+                            Navigator.pushNamed(context, '/editSection',
+                                arguments: EditSectionArguments(
+                                    section.section_id!,
+                                    module.module_id,
+                                    section.pos_index));
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/section',
-                          arguments: SectionArguments(
-                              section.section_id, module.sections, course_id));
+                      Navigator.pushNamed(context, '/createSection',
+                          arguments: CreateSectionArguments(
+                              module.module_id, module.sections.length));
                     },
-                    child: Text(
-                      sectionName,
+                    icon: Icon(Icons.add),
+                    label: Text(
+                      'Create New Section',
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 18,
                           fontWeight: FontWeight.normal),
                     ),
                   ),
-                );
-              }).toList(),
+                ),
+              ],
             ));
       }).toList(),
     );

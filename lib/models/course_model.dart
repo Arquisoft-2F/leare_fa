@@ -89,7 +89,7 @@ class ModuleModel {
 }
 
 class SectionModel {
-  String section_id;
+  String? section_id;
   String section_name;
   String section_content;
   String video_id;
@@ -97,7 +97,7 @@ class SectionModel {
   int pos_index;
 
   SectionModel({
-    required this.section_id,
+    this.section_id,
     required this.section_name,
     required this.section_content,
     required this.video_id,

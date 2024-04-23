@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -74,7 +73,8 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
       ),
       body: Center(
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * (Responsive.isDesktop(context) ? 0.5 : 0.9),
+          width: MediaQuery.of(context).size.width *
+              (Responsive.isDesktop(context) ? 0.5 : 0.9),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -144,7 +144,8 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                       Wrap(
                         children: _selectedCategories.map((category) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
                             child: Chip(
                               label: Text(category.category_name),
                               onDeleted: () {
@@ -173,11 +174,58 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                     );
                     return; // No continúes si algún campo está vacío
                   }
-          
+
                   var res = await uploadFile(
                       file: img!.base64!,
                       file_name: 'pp_$userId',
                       data_type: 'imagen',
+                      user_id: userId!,
+                      token: prefs.getString('token')!);
+                  CreateCourseModel course = CreateCourseModel(
+                    course_name: _courseNameController.text,
+                    course_description: _courseDescriptionController.text,
+                    categories:
+                        _selectedCategories.map((e) => e.category_id).toList(),
+                    picture_id: res,
+                  );
+                  var res2 = await GraphQLCreateCourse()
+                      .createCourse(createCourseModel: course);
+                  if (res2 == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Error al crear el curso'),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Curso $res2 creado correctamente'),
+                      ),
+                    );
+                    // Navigator.pop(context, course);
+                  }
+                },
+                child: const Text('Crear Curso'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_courseNameController.text.isEmpty ||
+                      _courseDescriptionController.text.isEmpty ||
+                      _selectedCategories.isEmpty ||
+                      img == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Por favor, completa todos los campos'),
+                      ),
+                    );
+                    return; // No continúes si algún campo está vacío
+                  }
+
+                  var res = await uploadFile(
+                      file: img!.base64!,
+                      file_name: 'pp_$userId',
+                      data_type: img!.file.split('.').last,
                       user_id: userId!,
                       token: prefs.getString('token')!);
                   CreateCourseModel course = CreateCourseModel(
