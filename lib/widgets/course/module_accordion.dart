@@ -272,7 +272,9 @@ class _ModuleAccordionState extends State<ModuleAccordion> {
                                 context, '/createSection',
                                 arguments: CreateSectionArguments(
                                     module.module_id,
-                                    module.sections.last.pos_index + 1,
+                                    module.sections.isEmpty
+                                        ? 1
+                                        : module.sections.last.pos_index + 1,
                                     widget.course_id));
                           },
                           icon: Icon(Icons.add),

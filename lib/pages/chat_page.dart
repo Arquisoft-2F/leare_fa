@@ -177,20 +177,35 @@ class ChatPageState extends State<ChatPage> {
                     DateTime.parse(s['created_at']).millisecondsSinceEpoch));
         print(_messages[0]);
         setState(() {});
+      } else {
+        users[s['sender_id']] =
+            types.User(id: s['sender_id'], firstName: s['sender_nickname']);
+        _messages.insert(
+            0,
+            types.TextMessage(
+                id: s['id'],
+                author: users[s['sender_id']]!,
+                text: s['content'],
+                createdAt:
+                    DateTime.parse(s['created_at']).millisecondsSinceEpoch));
+        print(_messages[0]);
+        setState(() {});
       }
     } else if (s['type'] == "message_edited") {
       print('edito');
+      print(s);
       for (int i = 0; i < _messages.length; i++) {
         types.TextMessage? m = _messages[i] as types.TextMessage?;
         if (m?.id == s['id']) {
-          setState(() {
-            _messages[i] = types.TextMessage(
-                id: m!.id,
-                author: m.author,
-                text: s['content'],
-                createdAt:
-                    DateTime.parse(s['created_at']).millisecondsSinceEpoch);
-          });
+          print(s['id']);
+          print(m!.author);
+          print(s['content']);
+          _messages[i] = types.TextMessage(
+              id: s['id'],
+              author: users[s['sender_id']]!,
+              text: s['content'],
+              createdAt:
+                  DateTime.parse(s['created_at']).millisecondsSinceEpoch);
           break;
         }
       }
