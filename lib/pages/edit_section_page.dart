@@ -53,8 +53,8 @@ class _EditSectionPageState extends State<EditSectionPage> {
   late ChewieController _chewieController;
   File? _videoFile;
   Uint8List? videoBytes;
-  List<File>? _documents = [];
-  List<Uint8List>? _documentsBytes = [];
+  List<File> _documents = [];
+  List<Uint8List> _documentsBytes = [];
   TextEditingController _sectionNameController = TextEditingController();
   TextEditingController _sectionContentController = TextEditingController();
   var args;
@@ -150,18 +150,16 @@ class _EditSectionPageState extends State<EditSectionPage> {
   void getWebFiles() async {
     // Lee bytes para documentos y video
     var documentBytesFutures = section.files_array.map((file) async {
-      if (file.endsWith('.mp4') || file.endsWith('.avi') || file.endsWith('.mkv')) {
-        return await readVideoBytes(Uri.parse(file));
-      } else {
-        return await readDocumentBytes(Uri.parse(file));
-      }
+      return await readBytes(Uri.parse(file));
     }).toList();
+
     var documentBytes = await Future.wait(documentBytesFutures);
+
     setState(() {
       _documentsBytes = documentBytes;
     });
     if (section.video_id != '' && section.video_id != 'NotFound') {
-      var videoBytes = await readVideoBytes(Uri.parse(section.video_id));
+      var videoBytes = await readBytes(Uri.parse(section.video_id));
       setState(() {
         videoBytes = videoBytes;
       });
@@ -171,23 +169,6 @@ class _EditSectionPageState extends State<EditSectionPage> {
       });
     }
   }
-  // Función para leer bytes de un documento
-    Future<Uint8List> readDocumentBytes(Uri uri) async {
-      HttpClientRequest request = await HttpClient().getUrl(uri);
-    request.headers.set(HttpHeaders.accessControlAllowOriginHeader, '*'); // Puedes ajustar según tus necesidades
-    request.headers.set(HttpHeaders.accessControlAllowCredentialsHeader, 'true'); // Habilita las credenciales del navegador
-      HttpClientResponse response = await request.close();
-      List<int> bytes = await consolidateHttpClientResponseBytes(response);
-      return Uint8List.fromList(bytes);
-    }
-
-// Función para leer bytes de un video
-    Future<Uint8List> readVideoBytes(Uri uri) async {
-      HttpClientRequest request = await HttpClient().getUrl(uri);
-      HttpClientResponse response = await request.close();
-      List<int> bytes = await consolidateHttpClientResponseBytes(response);
-      return Uint8List.fromList(bytes);
-    }
   Future<void> _pickVideoM() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.video);
@@ -251,7 +232,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
     if (result != null) {
       File file = File(result.files.single.path!);
       setState(() {
-        _documents!.add(file);
+        _documents.add(file);
       });
     }
   }
@@ -262,19 +243,19 @@ class _EditSectionPageState extends State<EditSectionPage> {
     if (result != null) {
       var file = result.files.single.bytes;
       setState(() {
-        _documentsBytes!.add(file!);
+        _documentsBytes.add(file!);
       });
     }
   }
 
   void _removeDocument(File document) {
     setState(() {
-      _documents!.remove(document);
+      _documents.remove(document);
     });
   }
     void _removeDocumentW(Uint8List document) {
     setState(() {
-      _documentsBytes!.remove(document);
+      _documentsBytes.remove(document);
     });
   }
 
@@ -288,7 +269,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
       token: prefs.getString('token') as String,
     );
     
-    List<Future<Uint8List>> filesF = _documents!.map((document) async {
+    List<Future<Uint8List>> filesF = _documents.map((document) async {
     try {
       return await document.readAsBytes();
     } catch (e) {
@@ -297,14 +278,14 @@ class _EditSectionPageState extends State<EditSectionPage> {
     }).toList();
 
     List<Uint8List> files = await Future.wait(filesF);
-    List<String> file_names = _documents!.map((document) => document.path.split('/').last).toList();
+    List<String> file_names = _documents.map((document) => document.path.split('/').last).toList();
     List<String> res2 = [];
     try {
     for (int i = 0; i < files.length; i++) {
       var fileId = await uploadFile(
         file: files[i],
         file_name: file_names[i],
-        data_type: _documents![i].path.split('.').last,
+        data_type: _documents[i].path.split('.').last,
         user_id: userId!,
         token: prefs.getString('token') as String,
       );
