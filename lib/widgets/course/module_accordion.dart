@@ -7,8 +7,9 @@ import 'package:leare_fa/pages/create_section_page.dart';
 import 'package:leare_fa/pages/edit_section_page.dart';
 import 'package:leare_fa/pages/pages.dart';
 import 'package:leare_fa/utils/delete/graphql_deleteCourses.dart';
+import 'package:leare_fa/utils/graphql_edit_module.dart';
 
-class ModuleAccordion extends StatelessWidget {
+class ModuleAccordion extends StatefulWidget {
   final List<ModuleModel> moduleList;
   final String course_id;
   final bool author;
@@ -23,6 +24,73 @@ class ModuleAccordion extends StatelessWidget {
       required void Function(String courseId) this.update,
       required this.enrollmentState})
       : super(key: key);
+
+  @override
+  State<ModuleAccordion> createState() => _ModuleAccordionState();
+}
+
+class _ModuleAccordionState extends State<ModuleAccordion> {
+  final GraphQLEditModule _graphQLEditModule = GraphQLEditModule();
+  TextEditingController _moduleNameController =
+      TextEditingController(); 
+
+  void _openModuleModal(ModuleModel module) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Ingresa nombre del modulo'),
+          content: TextField(
+            controller: _moduleNameController,
+            decoration: const InputDecoration(hintText: 'Nombre del módulo'),
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    // Código para crear o editar el módulo aquí
+                    String moduleName = _moduleNameController.text;
+                    var res = await _graphQLEditModule.editModule(
+                        module_name: moduleName,
+                        module_id: module.module_id,
+                        pos_index: module.pos_index);
+                    if (res != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Módulo creado exitosamente'),
+                        ),
+                      );
+                      widget.update(widget.course_id);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Error al crear el módulo'),
+                        ),
+                      );
+                    }
+                    Navigator.of(context).pop(); // Cierra el modal
+                  },
+                  child: const Text('Guardar'),
+                ),
+                const SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Cierra el modal sin guardar
+                  },
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +114,18 @@ class ModuleAccordion extends StatelessWidget {
       rightIcon: Icon(Icons.keyboard_arrow_down,
           color: Theme.of(context).colorScheme.onPrimaryContainer, size: 30),
       contentVerticalPadding: 10,
-      children: moduleList.map<AccordionSection>((module) {
+      children: widget.moduleList.map<AccordionSection>((module) {
         var moduleName = module.module_name;
+        setState(() {
+          _moduleNameController.text = moduleName;
+        });
         var sections = module.sections;
         sections.sort((a, b) => a.pos_index.compareTo(b.pos_index));
         print(sections);
         return AccordionSection(
             isOpen: false,
             header: Row(
-              children: author
+              children: widget.author
                   ? [
                       Text(moduleName,
                           style: TextStyle(
@@ -67,6 +138,7 @@ class ModuleAccordion extends StatelessWidget {
                         icon: Icon(Icons.edit),
                         onPressed: () {
                           // Acción de edición del módulo
+                          _openModuleModal(module);
                         },
                       ),
                       IconButton(
@@ -75,8 +147,8 @@ class ModuleAccordion extends StatelessWidget {
                           bool res = await _graphQLDelete
                               .deleteModule(module.module_id);
                           if (res) {
-                            moduleList.remove(module);
-                            update(course_id);
+                            widget.moduleList.remove(module);
+                            widget.update(widget.course_id);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -106,7 +178,7 @@ class ModuleAccordion extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: author
+                      children: widget.author
                           ? [
                               ElevatedButton(
                                 onPressed: () {
@@ -114,7 +186,7 @@ class ModuleAccordion extends StatelessWidget {
                                       arguments: SectionArguments(
                                           section.section_id!,
                                           module.sections,
-                                          course_id));
+                                          widget.course_id));
                                 },
                                 child: Text(
                                   sectionName,
@@ -148,7 +220,7 @@ class ModuleAccordion extends StatelessWidget {
                                         .deleteSection(section.section_id!);
                                     if (res) {
                                       sections.remove(section);
-                                      update(course_id);
+                                      widget.update(widget.course_id);
                                     } else {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -164,13 +236,13 @@ class ModuleAccordion extends StatelessWidget {
                             ]
                           : [
                               ElevatedButton(
-                                onPressed: enrollmentState
+                                onPressed: widget.enrollmentState
                                     ? () {
                                         Navigator.pushNamed(context, '/section',
                                             arguments: SectionArguments(
                                                 section.section_id!,
                                                 module.sections,
-                                                course_id));
+                                                widget.course_id));
                                       }
                                     : () {},
                                 child: Text(
@@ -193,7 +265,7 @@ class ModuleAccordion extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/createSection',
                           arguments: CreateSectionArguments(module.module_id,
-                              module.sections.length, course_id));
+                              module.sections.length, widget.course_id));
                     },
                     icon: Icon(Icons.add),
                     label: Text(

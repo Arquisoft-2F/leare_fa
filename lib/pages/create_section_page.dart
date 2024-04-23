@@ -261,7 +261,7 @@ class _CreateSectionPageState extends State<CreateSectionPage> {
         var fileId = await uploadFile(
           file: files[i],
           file_name: file_names[i],
-          data_type: _documents![i].path.split('.').last,
+          data_type: 'document',
           user_id: userId!,
           token: prefs.getString('token') as String,
         );
