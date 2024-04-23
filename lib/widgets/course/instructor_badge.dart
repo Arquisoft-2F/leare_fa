@@ -79,7 +79,7 @@ class InstructorBadge extends StatelessWidget {
                   const SizedBox(width: 9.0),
                   IconButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, "/profia",
+                        Navigator.pushNamed(context, "/profile",
                             arguments: UserArguments(id));
                       },
                       icon: const Icon(
