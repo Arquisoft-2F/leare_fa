@@ -16,12 +16,12 @@ class _SectionVideoState extends State<SectionVideo> {
   late Chewie playerWidget;
   late ChewieController chewieController;
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    chewieController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   chewieController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   void initState() {

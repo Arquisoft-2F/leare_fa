@@ -7,6 +7,11 @@ import 'package:leare_fa/models/course_model.dart';
 import 'package:leare_fa/utils/graphql_course.dart';
 import 'package:leare_fa/utils/graphql_user.dart';
 import 'package:leare_fa/models/user_model.dart';
+import 'package:leare_fa/models/chat/chat_response.dart';
+import 'package:leare_fa/utils/chat/graphql_chat.dart';
+import 'package:leare_fa/utils/graphql_enroll.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseArguments {
@@ -25,14 +30,21 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   bool isLoading = true;
   late CourseModel course;
+  late ChatModel chat;
   late UserModel user;
+  bool joinedChat = false;
+  late SharedPreferences prefs;
+  late String ownUserId;
+  late bool enrolledToCourse;
+
+  final GraphQLEnroll _graphQLEnroll = GraphQLEnroll();
+  final GraphQLChat _graphQLChat = GraphQLChat();
   final GraphQLUser _graphQLUser = GraphQLUser();
   final GraphQLCourse _graphQLCourse = GraphQLCourse();
   final GraphQLCreateModule _graphQLCreateModule = GraphQLCreateModule();
   final GraphQLDeletes _graphQLDelete = GraphQLDeletes();
   late UserModel creatorCourse;
   String user_id = '';
-  late SharedPreferences prefs;
   var args;
 
   TextEditingController _moduleNameController =
@@ -42,16 +54,25 @@ class _CoursePageState extends State<CoursePage> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
+      getOwnUserId();
+
       setState(() {
         args = (ModalRoute.of(context)?.settings.arguments ??
             CourseArguments('')) as CourseArguments;
       });
+
       var courseId = args.course_id;
       fetchMyToken();
       if (courseId != '') {
         fetchCourseData(courseId);
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(CoursePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    fetchIsEnrolled(course.course_id, ownUserId);
   }
 
   void fetchCourseData(String courseId) async {
@@ -63,9 +84,28 @@ class _CoursePageState extends State<CoursePage> {
       setState(() {
         user_id = course.creator_id;
       });
+      setState(() {
+        chat = ChatModel(
+            id: course.chat_id, name: course.course_name, picture: "n/a");
+      });
       fetchUserData(user_id);
+      fetchIsEnrolled(course.course_id, ownUserId);
     } catch (error) {
       print("Error fetching course data: $error");
+    }
+  }
+
+  void fetchIsEnrolled(String course_id, String user_id) async {
+    try {
+      enrolledToCourse =
+          await _graphQLEnroll.isEnrolled(idCourse: course_id, idUser: user_id);
+      setState(() {
+        enrolledToCourse = enrolledToCourse;
+      });
+      print("Enrolado:");
+      print(enrolledToCourse);
+    } catch (error) {
+      print("Error fetching enrollment state: $error");
     }
   }
 
@@ -99,6 +139,16 @@ class _CoursePageState extends State<CoursePage> {
     } catch (error) {
       print("Error fetching user data: $error");
     }
+  }
+
+  void getOwnUserId() async {
+    prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> jwtDecodedToken =
+        JwtDecoder.decode(prefs.getString('token') as String);
+
+    setState(() {
+      ownUserId = jwtDecodedToken['UserID'];
+    });
   }
 
   // Función para abrir el modal
@@ -180,10 +230,14 @@ class _CoursePageState extends State<CoursePage> {
 
       return Scaffold(
         backgroundColor: const Color(0xfff8f9ff),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.chat),
-          onPressed: () {},
-        ),
+        floatingActionButton: enrolledToCourse
+            ? FloatingActionButton(
+                child: const Icon(Icons.chat),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/chat', arguments: chat);
+                },
+              )
+            : Container(),
         body: SafeArea(
           child: ListView(
             children: [
@@ -230,7 +284,7 @@ class _CoursePageState extends State<CoursePage> {
                                     ),
                                     itemBuilder: (BuildContext context) =>
                                         <PopupMenuEntry>[
-                                      creatorCourse.id == user.id
+                                      user_id == user.id
                                           ? PopupMenuItem(
                                               child: const Text('Editar curso'),
                                               onTap: () {
@@ -266,10 +320,61 @@ class _CoursePageState extends State<CoursePage> {
                                           }
                                         },
                                       ),
-                                      PopupMenuItem(
-                                        child: const Text(''),
-                                        onTap: () {},
-                                      ),
+                                      enrolledToCourse == false
+                                          ? PopupMenuItem(
+                                              child: Text('Unirse al curso'),
+                                              onTap: () async {
+                                                String enrollCourseId =
+                                                    await _graphQLEnroll
+                                                        .createEnrollment(
+                                                            idCourse: course
+                                                                .course_id,
+                                                            idUser: ownUserId);
+                                                setState(() {
+                                                  enrolledToCourse = true;
+                                                });
+                                                try {
+                                                  String fetchChatId =
+                                                      await _graphQLChat
+                                                          .joinChat(
+                                                              chatId: course
+                                                                  .chat_id);
+                                                  joinedChat =
+                                                      false; //me dejo unirlo al chat, significa que no estaba
+                                                } catch (error) {
+                                                  print(
+                                                      "Error joining chat: $error");
+                                                  joinedChat =
+                                                      true; //no me dejo unirlo al chat, significa que ya estaba
+                                                }
+                                              })
+                                          : PopupMenuItem(
+                                              child: Text('Salir del curso'),
+                                              onTap: () async {
+                                                String exitCourseId =
+                                                    await _graphQLEnroll
+                                                        .deleteEnrollment(
+                                                            idCourse: course
+                                                                .course_id,
+                                                            idUser: ownUserId);
+                                                setState(() {
+                                                  enrolledToCourse = false;
+                                                });
+                                                try {
+                                                  String fetchChatId =
+                                                      await _graphQLChat
+                                                          .leaveChat(
+                                                              chatId: course
+                                                                  .chat_id);
+                                                  joinedChat =
+                                                      false; //me dejo unirlo al chat, significa que no estaba
+                                                } catch (error) {
+                                                  print(
+                                                      "Error leaving chat: $error");
+                                                  // joinedChat =
+                                                  //     true; //no me dejo unirlo al chat, significa que ya estaba
+                                                }
+                                              }),
                                     ],
                                   ),
                                 ],
@@ -347,6 +452,7 @@ class _CoursePageState extends State<CoursePage> {
                           ModuleAccordion(
                               moduleList: course.modules,
                               course_id: course.course_id,
+                              enrollmentState: enrolledToCourse,
                               update: fetchCourseData,
                               author: creatorCourse.id == course.creator_id),
                           TextButton.icon(

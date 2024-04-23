@@ -42,6 +42,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
     pos_index: 0,
   );
   String? userId;
+  bool isLoadingVideo = true;
   late VideoPlayerController _videoController;
   late ChewieController _chewieController;
   File? _videoFile;
@@ -60,20 +61,12 @@ class _EditSectionPageState extends State<EditSectionPage> {
       setState(() {
         args = (ModalRoute.of(context)?.settings.arguments ??
             EditSectionArguments('','',0)) as EditSectionArguments;
+        var sectionId = args.section_id;
+        if (sectionId != '') {
+          fetchSectionData(sectionId);
+        }
       });
     });
-    fetchSectionData(args.section_id);
-    _videoController = VideoPlayerController.networkUrl(
-        Uri.parse('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
-      ..initialize().then((_) {
-        setState(() {
-          _chewieController = ChewieController(
-            videoPlayerController: _videoController,
-            looping: false,
-          );
-          isLoading = false;
-        });
-      });
   }
 
   @override
@@ -85,20 +78,25 @@ class _EditSectionPageState extends State<EditSectionPage> {
 
   void fetchSectionData(String sectionId) async {
     var res = await _graphQLSection.sectionById(id: sectionId);
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    print(res.video_id);
     if (res != null) {
       setState(() {
         section = res;
         _sectionNameController.text = section.section_name;
         _sectionContentController.text = section.section_content;
         _documents = section.files_array.map((file) => File(file)).toList();
-        _videoController = VideoPlayerController.networkUrl(Uri.parse(section.video_id))
-          ..initialize().then((_) {
-            setState(() {
-              _chewieController = ChewieController(
-                videoPlayerController: _videoController,
-                looping: false,
-              );
-            });
+        _videoFile = File(section.video_id);
+        _videoController = VideoPlayerController.networkUrl(Uri.parse(_videoFile!.path));
+        _videoController.initialize().then((_) {
+          setState(() {
+            _chewieController = ChewieController(
+              videoPlayerController: _videoController,
+              looping: false,
+            );
+            isLoadingVideo = false;
+            isLoading = false;
+          });
           });
       });
     }
@@ -119,6 +117,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
               videoPlayerController: _videoController,
               looping: false,
             );
+            isLoadingVideo = false;
           });
         });
       });
@@ -138,7 +137,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
     setState(() {
       _videoFile = null;
       _videoController.dispose();
-      _chewieController.dispose();
+      isLoadingVideo = true;
     });
   }
 
@@ -228,11 +227,9 @@ class _EditSectionPageState extends State<EditSectionPage> {
       );
     }
     else{
-
-  
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Section'),
+        title: const Text('Editar Sección'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -292,7 +289,10 @@ class _EditSectionPageState extends State<EditSectionPage> {
                 children: [
                   AspectRatio(
                     aspectRatio: _videoController.value.aspectRatio,
-                    child: Chewie(
+                    child: isLoadingVideo
+                        ? const Center(child: CircularProgressIndicator())
+                        :
+                    Chewie(
                       controller: _chewieController,
                     ),
                   ),

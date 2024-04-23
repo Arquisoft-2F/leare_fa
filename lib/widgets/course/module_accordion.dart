@@ -13,13 +13,15 @@ class ModuleAccordion extends StatelessWidget {
   final String course_id;
   final bool author;
   final void Function(String courseId) update;
+  final bool enrollmentState;
 
   const ModuleAccordion(
       {Key? key,
       required this.moduleList,
       required this.course_id,
       required this.author,
-      required void Function(String courseId) this.update})
+      required void Function(String courseId) this.update,
+      required this.enrollmentState})
       : super(key: key);
 
   @override
@@ -127,6 +129,9 @@ class ModuleAccordion extends StatelessWidget {
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {
+                                  print(
+                                      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                                  print(section.section_id!);
                                   Navigator.pushNamed(context, '/editSection',
                                       arguments: EditSectionArguments(
                                           section.section_id!,
@@ -159,13 +164,15 @@ class ModuleAccordion extends StatelessWidget {
                             ]
                           : [
                               ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/section',
-                                      arguments: SectionArguments(
-                                          section.section_id!,
-                                          module.sections,
-                                          course_id));
-                                },
+                                onPressed: enrollmentState
+                                    ? () {
+                                        Navigator.pushNamed(context, '/section',
+                                            arguments: SectionArguments(
+                                                section.section_id!,
+                                                module.sections,
+                                                course_id));
+                                      }
+                                    : () {},
                                 child: Text(
                                   sectionName,
                                   style: TextStyle(
