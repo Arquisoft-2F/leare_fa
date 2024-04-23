@@ -6,8 +6,8 @@ class GraphQLFeed {
   static GraphQlConfiguration graphQlConfig = GraphQlConfiguration();
 
   Future<List<FeedModel>> getFeed() async {
-    String x = r'''query GetFeed {
-      listCoursesbyCategories {
+    String x = r'''query GetFeed($amount: Int!) {
+      listCoursesbyCategories(amount: $amount) {
         category {
           category_id
           category_name
@@ -32,6 +32,9 @@ class GraphQLFeed {
         QueryOptions(
           fetchPolicy: FetchPolicy.noCache,
           document: gql(x),
+          variables: const {
+            'amount': 6,
+          },
         )
       );
       if (result.hasException) {
