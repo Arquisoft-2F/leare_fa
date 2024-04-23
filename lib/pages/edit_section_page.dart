@@ -22,16 +22,24 @@ class EditSectionArguments {
   final String section_id;
   final String module_id;
   final int pos_index;
-  EditSectionArguments(this.section_id, this.module_id, this.pos_index);
+  final String course_id;
+  EditSectionArguments(
+      this.section_id, this.module_id, this.pos_index, this.course_id);
 }
 
 class EditSectionPage extends StatefulWidget {
   final String section_id;
   final String module_id;
   final int pos_index;
+  final String course_id;
 
-  const EditSectionPage({super.key, this.section_id ='' ,this.module_id = '', this.pos_index = 0});
-  
+  const EditSectionPage(
+      {super.key,
+      this.section_id = '',
+      this.module_id = '',
+      this.pos_index = 0,
+      this.course_id = ""});
+
   @override
   _EditSectionPageState createState() => _EditSectionPageState();
 }
@@ -65,22 +73,20 @@ class _EditSectionPageState extends State<EditSectionPage> {
   void initState() {
     super.initState();
     fetchToken();
-      Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () {
       setState(() {
         args = (ModalRoute.of(context)?.settings.arguments ??
-            EditSectionArguments('','',0)) as EditSectionArguments;
+            EditSectionArguments('', '', 0, '')) as EditSectionArguments;
         var sectionId = args.section_id;
-        if(Platform.isAndroid){
-            if (sectionId != '') {
+        if (Platform.isAndroid) {
+          if (sectionId != '') {
             fetchSectionData(sectionId);
           }
-        }
-        else{
+        } else {
           if (sectionId != '') {
-          fetchSectionDataW(sectionId);
+            fetchSectionDataW(sectionId);
+          }
         }
-        }
-
       });
     });
   }
@@ -102,14 +108,14 @@ class _EditSectionPageState extends State<EditSectionPage> {
         _sectionNameController.text = section.section_name;
         _sectionContentController.text = section.section_content;
         _documents = section.files_array.map((file) => File(file)).toList();
-        if(section.video_id != '' || section.video_id != 'NotFound'){
-        _videoFile = File(section.video_id);
-        }
-        else{
-        _videoFile = null;
+        if (section.video_id != '' || section.video_id != 'NotFound') {
+          _videoFile = File(section.video_id);
+        } else {
+          _videoFile = null;
         }
 
-        _videoController = VideoPlayerController.networkUrl(Uri.parse(_videoFile!.path));
+        _videoController =
+            VideoPlayerController.networkUrl(Uri.parse(_videoFile!.path));
         _videoController.initialize().then((_) {
           setState(() {
             _chewieController = ChewieController(
@@ -119,10 +125,11 @@ class _EditSectionPageState extends State<EditSectionPage> {
             isLoadingVideo = false;
             isLoading = false;
           });
-          });
+        });
       });
     }
   }
+
   void fetchSectionDataW(String sectionId) async {
     var res = await _graphQLSection.sectionById(id: sectionId);
     print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAweb");
@@ -134,37 +141,40 @@ class _EditSectionPageState extends State<EditSectionPage> {
         _sectionNameController.text = section.section_name;
         _sectionContentController.text = section.section_content;
         _videoController = VideoPlayerController.networkUrl(Uri.parse(
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
-      ..initialize().then((_) {
-        setState(() {
-          _chewieController = ChewieController(
-            videoPlayerController: _videoController,
-            looping: false,
-          );
-          isLoading = false;
-        });
-      });
+            'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
+          ..initialize().then((_) {
+            setState(() {
+              _chewieController = ChewieController(
+                videoPlayerController: _videoController,
+                looping: false,
+              );
+              isLoading = false;
+            });
+          });
       });
     }
   }
+
   void getWebFiles() async {
-        var documentsBytes = section.files_array.map((file) async => await readBytes(Uri.parse(file))).toList();
-        var docbytes = await Future.wait(documentsBytes);
-        setState(() {
-          _documentsBytes = docbytes;
-        });
-        if(section.video_id != '' || section.video_id != 'NotFound'){
-        var _videoBytes = await readBytes(Uri.parse(section.video_id));
-        setState(() {
-          videoBytes = _videoBytes;
-        });
-        }
-        else{
-          setState(() {
-            videoBytes = null;
-          });
-        }
+    var documentsBytes = section.files_array
+        .map((file) async => await readBytes(Uri.parse(file)))
+        .toList();
+    var docbytes = await Future.wait(documentsBytes);
+    setState(() {
+      _documentsBytes = docbytes;
+    });
+    if (section.video_id != '' || section.video_id != 'NotFound') {
+      var _videoBytes = await readBytes(Uri.parse(section.video_id));
+      setState(() {
+        videoBytes = _videoBytes;
+      });
+    } else {
+      setState(() {
+        videoBytes = null;
+      });
+    }
   }
+
   Future<void> _pickVideoM() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.video);
@@ -187,7 +197,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
     }
   }
 
-    Future<void> _pickVideoW() async {
+  Future<void> _pickVideoW() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.video);
 
@@ -198,10 +208,11 @@ class _EditSectionPageState extends State<EditSectionPage> {
       });
     }
   }
+
   void fetchToken() async {
     prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> jwtDecodedToken =
-    JwtDecoder.decode(prefs.getString('token') as String);
+        JwtDecoder.decode(prefs.getString('token') as String);
     String userID = jwtDecodedToken['UserID'];
     setState(() {
       userId = userID;
@@ -221,6 +232,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
       videoBytes = null;
     });
   }
+
   Future<void> _pickDocumentM() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.any);
@@ -232,7 +244,8 @@ class _EditSectionPageState extends State<EditSectionPage> {
       });
     }
   }
-    Future<void> _pickDocumentW() async {
+
+  Future<void> _pickDocumentW() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.any);
 
@@ -249,7 +262,8 @@ class _EditSectionPageState extends State<EditSectionPage> {
       _documents!.remove(document);
     });
   }
-    void _removeDocumentW(Uint8List document) {
+
+  void _removeDocumentW(Uint8List document) {
     setState(() {
       _documentsBytes!.remove(document);
     });
@@ -264,33 +278,34 @@ class _EditSectionPageState extends State<EditSectionPage> {
       user_id: userId!,
       token: prefs.getString('token') as String,
     );
-    
+
     List<Future<Uint8List>> filesF = _documents!.map((document) async {
-    try {
-      return await document.readAsBytes();
-    } catch (e) {
-      return await readBytes(Uri.parse(document.path));
-    }
+      try {
+        return await document.readAsBytes();
+      } catch (e) {
+        return await readBytes(Uri.parse(document.path));
+      }
     }).toList();
 
     List<Uint8List> files = await Future.wait(filesF);
-    List<String> file_names = _documents!.map((document) => document.path.split('/').last).toList();
+    List<String> file_names =
+        _documents!.map((document) => document.path.split('/').last).toList();
     List<String> res2 = [];
     try {
-    for (int i = 0; i < files.length; i++) {
-      var fileId = await uploadFile(
-        file: files[i],
-        file_name: file_names[i],
-        data_type: _documents![i].path.split('.').last,
-        user_id: userId!,
-        token: prefs.getString('token') as String,
-      );
-      res2.add(fileId);
+      for (int i = 0; i < files.length; i++) {
+        var fileId = await uploadFile(
+          file: files[i],
+          file_name: file_names[i],
+          data_type: _documents![i].path.split('.').last,
+          user_id: userId!,
+          token: prefs.getString('token') as String,
+        );
+        res2.add(fileId);
+      }
+    } catch (e) {
+      print('Error: $e');
     }
-  } catch (e) {
-    print('Error: $e');
-  }
-    if(res1 != null && res2 != null) {
+    if (res1 != null && res2 != null) {
       print('Upload Success!');
       setState(() {
         section = SectionModel(
@@ -305,8 +320,9 @@ class _EditSectionPageState extends State<EditSectionPage> {
     } else {
       print('Error saving section');
     }
-    var res3 = await _graphQLEditSection.editSection(sectionModel: section, module_id: args.module_id);
-    if(res3 != null) {
+    var res3 = await _graphQLEditSection.editSection(
+        sectionModel: section, module_id: args.module_id);
+    if (res3 != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Sección editar exitosamente'),
@@ -321,7 +337,8 @@ class _EditSectionPageState extends State<EditSectionPage> {
       );
     }
   }
- void _saveSectionW() async {
+
+  void _saveSectionW() async {
     var res1 = await uploadFile(
       file: videoBytes!,
       file_name: 'video_${DateTime.now().millisecondsSinceEpoch}',
@@ -386,65 +403,63 @@ class _EditSectionPageState extends State<EditSectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    if(Platform.isAndroid){
-    if (isLoading) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-    else{
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Editar Sección'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _sectionNameController,
-              decoration: const InputDecoration(
-                labelText: 'Section Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _sectionContentController,
-              maxLines: null,
-              decoration: const InputDecoration(
-                labelText: 'Section Content',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            _buildVideoSection(),
-            const SizedBox(height: 20),
-            _buildDocumentSection(),
-            const SizedBox(height: 20),
-            ElevatedButton(
+    if (Platform.isAndroid) {
+      if (isLoading) {
+        return Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      } else {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Editar Sección'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                _saveSection();
+                Navigator.pop(context);
               },
-              child: const Text('Editar Sección'),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-  }
-  else{
-    return Scaffold(
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextField(
+                  controller: _sectionNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Section Name',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _sectionContentController,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    labelText: 'Section Content',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildVideoSection(),
+                const SizedBox(height: 20),
+                _buildDocumentSection(),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    _saveSection();
+                  },
+                  child: const Text('Editar Sección'),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    } else {
+      return Scaffold(
         appBar: AppBar(
           title: const Text('Editar Sección'),
           leading: IconButton(
@@ -490,8 +505,9 @@ class _EditSectionPageState extends State<EditSectionPage> {
           ),
         ),
       );
+    }
   }
-}
+
   Widget _buildVideoSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,10 +524,9 @@ class _EditSectionPageState extends State<EditSectionPage> {
                     aspectRatio: _videoController.value.aspectRatio,
                     child: isLoadingVideo
                         ? const Center(child: CircularProgressIndicator())
-                        :
-                    Chewie(
-                      controller: _chewieController,
-                    ),
+                        : Chewie(
+                            controller: _chewieController,
+                          ),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton.icon(
@@ -567,6 +582,7 @@ class _EditSectionPageState extends State<EditSectionPage> {
       ],
     );
   }
+
   Widget _buildVideoSectionW() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
