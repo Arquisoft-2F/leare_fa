@@ -309,14 +309,18 @@ class UserProfilePageState extends State<UserProfilePage> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         print(index);
-                        return Card(
-                          child: GestureDetector(
-                              //You need to make my child interactive
-                              onTap: () => Navigator.pushNamed(
-                                  context, '/course',
-                                  arguments: CourseArguments(
-                                      courses[index].course.id)),
-                              child: CourseCard(course: courses[index].course)),
+                        return Padding(
+                          padding: EdgeInsets.all(16.16),
+                          child: Card(
+                            child: GestureDetector(
+                                //You need to make my child interactive
+                                onTap: () => Navigator.pushNamed(
+                                    context, '/course',
+                                    arguments: CourseArguments(
+                                        courses[index].course.id)),
+                                child:
+                                    CourseCard(course: courses[index].course)),
+                          ),
                         );
                       }),
                 )

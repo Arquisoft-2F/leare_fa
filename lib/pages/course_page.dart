@@ -163,6 +163,31 @@ class _CoursePageState extends State<CoursePage> {
     });
   }
 
+  Future<void> _showAlter(String title, String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [Text(message)],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Función para abrir el modal
   void _openModuleModal() {
     showDialog(
@@ -344,22 +369,32 @@ class _CoursePageState extends State<CoursePage> {
                                                             idCourse: course
                                                                 .course_id,
                                                             idUser: ownUserId);
-                                                setState(() {
-                                                  enrolledToCourse = true;
-                                                });
-                                                try {
-                                                  String fetchChatId =
-                                                      await _graphQLChat
-                                                          .joinChat(
-                                                              chatId: course
-                                                                  .chat_id);
-                                                  joinedChat =
-                                                      false; //me dejo unirlo al chat, significa que no estaba
-                                                } catch (error) {
-                                                  print(
-                                                      "Error joining chat: $error");
-                                                  joinedChat =
-                                                      true; //no me dejo unirlo al chat, significa que ya estaba
+                                                if (enrollCourseId != null &&
+                                                    enrollCourseId != "") {
+                                                  try {
+                                                    String fetchChatId =
+                                                        await _graphQLChat
+                                                            .joinChat(
+                                                                chatId: course
+                                                                    .chat_id);
+                                                    joinedChat =
+                                                        false; //me dejo unirlo al chat, significa que no estaba
+                                                  } catch (error) {
+                                                    print(
+                                                        "Error joining chat: $error");
+                                                    joinedChat =
+                                                        true; //no me dejo unirlo al chat, significa que ya estaba
+                                                  }
+                                                  setState(() {
+                                                    enrolledToCourse = true;
+                                                  });
+                                                  _showAlter(
+                                                      "Unido correctamente al curso",
+                                                      "Ya puedes ver y navegar sobre el contenido de este curso");
+                                                } else {
+                                                  _showAlter(
+                                                      "No se pudo unir al curso",
+                                                      "Intentelo más tarde por favor");
                                                 }
                                               })
                                           : PopupMenuItem(
@@ -371,22 +406,41 @@ class _CoursePageState extends State<CoursePage> {
                                                             idCourse: course
                                                                 .course_id,
                                                             idUser: ownUserId);
-                                                setState(() {
-                                                  enrolledToCourse = false;
-                                                });
-                                                try {
-                                                  String fetchChatId =
-                                                      await _graphQLChat
-                                                          .leaveChat(
-                                                              chatId: course
-                                                                  .chat_id);
-                                                  joinedChat =
-                                                      false; //me dejo unirlo al chat, significa que no estaba
-                                                } catch (error) {
-                                                  print(
-                                                      "Error leaving chat: $error");
-                                                  // joinedChat =
-                                                  //     true; //no me dejo unirlo al chat, significa que ya estaba
+                                                if (exitCourseId != null &&
+                                                    exitCourseId != "") {
+                                                  String fetchChatId;
+                                                  try {
+                                                    fetchChatId =
+                                                        await _graphQLChat
+                                                            .leaveChat(
+                                                                chatId: course
+                                                                    .chat_id);
+                                                    joinedChat =
+                                                        false; //me dejo unirlo al chat, significa que no estaba
+                                                  } catch (error) {
+                                                    print(
+                                                        "Error leaving chat: $error");
+                                                    fetchChatId = "";
+                                                    // joinedChat =
+                                                    //     true; //no me dejo unirlo al chat, significa que ya estaba
+                                                  }
+                                                  if (fetchChatId != null &&
+                                                      fetchChatId != "") {
+                                                    setState(() {
+                                                      enrolledToCourse = false;
+                                                    });
+                                                    _showAlter(
+                                                        "Salida del curso exitosa",
+                                                        "Ya no puedes ingresar al chat ni navegar en las secciones del urso");
+                                                  } else {
+                                                    _showAlter(
+                                                        "No se pudo salir del chat",
+                                                        "Intentelo más tarde por favor");
+                                                  }
+                                                } else {
+                                                  _showAlter(
+                                                      "No se pudo salir al curso",
+                                                      "Intentelo más tarde por favor");
                                                 }
                                               }),
                                     ],
@@ -469,11 +523,15 @@ class _CoursePageState extends State<CoursePage> {
                               enrollmentState: enrolledToCourse,
                               update: fetchCourseData,
                               author: creatorCourse.id == course.creator_id),
-                          TextButton.icon(
-                            onPressed: _openModuleModal, // Abre el modal
-                            icon: const Icon(Icons.add),
-                            label: const Text('Añadir módulo'),
-                          ),
+                          creatorCourse.id == course.creator_id
+                              ? TextButton.icon(
+                                  onPressed: _openModuleModal, // Abre el modal
+                                  icon: const Icon(Icons.add),
+                                  label: const Text('Añadir módulo'),
+                                )
+                              : const SizedBox(
+                                  height: 15,
+                                ),
                           const SizedBox(
                             height: 10,
                           ),

@@ -29,7 +29,8 @@ class _EditCoursePageState extends State<EditCoursePage> {
   late CourseModel course;
   late SharedPreferences prefs;
   final TextEditingController _courseNameController = TextEditingController();
-  final TextEditingController _courseDescriptionController = TextEditingController();
+  final TextEditingController _courseDescriptionController =
+      TextEditingController();
   List<CategoryModel> _categories = [];
   List<CategoryModel> _selectedCategories = [];
   final GraphQLCourse _graphQLCourse = GraphQLCourse();
@@ -84,10 +85,11 @@ class _EditCoursePageState extends State<EditCoursePage> {
     try {
       course = await _graphQLCourse.courseById(id: courseId);
       setState(() {
-        _courseNameController.text = course.course_name ;
+        _courseNameController.text = course.course_name;
         _courseDescriptionController.text = course.course_description;
         _selectedCategories = course.categories;
-        isPublic = course.is_public; // Actualizar el estado del interruptor isPublic
+        isPublic =
+            course.is_public; // Actualizar el estado del interruptor isPublic
         isLoading = false;
         print(isPublic);
       });
@@ -127,11 +129,13 @@ class _EditCoursePageState extends State<EditCoursePage> {
                   GestureDetector(
                     onTap: selectImage,
                     child: img == null
-                        ? Image.network(course.picture_id == "notFound"
-                            ? 'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png'
-                            : course.picture_id,
+                        ? Image.network(
+                            course.picture_id == "notFound"
+                                ? 'https://www.inlinefs.com/wp-content/uploads/2020/04/placeholder.png'
+                                : course.picture_id,
                             height: 200,
-                            fit: BoxFit.cover,)
+                            fit: BoxFit.cover,
+                          )
                         : Image.memory(
                             img!.base64!,
                             height: 200,
@@ -170,25 +174,26 @@ class _EditCoursePageState extends State<EditCoursePage> {
                   ),
                   const SizedBox(height: 20),
                   // Switch para permitir al usuario elegir si el curso es público o no
-                  Row(
-                    children: [
-                      const Text('Curso Público: '),
-                      Switch(
-                        value: isPublic,
-                        onChanged: (value) {
-                          setState(() {
-                            isPublic = !isPublic;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     const Text('Curso Público: '),
+                  //     Switch(
+                  //       value: isPublic,
+                  //       onChanged: (value) {
+                  //         setState(() {
+                  //           isPublic = !isPublic;
+                  //         });
+                  //       },
+                  //     ),
+                  //   ],
+                  // ),
                   DropdownButtonFormField<CategoryModel>(
                     value: null,
                     hint: const Text('Elige las categorías del curso'),
                     onChanged: (newValue) {
                       if (newValue != null &&
-                          !_selectedCategories.any((category) => category.category_id == newValue.category_id)) {
+                          !_selectedCategories.any((category) =>
+                              category.category_id == newValue.category_id)) {
                         setState(() {
                           _selectedCategories.add(newValue);
                         });
@@ -235,27 +240,26 @@ class _EditCoursePageState extends State<EditCoursePage> {
                 return;
               }
 
-              if(img != null){
-              res = await uploadFile(
-                  file: img!.base64!,
-                  file_name: 'cp_${course.course_id}',
-                  data_type: img!.file.split('.').last,
-                  user_id: userId!,
-                  token: prefs.getString('token')!);
-              }
-              else{
+              if (img != null) {
+                res = await uploadFile(
+                    file: img!.base64!,
+                    file_name: 'cp_${course.course_id}',
+                    data_type: img!.file.split('.').last,
+                    user_id: userId!,
+                    token: prefs.getString('token')!);
+              } else {
                 res = course.picture_id;
               }
-              print(isPublic); 
+              print(isPublic);
               CreateCourseModel courseQ = CreateCourseModel(
-                course_id: course.course_id,
-                course_name: _courseNameController.text,
-                course_description: _courseDescriptionController.text,
-                categories:
-                    _selectedCategories.map((e) => e.category_id).toList(),
-                picture_id: res,
-                is_public: isPublic,
-              );
+                  course_id: course.course_id,
+                  course_name: _courseNameController.text,
+                  course_description: _courseDescriptionController.text,
+                  categories:
+                      _selectedCategories.map((e) => e.category_id).toList(),
+                  picture_id: res,
+                  is_public: isPublic,
+                  chat_id: course.chat_id);
               var res2 = await GraphQLEditCourse()
                   .editCourse(createCourseModel: courseQ);
               if (res2 == null) {
@@ -270,7 +274,8 @@ class _EditCoursePageState extends State<EditCoursePage> {
                     content: Text('Curso editado correctamente'),
                   ),
                 );
-                // Navigator.pop(context, course);
+                Navigator.pushReplacementNamed(context, '/course',
+                    arguments: CourseArguments(course.course_id));
               }
             },
             child: const Text('Editar Curso'),

@@ -101,17 +101,17 @@ class GraphQLChat {
       );
 
       if (result.hasException) {
-        throw Exception(result.exception);
+        return "";
       }
       if (result.data == null || result.data?['leaveChat'] == null) {
-        throw Exception("Could not leave chat");
+        return "";
       }
 
       String res = result.data?['leaveChat']['message'];
       print(res);
       return res;
     } catch (error) {
-      throw Exception(error);
+      return "";
     }
   }
 
