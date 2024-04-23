@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:leare_fa/pages/category_page.dart';
 import 'package:leare_fa/pages/create_course_page.dart';
 import 'package:leare_fa/pages/create_section_page.dart';
-import 'package:leare_fa/pages/edit_section_page.dart';
+import 'package:leare_fa/pages/create_section_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   runApp(MyApp(token: prefs.getString('token')));
 }
 
