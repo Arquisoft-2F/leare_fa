@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:leare_fa/models/user_model.dart';
 import 'package:leare_fa/utils/graphql_register.dart';
@@ -39,11 +38,11 @@ class RegisterPageState extends State<RegisterPage> {
   String currentSection = 'credentials';
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     initSharedPref();
     setState(() {
-        roleController.text = '1';
+      roleController.text = '1';
     });
   }
 
@@ -59,8 +58,8 @@ class RegisterPageState extends State<RegisterPage> {
         confirmController.text.isNotEmpty &&
         firstnameController.text.isNotEmpty &&
         lastnameController.text.isNotEmpty &&
-        country.isNotEmpty && roleController.text.isNotEmpty) {
-      
+        country.isNotEmpty &&
+        roleController.text.isNotEmpty) {
       user = UserModel(
         id: '',
         nickname: usernameController.text,
@@ -75,7 +74,7 @@ class RegisterPageState extends State<RegisterPage> {
         web_site: websiteController.text,
       );
 
-       var res = await GraphQLRegister().createUser(
+      var res = await GraphQLRegister().createUser(
         userModel: user,
         password: passwordController.text,
         confirmPassword: confirmController.text,
@@ -88,9 +87,8 @@ class RegisterPageState extends State<RegisterPage> {
         ),
       );
       prefs.setString('token', res);
-      Navigator.pushNamed(context, '/home');
-        
-    
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/home', (Route<dynamic> route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -122,15 +120,18 @@ class RegisterPageState extends State<RegisterPage> {
       'info': {
         'title': 'Cuentanos un poco más',
         'subtitle': 'Te queremos conocer mejor',
-        'form': RegisterInfoForm(controllers: {
-          'firstname': firstnameController,
-          'lastname': lastnameController,
-          'country': countryController,
-          'bio': biographyController,
-        }, onCountrySelect: (country) => setState(() {
-          countryController.text = country.name;
-          this.country = country.name;
-        }),),
+        'form': RegisterInfoForm(
+          controllers: {
+            'firstname': firstnameController,
+            'lastname': lastnameController,
+            'country': countryController,
+            'bio': biographyController,
+          },
+          onCountrySelect: (country) => setState(() {
+            countryController.text = country.name;
+            this.country = country.name;
+          }),
+        ),
         'action': () {
           setState(() {
             currentSection = 'socials';
@@ -140,12 +141,14 @@ class RegisterPageState extends State<RegisterPage> {
       'socials': {
         'title': 'Cómo te podemos encontrar?',
         'subtitle': 'Conéctate con los demás',
-        'form': RegisterSocialsForm(controllers: {
-          'facebook': facebookController,
-          'twitter': twitterController,
-          'linkedin': linkedinController,
-          'website': websiteController,
-        },),
+        'form': RegisterSocialsForm(
+          controllers: {
+            'facebook': facebookController,
+            'twitter': twitterController,
+            'linkedin': linkedinController,
+            'website': websiteController,
+          },
+        ),
         'action': () {
           registerUser();
         },
@@ -165,7 +168,8 @@ class RegisterPageState extends State<RegisterPage> {
                   Navigator.pop(context);
                 } else {
                   setState(() {
-                    currentSection = currentSection == 'socials' ? 'info' : 'credentials';
+                    currentSection =
+                        currentSection == 'socials' ? 'info' : 'credentials';
                   });
                 }
               },
@@ -212,13 +216,16 @@ class RegisterPageState extends State<RegisterPage> {
                         registerSections[currentSection]!['form'] as Widget,
                         const SizedBox(height: 20.0),
                         ElevatedButton(
-                          onPressed: registerSections[currentSection]!['action'] as void Function(),
+                          onPressed: registerSections[currentSection]!['action']
+                              as void Function(),
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(double.infinity, 50),
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 15),
                           ),
-                          child: Text(currentSection == 'socials' ? 'Registrarse' : 'Siguiente'),
+                          child: Text(currentSection == 'socials'
+                              ? 'Registrarse'
+                              : 'Siguiente'),
                         ),
                         const SizedBox(height: 20.0),
                       ],
@@ -244,9 +251,8 @@ class RegisterPageState extends State<RegisterPage> {
                               child: Text(
                                 'Inicia Sesión',
                                 style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary),
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
                               ),
                             )
                           ],

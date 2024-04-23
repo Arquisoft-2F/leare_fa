@@ -122,7 +122,8 @@ class _LoginFormState extends State<LoginForm> {
                   print('Empizo');
                   if (loginRequest.flag == "true") {
                     prefs.setString('token', loginRequest.token as String);
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/home', (Route<dynamic> route) => false);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
