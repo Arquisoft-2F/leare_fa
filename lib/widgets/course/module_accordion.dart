@@ -209,7 +209,8 @@ class _ModuleAccordionState extends State<ModuleAccordion> {
                                       arguments: EditSectionArguments(
                                           section.section_id!,
                                           module.module_id,
-                                          section.pos_index));
+                                          section.pos_index,
+                                          widget.course_id));
                                 },
                               ),
                               Flexible(
