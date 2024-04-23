@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'package:flutter/material.dart';
@@ -147,24 +148,46 @@ class _EditSectionPageState extends State<EditSectionPage> {
     }
   }
   void getWebFiles() async {
-        var documentsBytes = section.files_array.map((file) async => await readBytes(Uri.parse(file))).toList();
-        var docbytes = await Future.wait(documentsBytes);
-        setState(() {
-          _documentsBytes = docbytes;
-        });
-        if(section.video_id != '' || section.video_id != 'NotFound'){
-        var _videoBytes = await readBytes(Uri.parse(section.video_id));
-        setState(() {
-          videoBytes = _videoBytes;
-        });
-        }
-        else{
-          setState(() {
-            videoBytes = null;
-          });
-        }
+    // Lee bytes para documentos y video
+    var documentBytesFutures = section.files_array.map((file) async {
+      if (file.endsWith('.mp4') || file.endsWith('.avi') || file.endsWith('.mkv')) {
+        return await readVideoBytes(Uri.parse(file));
+      } else {
+        return await readDocumentBytes(Uri.parse(file));
+      }
+    }).toList();
+    var documentBytes = await Future.wait(documentBytesFutures);
+    setState(() {
+      _documentsBytes = documentBytes;
+    });
+    if (section.video_id != '' && section.video_id != 'NotFound') {
+      var videoBytes = await readVideoBytes(Uri.parse(section.video_id));
+      setState(() {
+        videoBytes = videoBytes;
+      });
+    } else {
+      setState(() {
+        videoBytes = null;
+      });
+    }
   }
+  // Función para leer bytes de un documento
+    Future<Uint8List> readDocumentBytes(Uri uri) async {
+      HttpClientRequest request = await HttpClient().getUrl(uri);
+    request.headers.set(HttpHeaders.accessControlAllowOriginHeader, '*'); // Puedes ajustar según tus necesidades
+    request.headers.set(HttpHeaders.accessControlAllowCredentialsHeader, 'true'); // Habilita las credenciales del navegador
+      HttpClientResponse response = await request.close();
+      List<int> bytes = await consolidateHttpClientResponseBytes(response);
+      return Uint8List.fromList(bytes);
+    }
 
+// Función para leer bytes de un video
+    Future<Uint8List> readVideoBytes(Uri uri) async {
+      HttpClientRequest request = await HttpClient().getUrl(uri);
+      HttpClientResponse response = await request.close();
+      List<int> bytes = await consolidateHttpClientResponseBytes(response);
+      return Uint8List.fromList(bytes);
+    }
   Future<void> _pickVideoM() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.video);
@@ -256,15 +279,24 @@ class _EditSectionPageState extends State<EditSectionPage> {
   }
 
   void _saveSection() async {
+    var videoBytes = await readBytes(Uri.parse(_videoFile!.path));
     var res1 = await uploadFile(
-      file: _videoFile!.readAsBytesSync(),
+      file: videoBytes,
       file_name: 'video_${DateTime.now().millisecondsSinceEpoch}',
       data_type: _videoFile!.path.split('.').last,
       user_id: userId!,
       token: prefs.getString('token') as String,
     );
     
-    List<Uint8List> files = _documents!.map((document) => document.readAsBytesSync()).toList();
+    List<Future<Uint8List>> filesF = _documents!.map((document) async {
+    try {
+      return await document.readAsBytes();
+    } catch (e) {
+      return await readBytes(Uri.parse(document.path));
+    }
+    }).toList();
+
+    List<Uint8List> files = await Future.wait(filesF);
     List<String> file_names = _documents!.map((document) => document.path.split('/').last).toList();
     List<String> res2 = [];
     try {
