@@ -40,14 +40,15 @@ Future<String> uploadFile({
   try {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://35.215.29.86:8001/documents/upload'),
+      Uri.parse('https://35.215.30.59/documents/upload'),
     );
 
     request.fields['file_name'] = file_name;
     request.fields['data_type'] = data_type;
     request.fields['user_id'] = user_id;
 
-    var multipartFile = http.MultipartFile.fromBytes('content', file, filename: file_name);
+    var multipartFile =
+        http.MultipartFile.fromBytes('content', file, filename: file_name);
     request.files.add(multipartFile);
 
     request.headers['Authorization'] = 'Bearer $token';
