@@ -1,17 +1,21 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
+import 'package:universal_io/io.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GraphQlConfiguration {
   Future<GraphQLClient> clientToQuery() async {
     String? token = await getToken();
-    final http.Client httpClient = http.Client();
+    HttpClient _httpClient = new HttpClient();
+    _httpClient.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    IOClient _ioClient = new IOClient(_httpClient);
     final HttpLink httpLink = HttpLink(
       'https://35.215.30.59/graphql',
       defaultHeaders: {
         'Authorization': 'Bearer ${token ?? 'your_default_token_here'}',
       },
-      httpClient: httpClient,
+      httpClient: _ioClient,
     );
 
     return GraphQLClient(
