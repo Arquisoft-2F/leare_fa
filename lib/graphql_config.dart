@@ -11,7 +11,7 @@ class GraphQlConfiguration {
         (X509Certificate cert, String host, int port) => true;
     IOClient _ioClient = new IOClient(_httpClient);
     final HttpLink httpLink = HttpLink(
-      'https://10.0.0.3/graphql',
+      'https://35.215.4.97/graphql',
       defaultHeaders: {
         'Authorization': 'Bearer ${token ?? 'your_default_token_here'}',
       },
