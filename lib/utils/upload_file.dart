@@ -40,7 +40,7 @@ Future<String> uploadFile({
   try {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('https://35.215.30.59/documents/upload'),
+      Uri.parse('movil-proxy/documents/upload'),
     );
 
     request.fields['file_name'] = file_name;
