@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HttpLink httpLink = HttpLink('https://movil-proxy/graphql');
+    final HttpLink httpLink = HttpLink('https://35.215.4.97/graphql');
     final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
       GraphQLClient(
         cache: GraphQLCache(),

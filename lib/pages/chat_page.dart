@@ -59,7 +59,7 @@ class ChatPageState extends State<ChatPage> {
       try {
         print('Connecting to WebSocket...2');
         _channel = WebSocketChannel.connect(
-          Uri.parse('wss://movil-proxy/ws/${chat!.id}'),
+          Uri.parse('wss://35.215.4.97/ws/${chat!.id}'),
         );
         print('Connecting to WebSocket...3');
         _loadMessages();
