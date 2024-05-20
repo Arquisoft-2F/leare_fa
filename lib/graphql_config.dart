@@ -11,7 +11,7 @@ class GraphQlConfiguration {
         (X509Certificate cert, String host, int port) => true;
     IOClient _ioClient = new IOClient(_httpClient);
     final HttpLink httpLink = HttpLink(
-      'https://leare-gateway:5555/graphql',
+      'http://leare-gateway:5555/graphql',
       defaultHeaders: {
         'Authorization': 'Bearer ${token ?? 'your_default_token_here'}',
       },
