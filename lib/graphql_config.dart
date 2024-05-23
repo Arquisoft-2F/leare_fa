@@ -14,6 +14,7 @@ class GraphQlConfiguration {
       'https://35.215.61.223/graphql',
       defaultHeaders: {
         'Authorization': 'Bearer ${token ?? 'your_default_token_here'}',
+        'Access-Control-Allow-Origin': '*'
       },
       httpClient: _ioClient,
     );
