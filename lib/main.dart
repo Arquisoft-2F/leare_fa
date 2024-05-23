@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HttpLink httpLink = HttpLink('http://leare-gateway:5555/graphql');
+    final HttpLink httpLink = HttpLink('https://35.215.61.223/graphql');
     final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
       GraphQLClient(
         cache: GraphQLCache(),
